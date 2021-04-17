@@ -11,7 +11,7 @@ Cosas a resolver
 - Uso de sockets de SDL
 - Resolver dudas de herramientas de compilado con el profe
 - Agarrar profe el miércoles
-
+- Es la consola una aplicación gui o es en Stdout?
 
 - Cocodrilos agarran liana aleatoria
 - piso con agua mata
