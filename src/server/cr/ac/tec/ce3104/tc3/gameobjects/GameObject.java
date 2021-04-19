@@ -1,9 +1,9 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 public abstract class GameObject{
-    private Integer x1;
-    private Integer y1;
-    private Integer x2;
-    private Integer y2;
+    protected Integer x1;
+    protected Integer y1;
+    protected Integer x2;
+    protected Integer y2;
     
     public GameObject(Integer x, Integer y, Integer width, Integer height){
         this.x1 = x;

@@ -60,3 +60,6 @@ hs_err_pid*
 
 build
 test.pdf
+
+# user settings
+.vscode

@@ -1,1 +1,2 @@
 Main-Class: cr.ac.tec.ce3104.tc3.Main
+Class-Path: /usr/share/java/json-simple/json-simple.jar
