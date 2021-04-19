@@ -7,6 +7,8 @@ find_package(PkgConfig REQUIRED)
 find_package(Java 1.8 REQUIRED)
 
 include(UseJava)
-pkg_check_modules(JSON-C REQUIRED IMPORTED_TARGET json-c)
+
+pkg_check_modules(json-c REQUIRED IMPORTED_TARGET json-c)
+pkg_check_modules(SDL2_image REQUIRED IMPORTED_TARGET SDL2_image)
 
 add_subdirectory(src)
