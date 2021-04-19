@@ -1,7 +1,9 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
 public abstract class Fruit extends GameObject{
-    public Fruit(Integer x0, Integer y0, Integer xf, Integer yf ){
-        super(x0,y0,xf,yf);
+    private static Integer spriteWidth = 16;
+    private static Integer spriteHeight = 16;
+    public Fruit(Integer x, Integer y){
+        super(x,y, spriteWidth, spriteHeight);
     }
 }
