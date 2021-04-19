@@ -1,49 +1,55 @@
-# DonCEy-Kong-Jr
-Tercera Tarea corta del curso de Lenguajes, Compiladores e intérpretes, ITCR
+---
+title: Instituto Tecnológico de Costa Rica\endgraf\bigskip \endgraf\bigskip\bigskip\
+ Tarea Corta 3 - DonCEy Kong Jr \endgraf\bigskip\bigskip\bigskip\bigskip
+author: 
+- José Morales Vargas, carné 2019024270
+- Alejandro Soto Chacón, carné 2019008164
+date: \bigskip\bigskip\bigskip\bigskip Area Académica de\endgraf Ingeniería en Computadores \endgraf\bigskip\bigskip\ Lenguajes, Compiladores \endgraf e intérpretes (CE3104) \endgraf\bigskip\bigskip Profesor Marco Rivera Meneses \endgraf\vfill  Semestre I
+header-includes:
+- \setlength\parindent{24pt}
+lang: es-ES
+papersize: letter
+classoption: fleqn
+geometry: margin=1in
+#fontfamily: sans
+fontsize: 12pt
+monofont: "Noto Sans Mono"
+linestretch: 1.15
+...
 
-Sección C: SDL2
+\maketitle
+\thispagestyle{empty}
+\clearpage
+\tableofcontents
+\pagenumbering{roman}
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
 
+# DonCEy Kong Jr
 
-Servidor
-- Administrar toda la lógica
+## 1.1. Manual de Usuario
 
-Cosas a resolver
-- Uso de sockets de SDL
-- Resolver dudas de herramientas de compilado con el profe
-- Agarrar profe el miércoles
-- Es la consola una aplicación gui o es en Stdout?
+## 1.2. Descripción de las estructuras de datos desarrolladas
 
-- Cocodrilos agarran liana aleatoria
-- piso con agua mata
+## 1.3. Descripción detallada de algoritmos desarrollados
 
+## 1.4. Problemas sin solución
 
-Frutas:
+## 1.5. Actividades realizadas por estudiante
 
-- Manzana
-- Bananos
-- Nísperos
+## 1.6. Problemas solucionados
 
+## 1.7. Conclusiones y Recomendaciones del Proyecto
 
-Animaciones
-- sprite cambio de liana
-- sprite salto 
-- sprite 3 liana
-- 3 o 2 sprites de caminado
+### Conclusiones
 
-cocodrilos dos sprites
-Funcionalidad de llave para el donkeykong 
+### Recomendaciones
 
-hay dos tipos de cocodrilos, rojos se quedan en liana, azules se van por abajo
+## 1.8. Bibliografía
 
+# 2. Bitácoras
 
-imprimir varas del server
-recibe entrada de usuario
+## *José Morales*
 
-2do jugador activo -> aclarar si es lo referente a las partidas o si se refiere a jugadores por partida? (jugador que maneja la consola).
-
-- Diagrama de clases 
-- Plan de actividades 
-	- sockets alejandro
-	- diagramas jose
-
-
+## *Alejandro Soto*
