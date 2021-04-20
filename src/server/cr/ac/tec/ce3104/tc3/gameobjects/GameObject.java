@@ -4,17 +4,26 @@ public abstract class GameObject{
     protected Integer y1;
     protected Integer x2;
     protected Integer y2;
+    protected Integer id;
+    protected static Integer nextid=0;
     
     public GameObject(Integer x, Integer y, Integer width, Integer height){
         this.x1 = x;
         this.y1 = y;
         this.x2 = x + width;
         this.y2 = y + height;
+        this.id = nextid;
     }
     public Integer[] getCollisionBox(){
         return new Integer[]{x1,y1,x2,y2};
     }
-    
+    public void onStartUp(){
+        //maneja la instruccion inicial de dibujo
+    }
+    public void onTick(){
+        //No es requisito implementar para todos
+        //Maneja animaciones
+    }
     public Boolean collides(GameObject gameObject){
         Integer objectcoords[] = gameObject.getCollisionBox();
         Boolean collides = false;
