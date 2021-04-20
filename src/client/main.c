@@ -71,14 +71,16 @@ static struct
 	SDL_Renderer     *renderer;
 	struct hash_map   sprites;
 	struct hash_map   entities;
+	bool              fullscreen;
 } game =
 {
-	.state    = HANDSHAKE_WHOAMI,
-	.net_fd   = -1,
-	.x11_fd   = -1,
-	.net_file = NULL,
-	.window   = NULL,
-	.renderer = NULL
+	.state      = HANDSHAKE_WHOAMI,
+	.net_fd     = -1,
+	.x11_fd     = -1,
+	.net_file   = NULL,
+	.window     = NULL,
+	.renderer   = NULL,
+	.fullscreen = false
 };
 
 struct key_value
@@ -594,12 +596,17 @@ static void init_graphics(struct json_object *message)
 		quit(1);
 	}
 
+	init_sprites();
 	game.x11_fd = XConnectionNumber(wm_info.info.x11.display);
 
 	SDL_SetWindowTitle(game.window, "DonCEy Kong Jr.");
-	SDL_SetWindowPosition(game.window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-
-	init_sprites();
+	if(!game.fullscreen)
+	{
+		SDL_SetWindowPosition(game.window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+	} else if(SDL_SetWindowFullscreen(game.window, SDL_WINDOW_FULLSCREEN) != 0)
+	{
+		sdl_fatal();
+	}
 }
 
 static int expect_id(struct json_object *message)
@@ -842,9 +849,10 @@ int main(int argc, char *argv[])
 {
 	const struct option CMDLINE_OPTIONS[] =
 	{
-		{"help",    no_argument, NULL, 'h'},
-		{"version", no_argument, NULL, 'v'},
-		{NULL,      0,           NULL, 0}
+		{"help",       no_argument, NULL, 'h'},
+		{"version",    no_argument, NULL, 'v'},
+		{"fullscreen", no_argument, NULL, 'f'},
+		{NULL,         0,           NULL, 0}
 	};
 
 	game.sprites = hash_map_new(8, sizeof(struct sprite));
@@ -865,8 +873,12 @@ int main(int argc, char *argv[])
 				return 0;
 
 			case 'v':
-				fputs("DonCEyKong Jr. v1.0.0\n", stderr);
+				fputs("DonCEy Kong Jr. v1.0.0\n", stderr);
 				return 0;
+
+			case 'f':
+				game.fullscreen = true;
+				break;
 
 			case '?':
 				usage(argv[0]);
