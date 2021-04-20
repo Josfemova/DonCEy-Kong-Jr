@@ -603,9 +603,16 @@ static void init_graphics(struct json_object *message)
 	if(!game.fullscreen)
 	{
 		SDL_SetWindowPosition(game.window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-	} else if(SDL_SetWindowFullscreen(game.window, SDL_WINDOW_FULLSCREEN) != 0)
+	} else
 	{
-		sdl_fatal();
+		SDL_DisplayMode display_mode;
+
+		if(SDL_SetWindowFullscreen(game.window, SDL_WINDOW_FULLSCREEN) != 0
+		|| SDL_GetCurrentDisplayMode(0, &display_mode) != 0
+		|| SDL_RenderSetScale(game.renderer, (float)display_mode.w / width, (float)display_mode.h / height) != 0)
+		{
+			sdl_fatal();
+		}
 	}
 }
 
