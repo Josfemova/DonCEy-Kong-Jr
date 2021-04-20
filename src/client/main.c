@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <getopt.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -832,19 +833,57 @@ static void init_sdl(void)
 	}
 }
 
-int main(int argc, const char *const argv[])
+static void usage(const char *argv0)
 {
+	fprintf(stderr, "Run '%s --help' for more information\n", argv0);
+}
+
+int main(int argc, char *argv[])
+{
+	const struct option CMDLINE_OPTIONS[] =
+	{
+		{"help",    no_argument, NULL, 'h'},
+		{"version", no_argument, NULL, 'v'},
+		{NULL,      0,           NULL, 0}
+	};
+
 	game.sprites = hash_map_new(8, sizeof(struct sprite));
 	game.entities = hash_map_new(8, sizeof(struct entity));
 
-	if(argc != 3)
+	while(true)
 	{
-		fprintf(stderr, "Usage: %s <host> <port>\n", argv[0]);
+		int option = getopt_long(argc, argv, "hvf", CMDLINE_OPTIONS, NULL);
+		if(option == -1)
+		{
+			break;
+		}
+
+		switch(option)
+		{
+			case 'h':
+				fprintf(stderr, "Usage: %s <host> <port>\n", argv[0]);
+				return 0;
+
+			case 'v':
+				fputs("DonCEyKong Jr. v1.0.0\n", stderr);
+				return 0;
+
+			case '?':
+				usage(argv[0]);
+				return 1;
+		}
+	}
+
+	if(argc - optind != 2)
+	{
+		fprintf(stderr, "%s: missing host or port\n", argv[0]);
+		usage(argv[0]);
+
 		return 1;
 	}
 
 	init_sdl();
-	init_net(argv[1], argv[2]);
+	init_net(argv[optind], argv[optind + 1]);
 
 	event_loop();
 	quit(0);
