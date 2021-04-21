@@ -5,6 +5,7 @@ class BlueCrocodile extends Crocodile{
     Integer horizontalSprites[]={25,26};
     public BlueCrocodile(Integer x, Integer y){
         super(x,y);
+        this.defSprite = horizontalSprites[0];
     }
     public void onTick(){
 

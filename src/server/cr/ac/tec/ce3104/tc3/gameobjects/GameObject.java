@@ -1,4 +1,7 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
+
+import org.json.simple.JSONObject;
+
 public abstract class GameObject{
     protected Integer x1;
     protected Integer y1;
@@ -6,6 +9,7 @@ public abstract class GameObject{
     protected Integer y2;
     protected Integer id;
     protected static Integer nextid=0;
+    protected Integer defSprite;
     
     public GameObject(Integer x, Integer y, Integer width, Integer height){
         this.x1 = x;
@@ -34,5 +38,9 @@ public abstract class GameObject{
         if((rightCollision || leftCollision)&&(upCollision || downCollision))
             collides = true;  
         return collides;
+    }
+    public String getDrawCommand(){
+        return String.format("{\"op\":\"new\", \"id\":%d,\"sprite\":%d, \"x\":%d,\"y\":%d}",
+                            id, defSprite, this.x1, this.y1);
     }
 }

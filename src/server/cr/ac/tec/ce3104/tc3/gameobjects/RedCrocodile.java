@@ -4,5 +4,6 @@ class RedCrocodile extends Crocodile{
     Integer horizontalSprites[]={31,32};
     public RedCrocodile(Integer x, Integer y){
         super(x,y);
+        this.defSprite = verticalSprites[0];
     }
 }

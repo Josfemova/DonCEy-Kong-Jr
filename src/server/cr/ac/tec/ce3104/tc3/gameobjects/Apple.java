@@ -4,5 +4,6 @@ class Apple extends Fruit{
     Integer sprite=0;
     public Apple(Integer x, Integer y){
         super(x,y);
+        this.defSprite = sprite;
     }
 }
