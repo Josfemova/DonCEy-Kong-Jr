@@ -25,6 +25,10 @@
 #include <json-c/json_object.h>
 #include <json-c/json_tokener.h>
 
+/**
+ * @brief 
+ * 
+ */
 struct vec
 {
 	void  *data;
@@ -32,14 +36,20 @@ struct vec
 	size_t capacity;
 	size_t element_size;
 };
-
+/**
+ * @brief 
+ * 
+ */
 struct hash_map
 {
 	struct vec buckets;
 	unsigned   order;
 	size_t     value_size;
 };
-
+/**
+ * @brief 
+ * 
+ */
 enum client_state
 {
 	HANDSHAKE_WHOAMI,
@@ -47,13 +57,19 @@ enum client_state
 	READY,
 	REDRAW_PENDING
 };
-
+/**
+ * @brief 
+ * 
+ */
 struct sprite
 {
 	SDL_Surface *surface;
 	SDL_Texture *texture;
 };
-
+/**
+ * @brief 
+ * 
+ */
 struct entity
 {
 	int x;
@@ -61,6 +77,10 @@ struct entity
 	int sprite;
 };
 
+/**
+ * @brief 
+ * 
+ */
 static struct
 {
 	enum client_state state;
@@ -83,12 +103,21 @@ static struct
 	.fullscreen = false
 };
 
+/**
+ * @brief 
+ * 
+ */
 struct key_value
 {
 	const char         *key;
 	struct json_object *value;
 };
-
+/**
+ * @brief 
+ * 
+ * @param element_size 
+ * @return struct vec 
+ */
 static struct vec vec_new(size_t element_size)
 {
 	struct vec empty =
@@ -101,7 +130,11 @@ static struct vec vec_new(size_t element_size)
 
 	return empty;
 }
-
+/**
+ * @brief 
+ * 
+ * @param vec 
+ */
 static void vec_clear(struct vec *vec)
 {
 	free(vec->data);
@@ -109,12 +142,24 @@ static void vec_clear(struct vec *vec)
 	vec->data = NULL;
 	vec->length = vec->capacity = 0;
 }
-
+/**
+ * @brief 
+ * 
+ * @param vec 
+ * @param index 
+ * @return void* 
+ */
 static void *vec_get(struct vec *vec, size_t index)
 {
 	return (char*)vec->data + vec->element_size * index;
 }
 
+/**
+ * @brief 
+ * 
+ * @param vec 
+ * @param required 
+ */
 static void vec_require_capacity(struct vec *vec, size_t required)
 {
 	if(required > vec->capacity)
@@ -132,13 +177,24 @@ static void vec_require_capacity(struct vec *vec, size_t required)
 		}
 	}
 }
-
+/**
+ * @brief 
+ * 
+ * @param vec 
+ * @return void* 
+ */
 static void *vec_emplace(struct vec *vec)
 {
 	vec_require_capacity(vec, vec->length + 1);
 	return (char*)vec->data + vec->length++ * vec->element_size;
 }
 
+/**
+ * @brief 
+ * 
+ * @param vec 
+ * @param index 
+ */
 static void vec_delete(struct vec *vec, size_t index)
 {
 	assert(index < vec->length);
@@ -149,6 +205,12 @@ static void vec_delete(struct vec *vec, size_t index)
 	memmove(target, source, (vec->length-- - index - 1) * vec->element_size);
 }
 
+/**
+ * @brief 
+ * 
+ * @param vec 
+ * @param new_size 
+ */
 static void vec_resize(struct vec *vec, size_t new_size)
 {
 	vec_require_capacity(vec, new_size);
@@ -160,6 +222,13 @@ static void vec_resize(struct vec *vec, size_t new_size)
 	vec->length = new_size;
 }
 
+/**
+ * @brief 
+ * 
+ * @param bucket 
+ * @param lookup 
+ * @return void* 
+ */
 static void *bucket_get_pair(struct vec *bucket, int lookup)
 {
 	if(bucket)
@@ -179,6 +248,13 @@ static void *bucket_get_pair(struct vec *bucket, int lookup)
 	return NULL;
 }
 
+/**
+ * @brief 
+ * 
+ * @param order 
+ * @param value_size 
+ * @return struct hash_map 
+ */
 static struct hash_map hash_map_new(unsigned order, size_t value_size)
 {
 	assert(order > 0);
@@ -192,7 +268,11 @@ static struct hash_map hash_map_new(unsigned order, size_t value_size)
 
 	return empty;
 }
-
+/**
+ * @brief 
+ * 
+ * @param map 
+ */
 static void hash_map_clear(struct hash_map *map)
 {
 	for(size_t i = 0; i < map->buckets.length; ++i)
@@ -208,6 +288,13 @@ static size_t hash_map_cell_size(struct hash_map *map)
 	return map->value_size > sizeof(int) ? map->value_size : sizeof(int);
 }
 
+/**
+ * @brief 
+ * 
+ * @param map 
+ * @param key 
+ * @return struct vec* 
+ */
 static struct vec *hash_map_bucket_for(struct hash_map *map, int key)
 {
 	if(!map->buckets.data)
@@ -218,6 +305,13 @@ static struct vec *hash_map_bucket_for(struct hash_map *map, int key)
 	return vec_get(&map->buckets, (unsigned)key & ((1u << map->order) - 1));
 }
 
+/**
+ * @brief 
+ * 
+ * @param map 
+ * @param lookup 
+ * @return void* 
+ */
 static void *hash_map_get(struct hash_map *map, int lookup)
 {
 	struct vec *bucket = hash_map_bucket_for(map, lookup);
@@ -226,6 +320,13 @@ static void *hash_map_get(struct hash_map *map, int lookup)
 	return pair ? pair + hash_map_cell_size(map) : NULL;
 }
 
+/**
+ * @brief 
+ * 
+ * @param map 
+ * @param key 
+ * @param value 
+ */
 static void hash_map_put(struct hash_map *map, int key, const void *value)
 {
 	if(!map->buckets.data)
@@ -254,6 +355,12 @@ static void hash_map_put(struct hash_map *map, int key, const void *value)
 	memcpy(stored_value, value, map->value_size);
 }
 
+/**
+ * @brief 
+ * 
+ * @param map 
+ * @param key 
+ */
 static void hash_map_delete(struct hash_map *map, int key)
 {
 	struct vec *bucket = hash_map_bucket_for(map, key);
@@ -265,11 +372,24 @@ static void hash_map_delete(struct hash_map *map, int key)
 	}
 }
 
+/**
+ * @brief 
+ * 
+ * @param map 
+ * @param bucket 
+ * @param index 
+ * @return void* 
+ */
 static void *bucket_get_value(struct hash_map *map, struct vec *bucket, size_t index)
 {
 	return (char*)vec_get(bucket, index) + hash_map_cell_size(map);
 }
 
+/**
+ * @brief 
+ * 
+ * @param exit_code 
+ */
 static void quit(int exit_code)
 {
 	if(game.net_file)
@@ -303,24 +423,40 @@ static void quit(int exit_code)
 	exit(exit_code);
 }
 
+/**
+ * @brief 
+ * 
+ */
 static void sdl_fatal(void)
 {
 	fprintf(stderr, "Fatal SDL error: %s\n", SDL_GetError());
 	quit(1);
 }
 
+/**
+ * @brief 
+ * 
+ */
 static void sdl_image_fatal(void)
 {
 	fprintf(stderr, "Fatal SDL_image error: %s\n", IMG_GetError());
 	quit(1);
 }
 
+/**
+ * @brief 
+ * 
+ */
 static void sys_fatal(void)
 {
 	perror("Fatal error");
 	quit(1);
 }
 
+/**
+ * @brief 
+ * 
+ */
 static void redraw(void)
 {
 	assert(game.state == REDRAW_PENDING);
@@ -357,6 +493,11 @@ static void redraw(void)
 	game.state = READY;
 }
 
+/**
+ * @brief 
+ * 
+ * @param items 
+ */
 static void transmit(const struct key_value *items)
 {
 	struct json_object *root = json_object_new_object();
@@ -371,6 +512,10 @@ static void transmit(const struct key_value *items)
 	json_object_put(root);
 }
 
+/**
+ * @brief 
+ * 
+ */
 static void bye(void)
 {
 	struct key_value items[] =
@@ -382,6 +527,11 @@ static void bye(void)
 	transmit(items);
 }
 
+/**
+ * @brief 
+ * 
+ * @param event 
+ */
 static void handle_key(const SDL_KeyboardEvent *event)
 {
 	if(event->repeat > 0)
@@ -424,6 +574,15 @@ static void handle_key(const SDL_KeyboardEvent *event)
 	transmit(items);
 }
 
+/**
+ * @brief 
+ * 
+ * @param parent 
+ * @param key 
+ * @param type 
+ * @param required 
+ * @return struct json_object* 
+ */
 static struct json_object *expect_key
 (
 	struct json_object *parent, const char *key, enum json_type type, bool required
@@ -446,6 +605,13 @@ static struct json_object *expect_key
 	return value;
 }
 
+/**
+ * @brief 
+ * 
+ * @param client_id 
+ * @param games 
+ * @return int32_t 
+ */
 static int32_t select_game(int32_t client_id, struct json_object *games)
 {
 	for(size_t i = 0; i < json_object_array_length(games); ++i)
@@ -506,6 +672,11 @@ static int32_t select_game(int32_t client_id, struct json_object *games)
 	return game_id;
 }
 
+/**
+ * @brief 
+ * 
+ * @param message 
+ */
 static void start_or_watch_game(struct json_object *message)
 {
 	int32_t client_id = json_object_get_int(expect_key(message, "whoami", json_type_int, true));
@@ -532,6 +703,10 @@ static void start_or_watch_game(struct json_object *message)
 	transmit(items);
 }
 
+/**
+ * @brief 
+ * 
+ */
 static void init_sprites(void)
 {
 #define GLOB_FLAGS GLOB_ERR | GLOB_NOSORT | GLOB_NOESCAPE
@@ -576,6 +751,12 @@ static void init_sprites(void)
 	globfree(&paths);
 }
 
+
+/**
+ * @brief 
+ * 
+ * @param message 
+ */
 static void init_graphics(struct json_object *message)
 {
 	int width = json_object_get_int(expect_key(message, "width", json_type_int, true));
@@ -616,11 +797,23 @@ static void init_graphics(struct json_object *message)
 	}
 }
 
+/**
+ * @brief 
+ * 
+ * @param message 
+ * @return int 
+ */
 static int expect_id(struct json_object *message)
 {
 	return json_object_get_int(expect_key(message, "id", json_type_int, true));
 }
 
+/**
+ * @brief 
+ * 
+ * @param message 
+ * @return struct entity* 
+ */
 static struct entity *expect_entity(struct json_object *message)
 {
 	int id = expect_id(message);
@@ -635,6 +828,12 @@ static struct entity *expect_entity(struct json_object *message)
 	return entity;
 }
 
+/**
+ * @brief 
+ * 
+ * @param message 
+ * @return int 
+ */
 static int expect_sprite(struct json_object *message)
 {
 	int id = json_object_get_int(expect_key(message, "sprite", json_type_int, true));
@@ -647,12 +846,24 @@ static int expect_sprite(struct json_object *message)
 	return id;
 }
 
+/**
+ * @brief 
+ * 
+ * @param message 
+ * @param x 
+ * @param y 
+ */
 static void expect_position(struct json_object *message, int *x, int *y)
 {
 	*x = json_object_get_int(expect_key(message, "x", json_type_int, true));
 	*y = json_object_get_int(expect_key(message, "y", json_type_int, true));
 }
 
+/**
+ * @brief 
+ * 
+ * @param message 
+ */
 static void handle_command(struct json_object *message)
 {
 	const char *operation = json_object_get_string(expect_key(message, "op", json_type_string, true));
@@ -684,6 +895,11 @@ static void handle_command(struct json_object *message)
 	}
 }
 
+/**
+ * @brief 
+ * 
+ * @param line 
+ */
 static void receive(const char *line)
 {
 	struct json_object *root = json_tokener_parse(line);
@@ -720,7 +936,10 @@ static void receive(const char *line)
 
 	json_object_put(root);
 }
-
+/**
+ * @brief 
+ * 
+ */
 static void event_loop(void)
 {
 	struct pollfd pollfds[2] =
@@ -810,6 +1029,12 @@ static void event_loop(void)
 	}
 }
 
+/**
+ * @brief 
+ * 
+ * @param node 
+ * @param service 
+ */
 static void init_net(const char *node, const char *service)
 {
 	struct addrinfo *server_addrinfo = NULL;
@@ -835,7 +1060,10 @@ static void init_net(const char *node, const char *service)
 	game.net_file = fdopen(game.net_fd, "a+");
 	assert(game.net_file);
 }
-
+/**
+ * @brief 
+ * 
+ */
 static void init_sdl(void)
 {
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0)
@@ -847,11 +1075,23 @@ static void init_sdl(void)
 	}
 }
 
+/**
+ * @brief 
+ * 
+ * @param argv0 
+ */
 static void usage(const char *argv0)
 {
 	fprintf(stderr, "Run '%s --help' for more information\n", argv0);
 }
 
+/**
+ * @brief 
+ * 
+ * @param argc 
+ * @param argv 
+ * @return int 
+ */
 int main(int argc, char *argv[])
 {
 	const struct option CMDLINE_OPTIONS[] =
