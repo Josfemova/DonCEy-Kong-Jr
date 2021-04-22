@@ -1,6 +1,10 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
-public class Platform extends EnvironmentObject{
-    public Platform(Integer x0, Integer y0, Integer xf, Integer yf ){
-        super(x0,y0,xf,yf);
+
+import cr.ac.tec.ce3104.tc3.physics.Position;
+import cr.ac.tec.ce3104.tc3.resources.Sprite;
+
+public class Platform extends GameObject {
+    public Platform(Position position, Integer length) {
+        super(Sprite.TODO, position, length, 1);
     }
 }

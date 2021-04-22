@@ -1,9 +1,17 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
-public abstract class Fruit extends GameObject{
-    protected static Integer spriteWidth = 16;
-    protected static Integer spriteHeight = 16;
-    public Fruit(Integer x, Integer y){
-        super(x,y, spriteWidth, spriteHeight);
+import cr.ac.tec.ce3104.tc3.physics.Position;
+import cr.ac.tec.ce3104.tc3.resources.Sprite;
+
+public abstract class Fruit extends GameObject {
+    public Fruit(Sprite sprite, Position position, Integer score) {
+        super(sprite, position);
+        this.score = score;
     }
+
+    public Integer getScore() {
+        return this.score;
+    }
+
+    private Integer score;
 }

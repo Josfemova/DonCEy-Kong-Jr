@@ -1,14 +1,19 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
+import cr.ac.tec.ce3104.tc3.physics.Position;
+
 public class CrocodileFactory {
-    public static Crocodile createCrocodile(Integer x, Integer y, CrocodileType type){
-        switch(type){
+    public static Crocodile createCrocodile(CrocodileType type, Position position) {
+        switch(type) {
             case RED:
-                return new RedCrocodile(x,y);
+                return new RedCrocodile(position);
+
             case BLUE:
-                return new BlueCrocodile(x,y);
+                return new BlueCrocodile(position);
+
             default:
-                return new BlueCrocodile(x,y);
+                assert false;
+                return null;
         }
     }
 }

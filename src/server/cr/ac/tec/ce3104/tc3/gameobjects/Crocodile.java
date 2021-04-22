@@ -1,9 +1,10 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
+import cr.ac.tec.ce3104.tc3.physics.Position;
+import cr.ac.tec.ce3104.tc3.resources.Sequence;
+
 public abstract class Crocodile extends GameObject {
-    protected static Integer spriteWidth = 32;
-    protected static Integer spriteHeight = 32;
-    public Crocodile(Integer x, Integer y){
-        super(x,y, spriteWidth, spriteHeight);
+    protected Crocodile(Sequence sequence, Position position) {
+        super(sequence, position);
     }
 }

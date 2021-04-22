@@ -1,31 +1,37 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
-public abstract class GameObject{
-    protected Integer x1;
-    protected Integer y1;
-    protected Integer x2;
-    protected Integer y2;
-    protected Integer id;
-    protected static Integer nextid=0;
-    
-    public GameObject(Integer x, Integer y, Integer width, Integer height){
-        this.x1 = x;
-        this.y1 = y;
-        this.x2 = x + width;
-        this.y2 = y + height;
-        this.id = nextid;
+
+import cr.ac.tec.ce3104.tc3.physics.Position;
+import cr.ac.tec.ce3104.tc3.resources.Sequence;
+
+public abstract class GameObject {
+    public GameObject(Sequence sequence, Position position) {
+        this(sequence, position, 1, 1);
     }
-    public Integer[] getCollisionBox(){
-        return new Integer[]{x1,y1,x2,y2};
+
+    public GameObject(Sequence sequence, Position position, Integer horizontalRepeat, Integer verticalRepeat) {
+        this.id = nextId++;
+        this.position = position;
+        this.sequence = sequence;
+        this.horizontalRepeat = horizontalRepeat;
+        this.verticalRepeat = verticalRepeat;
     }
+
+    public Integer[] getCollisionBox() {
+        return new Integer[] {/*x1,y1,x2,y2*/};
+    }
+
     public void onStartUp(){
         //maneja la instruccion inicial de dibujo
     }
+
     public void onTick(){
         //No es requisito implementar para todos
         //Maneja animaciones
     }
+
     public Boolean collides(GameObject gameObject){
-        Integer objectcoords[] = gameObject.getCollisionBox();
+        return false; //TODO
+        /*Integer objectcoords[] = gameObject.getCollisionBox();/
         Boolean collides = false;
         Boolean rightCollision = (x1 <= objectcoords[0] && objectcoords[0] <= x2);
         Boolean leftCollision = (x1 <= objectcoords[2] && objectcoords[2]<= x2);
@@ -33,6 +39,14 @@ public abstract class GameObject{
         Boolean downCollision = (y1 <= objectcoords[3] && objectcoords[3] <= y2);
         if((rightCollision || leftCollision)&&(upCollision || downCollision))
             collides = true;  
-        return collides;
+        return collides;*/
     }
+
+    private static Integer nextId = 0;
+
+    private Integer id;
+    private Position position;
+    private Sequence sequence;
+    private Integer horizontalRepeat;
+    private Integer verticalRepeat;
 }

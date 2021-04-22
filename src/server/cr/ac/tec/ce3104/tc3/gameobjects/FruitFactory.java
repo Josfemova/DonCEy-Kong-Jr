@@ -1,15 +1,22 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
+
+import cr.ac.tec.ce3104.tc3.physics.Position;
+
 public class FruitFactory {
-    public static Fruit createFruit(Integer x, Integer y, FruitType type){
-        switch(type){
+    public static Fruit createFruit(FruitType type, Position position, Integer score) {
+        switch(type) {
             case NISPERO:
-                return new Nispero(x,y);
+                return new Nispero(position, score);
+
             case APPLE:
-                return new Apple(x,y);
+                return new Apple(position, score);
+
             case BANANA:
-                return new Banana(x,y);
+                return new Banana(position, score);
+
             default:
-                return new Banana(x,y);
+                assert false;
+                return null;
         }
     }
 }
