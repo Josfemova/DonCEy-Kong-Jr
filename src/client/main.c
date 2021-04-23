@@ -26,7 +26,7 @@
 #include <json-c/json_tokener.h>
 
 /**
- * @brief 
+ * @brief Implementación de un array dinámico
  * 
  */
 struct vec
@@ -37,7 +37,7 @@ struct vec
 	size_t element_size;
 };
 /**
- * @brief 
+ * @brief  Implementación de hash map
  * 
  */
 struct hash_map
@@ -47,7 +47,7 @@ struct hash_map
 	size_t     value_size;
 };
 /**
- * @brief 
+ * @brief Estados posibles en los que se puede encontrar un jugador
  * 
  */
 enum client_state
@@ -58,7 +58,7 @@ enum client_state
 	REDRAW_PENDING
 };
 /**
- * @brief 
+ * @brief Representa los componentes de un sprite
  * 
  */
 struct sprite
@@ -67,7 +67,7 @@ struct sprite
 	SDL_Texture *texture;
 };
 /**
- * @brief 
+ * @brief Representa una entidad
  * 
  */
 struct entity
@@ -78,8 +78,8 @@ struct entity
 };
 
 /**
- * @brief 
- * 
+ * @brief Describe el estado del cliente
+ *
  */
 static struct
 {
@@ -104,7 +104,7 @@ static struct
 };
 
 /**
- * @brief 
+ * @brief Representa un par llave-valor
  * 
  */
 struct key_value
@@ -113,10 +113,10 @@ struct key_value
 	struct json_object *value;
 };
 /**
- * @brief 
+ * @brief Crea e inicializa un nuevo vector
  * 
- * @param element_size 
- * @return struct vec 
+ * @param element_size Tamaño en memoria de cada elemento
+ * @return struct vec Vector inicializado que almacena vectores de tamaño element_size
  */
 static struct vec vec_new(size_t element_size)
 {
@@ -131,9 +131,9 @@ static struct vec vec_new(size_t element_size)
 	return empty;
 }
 /**
- * @brief 
+ * @brief Elimina todos los elementos de un vector 
  * 
- * @param vec 
+ * @param vec puntero al vector cuyos elementos se quieren eliminar 
  */
 static void vec_clear(struct vec *vec)
 {
@@ -143,11 +143,11 @@ static void vec_clear(struct vec *vec)
 	vec->length = vec->capacity = 0;
 }
 /**
- * @brief 
+ * @brief Obtiene el elemento ubicado en un índice dado de un vector
  * 
- * @param vec 
- * @param index 
- * @return void* 
+ * @param vec Puntero al vector en el que se encuentra el elemento
+ * @param index Índice del elemento
+ * @return void* puntero al vector del cual se quiere obtener el elemento
  */
 static void *vec_get(struct vec *vec, size_t index)
 {
@@ -155,10 +155,10 @@ static void *vec_get(struct vec *vec, size_t index)
 }
 
 /**
- * @brief 
+ * @brief Expande la capacidad máxima de un vector
  * 
- * @param vec 
- * @param required 
+ * @param vec Vector cuya capacidad quiere aumentarse
+ * @param required Capacidad a la que se requiere expandir el vector 
  */
 static void vec_require_capacity(struct vec *vec, size_t required)
 {
@@ -178,10 +178,10 @@ static void vec_require_capacity(struct vec *vec, size_t required)
 	}
 }
 /**
- * @brief 
+ * @brief Agrega un espacio a un vector y retorna un puntero al nuevo elemento  
  * 
- * @param vec 
- * @return void* 
+ * @param vec vector en el cual se quiere realizar un emplace 
+ * @return void* puntero al nuevo espacio agregado al vector 
  */
 static void *vec_emplace(struct vec *vec)
 {
@@ -190,14 +190,14 @@ static void *vec_emplace(struct vec *vec)
 }
 
 /**
- * @brief 
+ * @brief Elimina un elemento en el índice dado de un vector
  * 
- * @param vec 
- * @param index 
+ * @param vec vector del cual se quiere eliminar el elemento
+ * @param index índice del elemento
  */
 static void vec_delete(struct vec *vec, size_t index)
 {
-	assert(index < vec->length);
+	assert(index < vec->length); //verifica que el índice sea válido
 
 	void *target = (char*)vec->data + vec->element_size * index;
 	void *source = (char*)target + vec->element_size;
@@ -206,10 +206,10 @@ static void vec_delete(struct vec *vec, size_t index)
 }
 
 /**
- * @brief 
+ * @brief Redimensiona un vector a un nuevo tamaño dado
  * 
- * @param vec 
- * @param new_size 
+ * @param vec Vector a redimensionar
+ * @param new_size Nuevo tamaño del vector 
  */
 static void vec_resize(struct vec *vec, size_t new_size)
 {
@@ -223,11 +223,11 @@ static void vec_resize(struct vec *vec, size_t new_size)
 }
 
 /**
- * @brief 
+ * @brief Busca por un par llave-valor en un bucket dado
  * 
- * @param bucket 
- * @param lookup 
- * @return void* 
+ * @param bucket Puntero al bucket del hash map en que se quiere buscar el par
+ * @param lookup Llave que identifica el par buscado
+ * @return void* Puntero al par si el mismo es encontrado en el bucket, NULL de lo contrario
  */
 static void *bucket_get_pair(struct vec *bucket, int lookup)
 {
@@ -235,7 +235,7 @@ static void *bucket_get_pair(struct vec *bucket, int lookup)
 	{
 		for(size_t i = 0; i < bucket->length; ++i)
 		{
-			char *pair = vec_get(bucket, i);
+			char *pair = vec_get(bucket, i); //Obtiene elemento en índice i del vector bucket
 			int *key = (int*)pair;
 
 			if(lookup == *key)
@@ -249,15 +249,15 @@ static void *bucket_get_pair(struct vec *bucket, int lookup)
 }
 
 /**
- * @brief 
+ * @brief Crea un nuevo hashmap y retorna un puntero al mismo 
  * 
- * @param order 
- * @param value_size 
- * @return struct hash_map 
+ * @param order Orden del hashmap
+ * @param value_size Tamaño de una entrada en el hashmap 
+ * @return struct hash_map Puntero al hash map creado 
  */
 static struct hash_map hash_map_new(unsigned order, size_t value_size)
 {
-	assert(order > 0);
+	assert(order > 0); //orden no puede ser nulo
 
 	struct hash_map empty =
 	{
@@ -269,9 +269,9 @@ static struct hash_map hash_map_new(unsigned order, size_t value_size)
 	return empty;
 }
 /**
- * @brief 
+ * @brief Elimina todos los elementos de un hash map dado
  * 
- * @param map 
+ * @param map puntero al hash map cuyos elementos quieren eliminarse
  */
 static void hash_map_clear(struct hash_map *map)
 {
@@ -283,17 +283,22 @@ static void hash_map_clear(struct hash_map *map)
 	vec_clear(&map->buckets);
 }
 
+/**
+ * @brief Obtiene el tamaño de celda de un elmento de hash map
+ *
+ * @param map Mapa cuyo tamaño de celda quiere obtenerse
+ */
 static size_t hash_map_cell_size(struct hash_map *map)
 {
 	return map->value_size > sizeof(int) ? map->value_size : sizeof(int);
 }
 
 /**
- * @brief 
+ * @brief Obtiene el bucket que contiene el registro con la llave dada
  * 
- * @param map 
- * @param key 
- * @return struct vec* 
+ * @param map Hash map en el que se encuentra el bucket
+ * @param key Llave del registro a buscar
+ * @return struct vec* bucket que contiene el registro identificado por la llave, o NULL si el registro no existe
  */
 static struct vec *hash_map_bucket_for(struct hash_map *map, int key)
 {
@@ -306,11 +311,11 @@ static struct vec *hash_map_bucket_for(struct hash_map *map, int key)
 }
 
 /**
- * @brief 
+ * @brief Obtiene un par llave-valor de un hash map
  * 
- * @param map 
- * @param lookup 
- * @return void* 
+ * @param map Hash map del cual se quiere obtener el par llave-valor
+ * @param lookup Llave que identifica al para 
+ * @return void* Puntero al par llave-valor
  */
 static void *hash_map_get(struct hash_map *map, int lookup)
 {
@@ -321,11 +326,11 @@ static void *hash_map_get(struct hash_map *map, int lookup)
 }
 
 /**
- * @brief 
+ * @brief Agrega un par llave-valor a un hash map
  * 
- * @param map 
- * @param key 
- * @param value 
+ * @param map Hash map al que se quiere agregar el registro
+ * @param key Llave que identifica el registro
+ * @param value Valor del registro
  */
 static void hash_map_put(struct hash_map *map, int key, const void *value)
 {
@@ -356,10 +361,10 @@ static void hash_map_put(struct hash_map *map, int key, const void *value)
 }
 
 /**
- * @brief 
+ * @brief Remueve un registro identificado por una llave de un hash map
  * 
- * @param map 
- * @param key 
+ * @param map Hash map del que se quiere remover el registro
+ * @param key llave que identifica el registro
  */
 static void hash_map_delete(struct hash_map *map, int key)
 {
@@ -373,12 +378,12 @@ static void hash_map_delete(struct hash_map *map, int key)
 }
 
 /**
- * @brief 
+ * @brief Obtiene un valor en el índice dado de un bucket de un hash map
  * 
- * @param map 
- * @param bucket 
- * @param index 
- * @return void* 
+ * @param map Hash map en el que se encuentra el valor
+ * @param bucket Bucket del hash map en el que se encuentra el valor
+ * @param index Índice en el bucket del valor que se quiere obtener
+ * @return void* puntero al valor obtenido
  */
 static void *bucket_get_value(struct hash_map *map, struct vec *bucket, size_t index)
 {
@@ -386,9 +391,9 @@ static void *bucket_get_value(struct hash_map *map, struct vec *bucket, size_t i
 }
 
 /**
- * @brief 
+ * @brief Maneja el cierre de la ventana de juego
  * 
- * @param exit_code 
+ * @param exit_code Código que comunica la causa del cierre de la ventana de juego
  */
 static void quit(int exit_code)
 {
@@ -424,7 +429,7 @@ static void quit(int exit_code)
 }
 
 /**
- * @brief 
+ * @brief Escribe en la salida estándar de error un error encontrado por SDL 
  * 
  */
 static void sdl_fatal(void)
@@ -434,7 +439,7 @@ static void sdl_fatal(void)
 }
 
 /**
- * @brief 
+ * @brief Escribe en la salida estándar de error un un error de SDL asociado a una imagen
  * 
  */
 static void sdl_image_fatal(void)
@@ -444,7 +449,7 @@ static void sdl_image_fatal(void)
 }
 
 /**
- * @brief 
+ * @brief Comunica un estado de error fatal y cierra la aplicación inmediatamente 
  * 
  */
 static void sys_fatal(void)
@@ -454,8 +459,9 @@ static void sys_fatal(void)
 }
 
 /**
- * @brief 
+ * @brief redibuja la pantalla de juego  
  * 
+ * Redibuja todas las entidades de juego registradas en el hash map de entities pertenecientes al estado de juego game 
  */
 static void redraw(void)
 {
@@ -494,9 +500,10 @@ static void redraw(void)
 }
 
 /**
- * @brief 
+ * @brief  Envía un mensaje en forma de Objeto JSON al servidor
  * 
- * @param items 
+ * Escribe Un mensaje como objeto JSON al archivo que representa el stream de salida al socket Servidor  
+ * @param items Pares llave-valor que conforman el objeto a enviar 
  */
 static void transmit(const struct key_value *items)
 {
@@ -513,8 +520,10 @@ static void transmit(const struct key_value *items)
 }
 
 /**
- * @brief 
+ * @brief Comunica una despedida al Servidor
  * 
+ * Escribe un objeto JSON que comunica una despedida al archivo que representa el stream de salida
+ * al socket Servidor
  */
 static void bye(void)
 {
@@ -528,9 +537,12 @@ static void bye(void)
 }
 
 /**
- * @brief 
+ * @brief Reponsable de manejar los eventos de presión de teclas  
  * 
- * @param event 
+ * Dado un evento de presión de tecla, de ser dicha tecla parte de los controles de juego, envía al servidor
+ * un mensaje que comunica el tipo de evento y la tecla que lo causó, de forma que el servidor pueda resolver
+ * las instrucciones a emitir basado en dicho evento
+ * @param event Puntero a la estructura que describe el evento de presión de teclado
  */
 static void handle_key(const SDL_KeyboardEvent *event)
 {
@@ -575,13 +587,14 @@ static void handle_key(const SDL_KeyboardEvent *event)
 }
 
 /**
- * @brief 
+ * @brief  Obtiene un registro llave-valor de un objeto JSON y lo retorna como un objeto JSON separado
  * 
- * @param parent 
- * @param key 
- * @param type 
- * @param required 
- * @return struct json_object* 
+ * @param parent Objeto JSON que contiene el par llave-valor
+ * @param key Llave que identifica el par 
+ * @param type Tipo de dato almacenado en el valor del par 
+ * @param required Indica si obtener el registro es obligatorio. de ser ese el caso, imprime un error en
+ * la salida estándar de error
+ * @return struct json_object* Objeto json que contiene solo el par llave-valor buscado 
  */
 static struct json_object *expect_key
 (
@@ -606,11 +619,16 @@ static struct json_object *expect_key
 }
 
 /**
- * @brief 
+ * @brief Pregunta al usuario por un id de juego para inicializar el cliente
  * 
- * @param client_id 
- * @param games 
- * @return int32_t 
+ * Dado un id de cliente y una serie de id's que identifican los juegos activos, se le pregunta
+ * al usuario por el id de juego al que quiere unirse. Si el usuario escribe un id registrado 
+ * como juego, el usuario se une a una partida ya activa como espectador. Si coloca su propio id,
+ * trata de iniciar un juego como jugador. Dada una entrada inválida, levantará un error y cerrará
+ * el juego
+ * @param client_id Id asignado al cliente actual 
+ * @param games Objeto JSON que contiene la lista de juegos activos
+ * @return int32_t Id del juego asociado al cliente
  */
 static int32_t select_game(int32_t client_id, struct json_object *games)
 {
@@ -636,7 +654,7 @@ static int32_t select_game(int32_t client_id, struct json_object *games)
 		int scanned = scanf(" %" SCNd32, &game_id);
 		if(scanned == EOF && feof(stdin))
 		{
-			bye();
+			bye(); //no se quiere empezar un juego, se cierra sin error
 			quit(0);
 		} else if(scanned == EOF)
 		{
@@ -651,7 +669,7 @@ static int32_t select_game(int32_t client_id, struct json_object *games)
 		bool valid = scanned == 1 && game_id == client_id;
 		if(scanned == 1 && !valid)
 		{
-			for(size_t i = 0; i < json_object_array_length(games); ++i)
+			for(size_t i = 0; i < json_object_array_length(games); ++i) //
 			{
 				if(json_object_get_int(json_object_array_get_idx(games, i)) == game_id)
 				{
@@ -673,9 +691,12 @@ static int32_t select_game(int32_t client_id, struct json_object *games)
 }
 
 /**
- * @brief 
- * 
- * @param message 
+ * @brief Emite el mensaje que le indica al servidor el modo de operación del cliente
+ * y a qué partida quiere unirse el mismo
+ *
+ * Controla la rutina de inicio del cliente una vez recibido el mensaje inicial del Servidor. 
+ * Dado el estado del servidor, da ciertas opciones al usuario para inicializalizar un juego.
+ * @param message Mensaje inicial enviado del Servidor al cliente
  */
 static void start_or_watch_game(struct json_object *message)
 {
@@ -704,8 +725,10 @@ static void start_or_watch_game(struct json_object *message)
 }
 
 /**
- * @brief 
+ * @brief  Iniciliza los sprites del juego
  * 
+ * Carga las imágenes a utilizar en el juego como sprites para que se puedan asociar posteriormente
+ * a una entidad del juego
  */
 static void init_sprites(void)
 {
@@ -753,9 +776,11 @@ static void init_sprites(void)
 
 
 /**
- * @brief 
- * 
- * @param message 
+ * @brief Inicializa la pantalla de juego 
+ *
+ * En base a un mensaje del servidor que indica los parámetros gráficos del juego, 
+ * crea una ventana bajo X11 y realiza su configuración inicial
+ * @param message Mensaje del servidor que contiene parámetros para la ventana a crear
  */
 static void init_graphics(struct json_object *message)
 {
@@ -798,10 +823,12 @@ static void init_graphics(struct json_object *message)
 }
 
 /**
- * @brief 
+ * @brief Obtiene el valor del campo id del objeto JSON dado
  * 
- * @param message 
- * @return int 
+ * Dado un objeto JSON, extrae el valor asociado a la llave "id". Utilizado para
+ * procesar mensajes del servidor 
+ * @param message Objeto JSON del que se extraerá el valor de id. Es un mensaje del servidor
+ * @return int Valor de id extraído del mensaje JSON
  */
 static int expect_id(struct json_object *message)
 {
@@ -809,10 +836,12 @@ static int expect_id(struct json_object *message)
 }
 
 /**
- * @brief 
- * 
- * @param message 
- * @return struct entity* 
+ * @brief Obtiene la entidad referenciada por un id contenido en un mensaje en formato JSON
+ *
+ * Dado un mensaje en formato JSON que se refiere a una entidad, extrae el valor de id del mensaje
+ * y utiliza dicho valor para obtener un puntero a la entidad identificada por dicho id
+ * @param message Mensaje del servidor con referencia a la entidad que se quiere obtener
+ * @return struct entity* Puntero a la entidad identificada por el identificador dado
  */
 static struct entity *expect_entity(struct json_object *message)
 {
@@ -829,10 +858,12 @@ static struct entity *expect_entity(struct json_object *message)
 }
 
 /**
- * @brief 
- * 
- * @param message 
- * @return int 
+ * @brief Obtiene el id de un sprite referenciado por un mensaje en formato JSON
+ *
+ * Dado un mensaje en formato JSON proveniente del servidor, extrae el campo que 
+ * referencia al id de un sprite y retorna dicho valor 
+ * @param message Mensaje en formato JSON proveniente del servidor
+ * @return int ID del sprite referenciado en el mensaje
  */
 static int expect_sprite(struct json_object *message)
 {
@@ -847,11 +878,13 @@ static int expect_sprite(struct json_object *message)
 }
 
 /**
- * @brief 
- * 
- * @param message 
- * @param x 
- * @param y 
+ * @brief Extrae valores de posicion vertical y horizontal de un objeto JSON
+ *
+ * Dado un mensaje en formato JSON proveniente del servidor, obtiene los valores
+ * asociados a las llaves "x" y "y", los cuales se refieren a posiciones de pantalla
+ * @param message Mensaje en formato JSON proveniente del servidor
+ * @param x Parámetro de retorno en el que se almacena el valor de posición horizontal extraído
+ * @param y Parámetro de retorno en el que se almacena el valor de posición vertical extraído
  */
 static void expect_position(struct json_object *message, int *x, int *y)
 {
@@ -860,9 +893,14 @@ static void expect_position(struct json_object *message, int *x, int *y)
 }
 
 /**
- * @brief 
+ * @brief Maneja los comandos provenientes del servidor
  * 
- * @param message 
+ * Dado un mensaje en formato JSON proveniente del servidor, analiza el mismo y determina
+ * las acciones a tomar para llevar a cabo lo especificado por el comando. Los comandos son 
+ * identificados por el valor asoaciado a la llave "op" en el mensaje. Si dicho para llave-valor
+ * no se encuentra en el mensaje o contiene un comando no válido, detiene la ejecución del
+ * programa
+ * @param message Mensaje en formato JSON proveniente del servidor 
  */
 static void handle_command(struct json_object *message)
 {
@@ -896,9 +934,13 @@ static void handle_command(struct json_object *message)
 }
 
 /**
- * @brief 
- * 
- * @param line 
+ * @brief Procesa un mensaje enviado por el servidor
+ *
+ * Procesa un mensaje enviado del servidor, espera texto plano que pueda describir un
+ * objeto JSON. Trata de parsear el objeto JSON, y si el parseo es exitoso, procesa
+ * el mensaje ya sea como hanshake inicial, el handshake de inicio de juego o como
+ * un comando
+ * @param line Mensaje enviado del servidor como una cadena de caracteres
  */
 static void receive(const char *line)
 {
@@ -937,7 +979,7 @@ static void receive(const char *line)
 	json_object_put(root);
 }
 /**
- * @brief 
+ * @brief Controla el loop general del juego una vez iniciado
  * 
  */
 static void event_loop(void)
@@ -1030,10 +1072,10 @@ static void event_loop(void)
 }
 
 /**
- * @brief 
+ * @brief Inicializa la conexión con el servidor  
  * 
- * @param node 
- * @param service 
+ * @param node Dirección IP del servidor
+ * @param service Puerto en el que escucha el servidor
  */
 static void init_net(const char *node, const char *service)
 {
@@ -1061,7 +1103,7 @@ static void init_net(const char *node, const char *service)
 	assert(game.net_file);
 }
 /**
- * @brief 
+ * @brief Iniciliza los componentes de SDL2
  * 
  */
 static void init_sdl(void)
@@ -1076,9 +1118,11 @@ static void init_sdl(void)
 }
 
 /**
- * @brief 
- * 
- * @param argv0 
+ * @brief Escribe un mensaje de error como respuesta a un mal uso del ejecutable
+ *
+ * Si los parámetros de línea de comandos son erróneos, comunica que se puede correr
+ * el comando dado con una bandera "--help" para solicitar mayor información
+ * @param argv0 Comando que se ejecutó de manera inadecuada
  */
 static void usage(const char *argv0)
 {
@@ -1086,11 +1130,12 @@ static void usage(const char *argv0)
 }
 
 /**
- * @brief 
+ * @brief Punto de entrada de la aplicación
  * 
- * @param argc 
- * @param argv 
- * @return int 
+ * Maneja la rutina de inicio del juego e inicializa el juego una vez terminada la misma
+ * @param argc Cantidad de argumentos en la linea de comandos
+ * @param argv Array que contiene los argumentos en la línea de comandos
+ * @return int Código de salida que indica resultado de ejecución
  */
 int main(int argc, char *argv[])
 {
