@@ -60,3 +60,4 @@
 
 - Se comenzó con la modificación del diagrama UML prototipo
 - Se agregó mayor documentación interna del cliente
+- Se agregaron archivos de bibliografía de recursos consultados hasta ahora

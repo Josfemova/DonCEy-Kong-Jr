@@ -7,6 +7,7 @@ author:
 date: \bigskip\bigskip\bigskip\bigskip Area Académica de\endgraf Ingeniería en Computadores \endgraf\bigskip\bigskip\ Lenguajes, Compiladores \endgraf e intérpretes (CE3104) \endgraf\bigskip\bigskip Profesor Marco Rivera Meneses \endgraf\vfill  Semestre I
 header-includes:
 - \setlength\parindent{24pt}
+- \usepackage{url}
 lang: es-ES
 papersize: letter
 classoption: fleqn
@@ -15,6 +16,10 @@ geometry: margin=1in
 fontsize: 12pt
 monofont: "Noto Sans Mono"
 linestretch: 1.15
+bibliography: bibliografia.bib
+csl: /home/josfemova/UsefulRepos/styles/apa.csl
+nocite: |
+    @perror, @getline, @poll, @read, @getaddrinfo, @ip, @socket, @connect, @getopt, @timerfd, @x11, @sdlwiki
 ...
 
 \maketitle
@@ -47,6 +52,9 @@ linestretch: 1.15
 ### Recomendaciones
 
 ## 1.8. Bibliografía
+
+::: {#refs}
+:::
 
 # 2. Bitácoras
 
