@@ -40,4 +40,24 @@
 ### 19 de abril
 
 - Se agregaron encabezados a documentos de documentación técnica ejecutiva y manual de usuario. 
-- Se agregaron las secciones iniciales al documento README.md en donde se almacena la documentación externa del proyecto. 
+- Se agregaron las secciones iniciales al documento README.md en donde se almacena la documentación externa del proyecto.
+
+### 20 de abril
+
+- Se realizaron cambios menores a algunas clases para registrar información de sprites y manejar cambios de estado con onTick()
+
+### 21 de abril
+
+- Se extrajeron texturas adicionales para el dibujo de la pantalla de juego.
+- Se agregó rutina prototipo para dibujado para la primera pantalla de juego. Sujeta a cambios, solo es una prueba de concepto inicial.
+
+### 22 de abril
+
+- Se realizó una reunión con el compañero de trabajo para determinar términos operativos de la fase final de la realización del proyecto. Dado el avance acumulado hasta el momento y las estructura del proyecto, se determinó que la mejor estrategia para continuar en la fase final es tener un miembro dedicado a completar la lógica de juego y que otro miembro se dedique a completar la documentación requerida, esto porque el entrelazado entre cliente y servidor en la lógica de juego puede resultar un causante de conflictos a la hora de trabajar en el código de manera paralela. Mi persona toma entonces la tarea de asegurarse que todo lo relacionado a documentación se encuentre en condición y completitud adecuada.
+
+### 23 de abril
+
+- Se agregó la documentación interna correspondiente a la lógica del cliente
+- Se comenzó con la modificación del diagrama UML prototipo
+
+### 23 de abril
