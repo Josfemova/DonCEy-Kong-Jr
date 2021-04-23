@@ -15,6 +15,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/timerfd.h>
 
 #include <X11/Xlib.h>
 
@@ -24,6 +25,9 @@
 
 #include <json-c/json_object.h>
 #include <json-c/json_tokener.h>
+
+#define CLOCK_HZ       30
+#define NANOS_PER_TICK (1000000000 / CLOCK_HZ)
 
 struct vec
 {
@@ -44,8 +48,7 @@ enum client_state
 {
 	HANDSHAKE_WHOAMI,
 	HANDSHAKE_INIT,
-	READY,
-	REDRAW_PENDING
+	READY
 };
 
 struct sprite
@@ -66,6 +69,7 @@ static struct
 	enum client_state state;
 	int               net_fd;
 	int               x11_fd;
+	int               timer_fd;
 	FILE             *net_file;
 	SDL_Window       *window;
 	SDL_Renderer     *renderer;
@@ -77,6 +81,7 @@ static struct
 	.state      = HANDSHAKE_WHOAMI,
 	.net_fd     = -1,
 	.x11_fd     = -1,
+	.timer_fd   = -1,
 	.net_file   = NULL,
 	.window     = NULL,
 	.renderer   = NULL,
@@ -272,6 +277,8 @@ static void *bucket_get_value(struct hash_map *map, struct vec *bucket, size_t i
 
 static void quit(int exit_code)
 {
+	close(game.timer_fd);
+
 	if(game.net_file)
 	{
 		fclose(game.net_file);
@@ -323,7 +330,6 @@ static void sys_fatal(void)
 
 static void redraw(void)
 {
-	assert(game.state == REDRAW_PENDING);
 	if(SDL_RenderClear(game.renderer) < 0)
 	{
 		sdl_fatal();
@@ -534,7 +540,7 @@ static void start_or_watch_game(struct json_object *message)
 
 static void init_sprites(void)
 {
-#define GLOB_FLAGS GLOB_ERR | GLOB_NOSORT | GLOB_NOESCAPE
+#define GLOB_FLAGS (GLOB_ERR | GLOB_NOSORT | GLOB_NOESCAPE)
 	glob_t paths = { 0 };
 	if(glob("assets/sprites/*/\?\?-*.png", GLOB_FLAGS, NULL, &paths) != 0)
 	{
@@ -596,7 +602,6 @@ static void init_graphics(struct json_object *message)
 		quit(1);
 	}
 
-	init_sprites();
 	game.x11_fd = XConnectionNumber(wm_info.info.x11.display);
 
 	SDL_SetWindowTitle(game.window, "DonCEy Kong Jr.");
@@ -613,6 +618,27 @@ static void init_graphics(struct json_object *message)
 		{
 			sdl_fatal();
 		}
+	}
+}
+
+static void init_clock(void)
+{
+	struct timespec timer_period =
+	{
+		.tv_sec  = 0,
+		.tv_nsec = NANOS_PER_TICK
+	};
+
+	struct itimerspec timer_expiration =
+	{
+		.it_interval = timer_period,
+		.it_value    = timer_period
+	};
+
+	if((game.timer_fd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC)) == -1
+	|| timerfd_settime(game.timer_fd, 0, &timer_expiration, NULL) != 0)
+	{
+		sys_fatal();
 	}
 }
 
@@ -709,24 +735,42 @@ static void receive(const char *line)
 
 		case HANDSHAKE_INIT:
 			init_graphics(root);
+			init_sprites();
+			init_clock();
+
 			game.state = READY;
 			break;
 
 		default:
 			handle_command(root);
-			game.state = REDRAW_PENDING;
 			break;
 	}
 
 	json_object_put(root);
 }
 
+static void push_sdl_event(int type)
+{
+	SDL_Event event = { .type = type };
+	if(SDL_PushEvent(&event) != 1)
+	{
+		sdl_fatal();
+	}
+}
+
+#define X11_EVENT   (SDL_USEREVENT + 0)
+#define TIMER_EVENT (SDL_USEREVENT + 1)
+
 static void event_loop(void)
 {
-	struct pollfd pollfds[2] =
+	struct pollfd pollfds[] =
 	{
 		{
 			.fd = game.net_fd,
+			.events = POLLIN
+		},
+		{
+			.fd = -1,
 			.events = POLLIN
 		},
 		{
@@ -737,6 +781,7 @@ static void event_loop(void)
 
 	struct pollfd *net_pollfd = &pollfds[0];
 	struct pollfd *x11_pollfd = &pollfds[1];
+	struct pollfd *timer_pollfd = &pollfds[2];
 
 	char *input_line = NULL;
 	size_t input_length = 0;
@@ -749,25 +794,15 @@ static void event_loop(void)
 			switch(event.type)
 			{
 				case SDL_QUIT:
-				{
 					bye();
 					return;
-				}
 
 				case SDL_KEYUP:
 				case SDL_KEYDOWN:
 					handle_key(&event.key);
 					break;
 
-				case SDL_WINDOWEVENT:
-					if(event.window.event == SDL_WINDOWEVENT_EXPOSED)
-					{
-						game.state = REDRAW_PENDING;
-					}
-
-					break;
-
-				case SDL_USEREVENT:
+				case X11_EVENT:
 					errno = 0;
 					while(getline(&input_line, &input_length, game.net_file) >= 0)
 					{
@@ -787,25 +822,39 @@ static void event_loop(void)
 					}
 
 					break;
+
+				case TIMER_EVENT:
+				{
+					uint64_t expirations = 0;
+					read(game.timer_fd, &expirations, sizeof expirations);
+
+					if(expirations > 1)
+					{
+						fprintf(stderr, "Warning: %lu clock tick(s) missed\n", expirations - 1);
+					}
+
+					redraw();
+					break;
+				}
 			}
 		}
 
 		x11_pollfd->fd = game.x11_fd;
-		if(game.state == REDRAW_PENDING)
-		{
-			redraw();
-		}
+		timer_pollfd->fd = game.timer_fd;
 
 		if(poll(pollfds, sizeof pollfds / sizeof(struct pollfd), -1) < 0 && errno != EINTR)
 		{
 			sys_fatal();
-		} else if(net_pollfd->revents)
+		}
+
+		if(net_pollfd->revents)
 		{
-			event.type = SDL_USEREVENT;
-			if(SDL_PushEvent(&event) != 1)
-			{
-				sdl_fatal();
-			}
+			push_sdl_event(X11_EVENT);
+		}
+
+		if(timer_pollfd->revents)
+		{
+			push_sdl_event(TIMER_EVENT);
 		}
 	}
 }
