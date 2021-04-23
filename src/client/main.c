@@ -57,11 +57,21 @@ struct sprite
 	SDL_Texture *texture;
 };
 
+struct ratio
+{
+	int      numerator;
+	unsigned denominator;
+};
+
 struct entity
 {
-	int x;
-	int y;
-	int sprite;
+	int          id;
+	int          x;
+	int          y;
+	struct vec   sequence;
+	size_t       next_sprite;
+	struct ratio speed_x;
+	struct ratio speed_y;
 };
 
 static struct
@@ -73,6 +83,7 @@ static struct
 	FILE             *net_file;
 	SDL_Window       *window;
 	SDL_Renderer     *renderer;
+	size_t            ticks;
 	struct hash_map   sprites;
 	struct hash_map   entities;
 	bool              fullscreen;
@@ -85,6 +96,7 @@ static struct
 	.net_file   = NULL,
 	.window     = NULL,
 	.renderer   = NULL,
+	.ticks      = 0,
 	.fullscreen = false
 };
 
@@ -231,7 +243,7 @@ static void *hash_map_get(struct hash_map *map, int lookup)
 	return pair ? pair + hash_map_cell_size(map) : NULL;
 }
 
-static void hash_map_put(struct hash_map *map, int key, const void *value)
+static void *hash_map_put(struct hash_map *map, int key, const void *value)
 {
 	if(!map->buckets.data)
 	{
@@ -256,7 +268,7 @@ static void hash_map_put(struct hash_map *map, int key, const void *value)
 	void *stored_value = pair + hash_map_cell_size(map);
 
 	*stored_key = key;
-	memcpy(stored_value, value, map->value_size);
+	return memcpy(stored_value, value, map->value_size);
 }
 
 static void hash_map_delete(struct hash_map *map, int key)
@@ -328,6 +340,35 @@ static void sys_fatal(void)
 	quit(1);
 }
 
+static void transmit(const struct key_value *items)
+{
+	struct json_object *root = json_object_new_object();
+	for(; items->key; ++items)
+	{
+		json_object_object_add(root, items->key, items->value);
+	}
+
+	fprintf(game.net_file, "%s\n", json_object_to_json_string(root));
+	fflush(game.net_file);
+
+	json_object_put(root);
+}
+
+static bool move_on_tick(int *coordinate, const struct ratio *speed)
+{
+	if(speed->denominator > 0 && game.ticks % speed->denominator < abs(speed->numerator))
+	{
+		int jump = roundf((float)abs(speed->numerator) / speed->denominator);
+		jump = jump > 0 ? jump : 1;
+		jump = speed->numerator > 0 ? jump : -jump;
+
+		*coordinate += jump;
+		return true;
+	}
+
+	return false;
+}
+
 static void redraw(void)
 {
 	if(SDL_RenderClear(game.renderer) < 0)
@@ -341,8 +382,19 @@ static void redraw(void)
 		for(size_t j = 0; j < bucket->length; ++j)
 		{
 			struct entity *entity = bucket_get_value(&game.entities, bucket, j);
-			struct sprite *sprite = hash_map_get(&game.sprites, entity->sprite);
+
+			// Evita lógica de corto-circuito
+			bool moved = move_on_tick(&entity->x, &entity->speed_x);
+			moved = move_on_tick(&entity->y, &entity->speed_y) || moved;
+
+			int sprite_id = *(int*)vec_get(&entity->sequence, entity->next_sprite);
+			struct sprite *sprite = hash_map_get(&game.sprites, sprite_id);
 			assert(sprite);
+
+			if(moved && ++entity->next_sprite == entity->sequence.length)
+			{
+				entity->next_sprite = 0;
+			}
 
 			struct SDL_Rect destination =
 			{
@@ -356,25 +408,25 @@ static void redraw(void)
 			{
 				sdl_fatal();
 			}
+
+			if(moved)
+			{
+				struct key_value items[] =
+				{
+					{"op", json_object_new_string("move")},
+					{"id", json_object_new_int(entity->id)},
+					{"x",  json_object_new_int(entity->x)},
+					{"y",  json_object_new_int(entity->y)},
+					{NULL, NULL}
+				};
+
+				transmit(items);
+			}
 		}
 	}
 
 	SDL_RenderPresent(game.renderer);
 	game.state = READY;
-}
-
-static void transmit(const struct key_value *items)
-{
-	struct json_object *root = json_object_new_object();
-	for(; items->key; ++items)
-	{
-		json_object_object_add(root, items->key, items->value);
-	}
-
-	fprintf(game.net_file, "%s\n", json_object_to_json_string(root));
-	fflush(game.net_file);
-
-	json_object_put(root);
 }
 
 static void bye(void)
@@ -661,16 +713,52 @@ static struct entity *expect_entity(struct json_object *message)
 	return entity;
 }
 
-static int expect_sprite(struct json_object *message)
+static struct ratio expect_ratio(struct json_object *message, const char *num_key, const char *denom_key)
 {
-	int id = json_object_get_int(expect_key(message, "sprite", json_type_int, true));
-	if(!hash_map_get(&game.sprites, id))
+	int num = json_object_get_int(expect_key(message, num_key, json_type_int, true));
+	int denom = json_object_get_int(expect_key(message, denom_key, json_type_int, true));
+
+	if(denom < 0 || (num != 0 && denom == 0))
 	{
-		fprintf(stderr, "Error: no sprite has ID %d\n", id);
+		fprintf(stderr, "Error: bad speed ratio: %d:%d\n", num, denom);
 		quit(1);
 	}
 
-	return id;
+	struct ratio ratio =
+	{
+		.numerator   = num,
+		.denominator = denom
+	};
+
+	return ratio;
+}
+
+static void expect_sequence(struct json_object *message, struct vec *sequence)
+{
+	struct json_object *sequence_ids = expect_key(message, "seq", json_type_array, true);
+	if(json_object_array_length(sequence_ids) == 0)
+	{
+		fputs("Error: empty sequence array\n", stderr);
+	}
+
+	for(size_t i = 0; i < json_object_array_length(sequence_ids); ++i)
+	{
+		struct json_object *id_object = json_object_array_get_idx(sequence_ids, i);
+		if(json_object_get_type(id_object) != json_type_int)
+		{
+			fputs("Error: expected int in sequence array\n", stderr);
+			quit(1);
+		}
+
+		int id = json_object_get_int(id_object);
+		if(!hash_map_get(&game.sprites, id))
+		{
+			fprintf(stderr, "Error: no sprite has ID %d\n", id);
+			quit(1);
+		}
+
+		*(int*)vec_emplace(sequence) = id;
+	}
 }
 
 static void expect_position(struct json_object *message, int *x, int *y)
@@ -683,22 +771,37 @@ static void handle_command(struct json_object *message)
 {
 	const char *operation = json_object_get_string(expect_key(message, "op", json_type_string, true));
 
-	if(strcmp(operation, "move") == 0)
+	if(strcmp(operation, "put") == 0)
+	{
+		int id = expect_id(message);
+
+		struct entity new = { 0 };
+		struct entity *existing = hash_map_get(&game.entities, id);
+		struct entity *entity = existing ? existing : &new;
+
+		entity->id = id;
+		entity->next_sprite = 0;
+		expect_position(message, &entity->x, &entity->y);
+
+		if(existing)
+		{
+			vec_resize(&existing->sequence, 0);
+		} else
+		{
+			new.sequence = vec_new(sizeof(int));
+			entity = hash_map_put(&game.entities, id, &new);
+		}
+
+		expect_sequence(message, &entity->sequence);
+		entity->speed_x = expect_ratio(message, "num_x", "denom_x");
+		entity->speed_y = expect_ratio(message, "num_y", "denom_y");
+	} else if(strcmp(operation, "move") == 0)
 	{
 		struct entity *entity = expect_entity(message);
 		expect_position(message, &entity->x, &entity->y);
-	} else if(strcmp(operation, "transition") == 0)
-	{
-		expect_entity(message)->sprite = expect_sprite(message);
 	} else if(strcmp(operation, "delete") == 0)
 	{
 		hash_map_delete(&game.entities, expect_id(message));
-	} else if(strcmp(operation, "new") == 0)
-	{
-		struct entity entity = { .sprite = expect_sprite(message) };
-		expect_position(message, &entity.x, &entity.y);
-
-		hash_map_put(&game.entities, expect_id(message), &entity);
 	} else if(strcmp(operation, "bye") == 0)
 	{
 		puts("Connection terminated by server");
@@ -833,7 +936,9 @@ static void event_loop(void)
 						fprintf(stderr, "Warning: %lu clock tick(s) missed\n", expirations - 1);
 					}
 
+					++game.ticks;
 					redraw();
+
 					break;
 				}
 			}
