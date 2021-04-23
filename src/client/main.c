@@ -1318,7 +1318,7 @@ int main(int argc, char *argv[])
 		switch(option)
 		{
 			case 'h':
-				fprintf(stderr, "Usage: %s <host> <port>\n", argv[0]);
+				fprintf(stderr, "Usage: %s [-f|--fullscreen] <host> <port>\n", argv[0]);
 				return 0;
 
 			case 'v':
