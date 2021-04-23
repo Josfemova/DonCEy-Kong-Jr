@@ -1,6 +1,8 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
+import cr.ac.tec.ce3104.tc3.physics.Speed;
 import cr.ac.tec.ce3104.tc3.physics.Position;
+import cr.ac.tec.ce3104.tc3.networking.Command;
 import cr.ac.tec.ce3104.tc3.resources.Sequence;
 
 public abstract class GameObject {
@@ -14,6 +16,14 @@ public abstract class GameObject {
         this.sequence = sequence;
         this.horizontalRepeat = horizontalRepeat;
         this.verticalRepeat = verticalRepeat;
+    }
+
+    public Integer getId() {
+        return this.id;
+    }
+
+    public Command makePutCommand() {
+        return Command.cmdPut(this.id, this.position, this.speed, this.sequence);
     }
 
     public Integer[] getCollisionBox() {
@@ -46,6 +56,7 @@ public abstract class GameObject {
 
     private Integer id;
     private Position position;
+    private Speed speed = Speed.stationary();
     private Sequence sequence;
     private Integer horizontalRepeat;
     private Integer verticalRepeat;

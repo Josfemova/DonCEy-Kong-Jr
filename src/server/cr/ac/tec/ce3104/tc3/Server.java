@@ -4,19 +4,14 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cr.ac.tec.ce3104.tc3.networking.ClientAdmin;
 
 public class Server {
-    private ServerSocket serverSocket = null;
-    private static Integer port = 8080;
-    private static List<Game> games = new ArrayList<>();
-
-    private static Server instance;
-
     private Server() {
         try {
-            serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(PORT);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Fatal error: unable to start server");
@@ -36,37 +31,23 @@ public class Server {
      * @return
      */
     public Game initPlayer(ClientAdmin player) {
-        Game game = new Game(player.getClientId());
-        game.attachClient(player);
-        games.add(game);
+        Game game = new Game(player);
+        this.games.put(game.getPlayerId(), game);
+
         return game;
     }
     /**
-     * Busca un juego cuyo jugador sea identificado por playerId, y suscribe al cliente dado a las actualizaciones del servidor
+     * Busca un juego cuyo jugador sea identificado por playerId
      * @param playerId
      * @param spectator
      * @return
      */
-    public Game initSpectator(Integer playerId, ClientAdmin spectator) {
-        Game game = null;
-        for (Game x : games) {
-            if (x.getPlayerId() == playerId) {
-                game = x;
-                break;
-            }
-        }
-
-        game.attachClient(spectator);
-        return game;
+    public Game getGame(Integer gameId) {
+        return this.games.get(gameId);
     }
 
     public List<Integer> getGameIds() {
-        List<Integer> gameIds = new ArrayList<>();
-        for (Game game : games) {
-            gameIds.add(game.getPlayerId());
-        }
-
-        return gameIds;
+        return new ArrayList<>(this.games.keySet());
     }
 
     /**
@@ -84,4 +65,10 @@ public class Server {
             }
         }
     }
+
+    private static Server instance;
+    private static final Integer PORT = 8080;
+
+    private ServerSocket serverSocket;
+    private HashMap<Integer, Game> games = new HashMap<>();
 }

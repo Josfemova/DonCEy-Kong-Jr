@@ -63,7 +63,7 @@ public class ClientAdmin implements AutoCloseable {
             this.game = null;
 
             try {
-                this.sendSingle(new Command().putString("error", message));
+                this.sendSingle(Command.cmdError(message));
                 this.close();
             } catch (Exception exception) {
                 exception.printStackTrace();
@@ -109,32 +109,24 @@ public class ClientAdmin implements AutoCloseable {
         List<Integer> gameIds = Server.getInstance().getGameIds();
 
         // primer mensaje
-        this.sendSingle(new Command().putInt("whoami", this.id).putIntList("games", gameIds));
+        this.sendSingle(Command.cmdWhoAmI(this.id, gameIds));
         // respuesta al init
-        Integer playerId = this.receive().expectInt("init");
+        Integer gameId = this.receive().expectInt("init");
 
         //suscribe a un jugador según el id provisto por init
-        if (playerId == this.id) {
+        if (gameId == this.id) {
             this.type = ClientType.PLAYER;
-        } else if (gameIds.contains(playerId)) {
-            this.type = ClientType.SPECTATOR;
+            this.game = Server.getInstance().initPlayer(this);
         } else {
-            this.sendError("invalid game ID");
-            return false;
-        }
+            this.type = ClientType.SPECTATOR;
+            this.game = Server.getInstance().getGame(gameId);
 
-        //resolución original del NES
-        //aspect ratio 16:15 en caso de querer escalar
-        this.sendSingle(new Command().putInt("width", 256).putInt("height", 240));
+            if (game == null) {
+                this.sendError("invalid game ID");
+                return false;
+            }
 
-        switch(this.type) {
-            case PLAYER:
-                this.game = Server.getInstance().initPlayer(this);
-                break;
-
-            case SPECTATOR:
-                this.game = Server.getInstance().initSpectator(playerId, this);
-                break;
+            this.game.attachClient(this);
         }
 
         return true;

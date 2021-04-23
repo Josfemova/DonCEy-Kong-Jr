@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
+import cr.ac.tec.ce3104.tc3.physics.Size;
+
 public class Sprite implements Sequence {
     public static final Sprite APPLE;
     public static final Sprite BANANA;
@@ -31,23 +33,22 @@ public class Sprite implements Sequence {
         this.id = Integer.parseInt(filename.substring(0, filename.indexOf('-')));
 
         BufferedImage image = ImageIO.read(path);
-        this.width = image.getWidth();
-        this.height = image.getHeight();
+        this.size = new Size(image.getWidth(), image.getHeight());
+    }
+
+    @Override
+    public Sprite[] getSprites() {
+        return new Sprite[] { this };
     }
 
     public Integer getId() {
         return this.id;
     }
 
-    public Integer getWidth() {
-        return this.width;
-    }
-
-    public Integer getHeight() {
-        return this.height;
+    public Size getSize() {
+        return this.size;
     }
 
     private Integer id;
-    private Integer width;
-    private Integer height;
+    private Size size;
 }
