@@ -73,6 +73,10 @@ struct sprite
 	SDL_Texture *texture;
 };
 
+/**
+ * @brief representa una fracción numérica
+ * 
+ */
 struct ratio
 {
 	int      numerator;
@@ -190,7 +194,7 @@ static void vec_require_capacity(struct vec *vec, size_t required)
 	{
 		do
 		{
-			vec->capacity = vec->capacity > 0 ? 2 * vec->capacity : 4;
+			vec->capacity = vec->capacity > 0 ? 2 * vec->capacity : 4; //duplica la capacidad
 		} while(required > vec->capacity);
 
 		vec->data = realloc(vec->data, vec->element_size * vec->capacity);
@@ -507,6 +511,21 @@ static void transmit(const struct key_value *items)
 	json_object_put(root);
 }
 
+/**
+ * @brief Mueve una entidad, dada la cantidad correcta de ticks transcurridos 
+ * 
+ * Dada una coordenada y la velocidad(cantidad movimiento/ticks) en esa 
+ * coordenada de una entidad, decide si dicha entidad debe moverse o no. 
+ * De ser el número de ticks factor del denominador de la velocidad, mueve
+ * la entidad la cantidad unidades de longitud específicadas por el 
+ * numerador de la velocidad. Retorna un valor booleano que indica si 
+ * hubo movimiento o no
+ * 
+ * @param coordinate Puntero a un campo de eje coordenado de una entidad (x o y)
+ * @param speed Fracción de velocidad expresada como (cantidad movimiento/ticks)
+ * @return true La entidad se movió en este tick
+ * @return false La entidad no se movió en este tick
+ */
 static bool move_on_tick(int *coordinate, const struct ratio *speed)
 {
 	if(speed->denominator > 0 && game.ticks % speed->denominator < abs(speed->numerator))
@@ -856,7 +875,7 @@ static void init_graphics(struct json_object *message)
 
 	assert(!game.window && !game.renderer);
 
-	SDL_SysWMinfo wm_info;
+	SDL_SysWMinfo wm_info; //Información de pantalla
 	SDL_VERSION(&wm_info.version);
 
 	if(SDL_CreateWindowAndRenderer(width, height, 0, &game.window, &game.renderer) != 0
@@ -874,7 +893,7 @@ static void init_graphics(struct json_object *message)
 	SDL_SetWindowTitle(game.window, "DonCEy Kong Jr.");
 	if(!game.fullscreen)
 	{
-		SDL_SetWindowPosition(game.window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+		SDL_SetWindowPosition(game.window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); //centra la pantalla
 	} else
 	{
 		SDL_DisplayMode display_mode;
@@ -888,6 +907,12 @@ static void init_graphics(struct json_object *message)
 	}
 }
 
+/**
+ * @brief Inicia un reloj para llevar cuenta del tiempo transcurrido
+ * 
+ * Configura e inicializa el timer del juego que se utiliza para llevar
+ * registro de los ticks transcurridos
+ */
 static void init_clock(void)
 {
 	struct timespec timer_period =
@@ -944,6 +969,17 @@ static struct entity *expect_entity(struct json_object *message)
 	return entity;
 }
 
+/**
+ * @brief Extrae una razon matemática de un mensaje en formato JSON
+ * 
+ * Dado un mensaje en formato JSON que contiene información respecto a una razón matemática,
+ * extrae la información del nominador y denominador de dicha razón matemática del objeto, y crea
+ * un valor de struct ratio en base a dicha información 
+ * @param message Objeto JSON que contiene los campos que se quiere extraer
+ * @param num_key Cadena de caracteres utilizada como llave del valor que identifica el numerador
+ * @param denom_key Cadena de caracteres utilizada como llave del valor que identifica el denominador
+ * @return struct ratio Razón matemática extraída del objeto JSON
+ */
 static struct ratio expect_ratio(struct json_object *message, const char *num_key, const char *denom_key)
 {
 	int num = json_object_get_int(expect_key(message, num_key, json_type_int, true));
@@ -964,6 +1000,16 @@ static struct ratio expect_ratio(struct json_object *message, const char *num_ke
 	return ratio;
 }
 
+/**
+ * @brief Extrae una secuencia de id's de sprites de un mensaje en formato JSON
+ * 
+ * Dado un mensaje en formato JSON que contiene un campo con llave "seq" que tiene como
+ * valor asociado un arreglo JSON de miembros de tipo entero, extrae dicho arreglo
+ * y lo carga sobre un vector
+ * @param message Objeto JSON que contiene el arreglo secuencia a extraerse
+ * @param sequence Parámetro de salida que toma el valor de la secuencia de ID's de
+ * 		  		   sprites
+ */
 static void expect_sequence(struct json_object *message, struct vec *sequence)
 {
 	struct json_object *sequence_ids = expect_key(message, "seq", json_type_array, true);
@@ -971,14 +1017,14 @@ static void expect_sequence(struct json_object *message, struct vec *sequence)
 	{
 		fputs("Error: empty sequence array\n", stderr);
 	}
-
+	//Recorre el array json
 	for(size_t i = 0; i < json_object_array_length(sequence_ids); ++i)
 	{
 		struct json_object *id_object = json_object_array_get_idx(sequence_ids, i);
-		if(json_object_get_type(id_object) != json_type_int)
+		if(json_object_get_type(id_object) != json_type_int) 
 		{
 			fputs("Error: expected int in sequence array\n", stderr);
-			quit(1);
+			quit(1);//fallar si no se obtiene un valor de tipo entero
 		}
 
 		int id = json_object_get_int(id_object);
@@ -987,7 +1033,7 @@ static void expect_sequence(struct json_object *message, struct vec *sequence)
 			fprintf(stderr, "Error: no sprite has ID %d\n", id);
 			quit(1);
 		}
-
+		//agrega elemento al vector de retorno
 		*(int*)vec_emplace(sequence) = id;
 	}
 }
@@ -1020,8 +1066,7 @@ static void expect_position(struct json_object *message, int *x, int *y)
 static void handle_command(struct json_object *message)
 {
 	const char *operation = json_object_get_string(expect_key(message, "op", json_type_string, true));
-
-	if(strcmp(operation, "put") == 0)
+	if(strcmp(operation, "put") == 0)//comando de crear entidades
 	{
 		int id = expect_id(message);
 
@@ -1045,14 +1090,14 @@ static void handle_command(struct json_object *message)
 		expect_sequence(message, &entity->sequence);
 		entity->speed_x = expect_ratio(message, "num_x", "denom_x");
 		entity->speed_y = expect_ratio(message, "num_y", "denom_y");
-	} else if(strcmp(operation, "move") == 0)
+	} else if(strcmp(operation, "move") == 0)//comando de mover un entidad
 	{
 		struct entity *entity = expect_entity(message);
 		expect_position(message, &entity->x, &entity->y);
-	} else if(strcmp(operation, "delete") == 0)
+	} else if(strcmp(operation, "delete") == 0)//comando para eliminar una entidad
 	{
 		hash_map_delete(&game.entities, expect_id(message));
-	} else if(strcmp(operation, "bye") == 0)
+	} else if(strcmp(operation, "bye") == 0)//Servidor se despide del cliente
 	{
 		puts("Connection terminated by server");
 		quit(0);
@@ -1111,6 +1156,11 @@ static void receive(const char *line)
 	json_object_put(root);
 }
 
+/**
+ * @brief Agrega un evento al queue de eventos de SDL
+ * 
+ * @param type Entero que identifica el tipo de evento a agregar
+ */
 static void push_sdl_event(int type)
 {
 	SDL_Event event = { .type = type };
