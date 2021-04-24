@@ -1,42 +1,49 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
+import cr.ac.tec.ce3104.tc3.modes.Mode;
+import cr.ac.tec.ce3104.tc3.modes.Static;
 import cr.ac.tec.ce3104.tc3.physics.Speed;
+import cr.ac.tec.ce3104.tc3.physics.Dynamics;
 import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.networking.Command;
+import cr.ac.tec.ce3104.tc3.resources.Sprite;
 import cr.ac.tec.ce3104.tc3.resources.Sequence;
 
 public abstract class GameObject {
-    public GameObject(Sequence sequence, Position position) {
-        this(sequence, position, 1, 1);
+    public GameObject(Sprite staticSprite, Position position) {
+        this(new Static(staticSprite), position);
     }
 
-    public GameObject(Sequence sequence, Position position, Integer horizontalRepeat, Integer verticalRepeat) {
+    public GameObject(Mode mode, Position position) {
         this.id = nextId++;
         this.position = position;
-        this.sequence = sequence;
-        this.horizontalRepeat = horizontalRepeat;
-        this.verticalRepeat = verticalRepeat;
+        this.mode = mode;
     }
+
+    public abstract Dynamics getInteractionMode();
 
     public Integer getId() {
         return this.id;
     }
 
     public Command makePutCommand() {
-        return Command.cmdPut(this.id, this.position, this.speed, this.sequence);
+        return Command.cmdPut(this.id, this.position, this.mode.getSpeed(), this.mode.getSequence());
     }
 
-    public Integer[] getCollisionBox() {
-        return new Integer[] {/*x1,y1,x2,y2*/};
+    public Mode getMode() {
+        return this.mode;
     }
 
-    public void onStartUp(){
-        //maneja la instruccion inicial de dibujo
+    public void addObserver(GameObjectObserver observer) {
+        assert this.observer == null;
+        this.observer = observer;
     }
 
-    public void onTick(){
-        //No es requisito implementar para todos
-        //Maneja animaciones
+    public void switchTo(Mode mode) {
+        this.mode = mode;
+        if (this.observer != null) {
+            this.observer.onObjectModeChanged(this);
+        }
     }
 
     public Boolean collides(GameObject gameObject){
@@ -47,7 +54,7 @@ public abstract class GameObject {
         Boolean leftCollision = (x1 <= objectcoords[2] && objectcoords[2]<= x2);
         Boolean upCollision = (y1 <= objectcoords[1] && objectcoords[1] <= y2);
         Boolean downCollision = (y1 <= objectcoords[3] && objectcoords[3] <= y2);
-        if((rightCollision || leftCollision)&&(upCollision || downCollision))
+        if ((rightCollision || leftCollision)&&(upCollision || downCollision))
             collides = true;  
         return collides;*/
     }
@@ -56,8 +63,6 @@ public abstract class GameObject {
 
     private Integer id;
     private Position position;
-    private Speed speed = Speed.stationary();
-    private Sequence sequence;
-    private Integer horizontalRepeat;
-    private Integer verticalRepeat;
+    private Mode mode;
+    private GameObjectObserver observer = null;
 }

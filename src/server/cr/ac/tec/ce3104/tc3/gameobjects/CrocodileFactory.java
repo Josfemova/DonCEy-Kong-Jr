@@ -4,7 +4,7 @@ import cr.ac.tec.ce3104.tc3.physics.Position;
 
 public class CrocodileFactory {
     public static Crocodile createCrocodile(CrocodileType type, Position position) {
-        switch(type) {
+        switch (type) {
             case RED:
                 return new RedCrocodile(position);
 

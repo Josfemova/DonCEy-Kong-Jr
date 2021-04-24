@@ -1,10 +1,16 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
+import cr.ac.tec.ce3104.tc3.modes.Mode;
+import cr.ac.tec.ce3104.tc3.physics.Dynamics;
 import cr.ac.tec.ce3104.tc3.physics.Position;
-import cr.ac.tec.ce3104.tc3.resources.Sequence;
 
 public abstract class Crocodile extends GameObject {
-    protected Crocodile(Sequence sequence, Position position) {
-        super(sequence, position);
+    @Override
+    public Dynamics getInteractionMode() {
+        return Dynamics.INTERACTIVE;
+    }
+
+    protected Crocodile(Mode mode, Position position) {
+        super(mode, position);
     }
 }

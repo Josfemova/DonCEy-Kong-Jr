@@ -2,11 +2,15 @@ package cr.ac.tec.ce3104.tc3.physics;
 
 public class Speed {
     public static Speed stationary() {
-        Speed speed = new Speed();
-        speed.x = SpeedRatio.stationary();
-        speed.y = SpeedRatio.stationary();
+        return new Speed(SpeedRatio.stationary(), SpeedRatio.stationary());
+    }
 
-        return speed;
+    public static Speed horizontal(SpeedRatio horizontal) {
+        return new Speed(horizontal, SpeedRatio.stationary());
+    }
+
+    public static Speed vertical(SpeedRatio vertical) {
+        return new Speed(SpeedRatio.stationary(), vertical);
     }
 
     public SpeedRatio getX() {
@@ -20,5 +24,8 @@ public class Speed {
     private SpeedRatio x;
     private SpeedRatio y;
 
-    private Speed() {}
+    private Speed(SpeedRatio x, SpeedRatio y) {
+        this.x = x;
+        this.y = y;
+    }
 }

@@ -5,12 +5,21 @@ public class SpeedRatio {
         return new SpeedRatio();
     }
 
+    public SpeedRatio(Integer numerator, Integer denominator) {
+        this.numerator = numerator;
+        this.denominator = denominator;
+    }
+
     public Integer getNumerator() {
         return this.numerator;
     }
 
     public Integer getDenominator() {
         return this.denominator;
+    }
+
+    public SpeedRatio negate() {
+        return new SpeedRatio(-this.numerator, this.denominator);
     }
 
     private Integer numerator = 0;

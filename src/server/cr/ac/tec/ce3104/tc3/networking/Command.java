@@ -59,7 +59,12 @@ public class Command {
 
     public Integer expectInt(String key) {
         //tiene que castear a long para poder extraerlo por...razones
-        return ((Long)this.json.get(key)).intValue();
+        Long value = (Long)this.json.get(key);
+        return value != null ? value.intValue() : null;
+    }
+
+    public String expectString(String key) {
+        return (String)this.json.get(key);
     }
 
     public Command putInt(String key, Integer value) {

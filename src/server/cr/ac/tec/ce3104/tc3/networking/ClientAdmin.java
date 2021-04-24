@@ -7,12 +7,14 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 
+import cr.ac.tec.ce3104.tc3.Key;
 import cr.ac.tec.ce3104.tc3.Game;
 import cr.ac.tec.ce3104.tc3.Server;
+import cr.ac.tec.ce3104.tc3.physics.Position;
 
 enum ClientType {
     PLAYER,
-    SPECTATOR
+    SPECTATOR;
 }
 
 public class ClientAdmin implements AutoCloseable {
@@ -30,9 +32,14 @@ public class ClientAdmin implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
-        if(this.socket != null) {
+        if (this.socket != null) {
             this.socket.close();
             this.socket = null;
+        }
+
+        if (this.game != null) {
+            this.game.detachClient(this);
+            this.game = null;
         }
     }
 
@@ -81,8 +88,9 @@ public class ClientAdmin implements AutoCloseable {
 
     private Game game;
     private Socket socket;
-    private ClientType type;
     private Integer id;
+    private ClientType type;
+    private Key lastKey = null;
 
     private Thread runnerThread;
     private BufferedReader requestReader;
@@ -112,6 +120,9 @@ public class ClientAdmin implements AutoCloseable {
         this.sendSingle(Command.cmdWhoAmI(this.id, gameIds));
         // respuesta al init
         Integer gameId = this.receive().expectInt("init");
+        if (gameId == null) {
+            return false;
+        }
 
         //suscribe a un jugador según el id provisto por init
         if (gameId == this.id) {
@@ -134,20 +145,48 @@ public class ClientAdmin implements AutoCloseable {
 
     private Boolean processNext() throws IOException {
         // inicia loop de cliente
-        //Todavía falta gran parte de la lógica acá
+        Command request = this.receive();
 
-        //Procesamiento de entrada de usuario
-        //es probable que se quieran administrar comandos de quit de parte del usuario
-        if (type == ClientType.SPECTATOR) {
+        //se quieren administrar comandos de quit para los dos tipos de cliente
+        String operation = request.expectString("op");
+        if (operation.equals("bye")) {
+            return false;
+        } else if (type == ClientType.SPECTATOR) {
             return true;
         }
 
-        Command request = this.receive();
-        System.out.println("received: " + request);
-        //TODO
+        switch (operation) {
+            case "press":
+                Key pressed = Key.parse(request.expectString("key"));
+                if (this.lastKey != null && this.lastKey != pressed) {
+                    this.game.onRelease();
+                }
 
-        this.sendError("invalid operation");
-        return false;
+                this.lastKey = pressed;
+                this.game.onPress(this.lastKey);
+
+                break;
+
+            case "release":
+                if (this.lastKey == Key.parse(request.expectString("key"))) {
+                    this.game.onRelease();
+                    this.lastKey = null;
+                }
+
+                break;
+
+            case "move":
+                Position position = new Position(request.expectInt("x"), request.expectInt("y"));
+                this.game.onMove(request.expectInt("id"), position);
+
+                break;
+
+            default:
+                this.sendError("invalid operation: " + operation);
+                return false;
+        }
+
+        return true;
     }
 
     private Command receive() throws IOException {

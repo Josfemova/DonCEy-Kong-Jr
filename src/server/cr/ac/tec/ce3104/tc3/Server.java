@@ -46,6 +46,10 @@ public class Server {
         return this.games.get(gameId);
     }
 
+    public void removeGame(Integer gameId) {
+        this.games.remove(gameId);
+    }
+
     public List<Integer> getGameIds() {
         return new ArrayList<>(this.games.keySet());
     }
