@@ -528,9 +528,9 @@ static void transmit(const struct key_value *items)
  */
 static bool move_on_tick(int *coordinate, const struct ratio *speed)
 {
-	if(speed->denominator > 0 && game.ticks % speed->denominator < abs(speed->numerator))
+	if(speed->denominator > 0 && game.ticks % speed->denominator == 0)
 	{
-		int jump = roundf((float)abs(speed->numerator) / speed->denominator);
+		int jump = abs(speed->numerator);
 		jump = jump > 0 ? jump : 1;
 		jump = speed->numerator > 0 ? jump : -jump;
 
