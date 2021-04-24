@@ -644,19 +644,27 @@ static void handle_key(const SDL_KeyboardEvent *event)
 	switch(event->keysym.sym)
 	{
 		case SDLK_LEFT:
+		case SDLK_a:
 			key = "left";
 			break;
 
 		case SDLK_RIGHT:
+		case SDLK_d:
 			key = "right";
 			break;
 
 		case SDLK_UP:
+		case SDLK_w:
 			key = "up";
 			break;
 
 		case SDLK_DOWN:
+		case SDLK_s:
 			key = "down";
+			break;
+
+		case SDLK_SPACE:
+			key = "jump";
 			break;
 
 		default:
