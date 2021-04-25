@@ -11,7 +11,7 @@ public class Vines extends GameObject {
 
         Integer unitHeight = Sprite.VINES.getSize().getHeight();
         Bounds platformBounds = platform.getBounds();
-        Integer baseX = platformBounds.getHorizontalCenter();
+        Integer baseX = platformBounds.getHorizontalCenter() - Sprite.VINES.getSize().getWidth() / 2;
         Integer baseY = platformBounds.getBaseline();
 
         Vines[] vines = new Vines[length];
