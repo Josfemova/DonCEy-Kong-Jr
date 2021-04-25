@@ -2,7 +2,9 @@ package cr.ac.tec.ce3104.tc3.gameobjects;
 
 import cr.ac.tec.ce3104.tc3.modes.Mode;
 import cr.ac.tec.ce3104.tc3.modes.Static;
+import cr.ac.tec.ce3104.tc3.physics.Size;
 import cr.ac.tec.ce3104.tc3.physics.Speed;
+import cr.ac.tec.ce3104.tc3.physics.Bounds;
 import cr.ac.tec.ce3104.tc3.physics.Dynamics;
 import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.networking.Command;
@@ -20,18 +22,34 @@ public abstract class GameObject {
         this.mode = mode;
     }
 
-    public abstract Dynamics getInteractionMode();
+    public abstract Dynamics getDynamics();
 
     public Integer getId() {
         return this.id;
+    }
+
+    public Mode getMode() {
+        return this.mode;
+    }
+
+    public Position getPosition() {
+        return this.position;
+    }
+
+    public Size getSize() {
+        return this.mode.getSequence().getSize();
+    }
+
+    public Bounds getBounds() {
+        return new Bounds(this.position, this.getSize());
     }
 
     public Command makePutCommand() {
         return Command.cmdPut(this.id, this.position, this.mode.getSpeed(), this.mode.getSequence());
     }
 
-    public Mode getMode() {
-        return this.mode;
+    public Command makeDeleteCommand() {
+        return Command.cmdDelete(this.id);
     }
 
     public void addObserver(GameObjectObserver observer) {
@@ -46,17 +64,30 @@ public abstract class GameObject {
         }
     }
 
-    public Boolean collides(GameObject gameObject){
-        return false; //TODO
-        /*Integer objectcoords[] = gameObject.getCollisionBox();/
-        Boolean collides = false;
-        Boolean rightCollision = (x1 <= objectcoords[0] && objectcoords[0] <= x2);
-        Boolean leftCollision = (x1 <= objectcoords[2] && objectcoords[2]<= x2);
-        Boolean upCollision = (y1 <= objectcoords[1] && objectcoords[1] <= y2);
-        Boolean downCollision = (y1 <= objectcoords[3] && objectcoords[3] <= y2);
-        if ((rightCollision || leftCollision)&&(upCollision || downCollision))
-            collides = true;  
-        return collides;*/
+    public void relocate(Position position) {
+        this.position = position;
+        this.mode.onRelocate(this);
+    }
+
+    public void delete() {
+        if (this.observer != null) {
+            this.observer.onObjectDeleted(this);
+            this.observer = null;
+        }
+    }
+
+    public void freeze() {
+        if (!(this.mode instanceof Static)) {
+            this.switchTo(new Static(this.mode.getSequence().freeze()));
+        }
+    }
+
+    public void onInteraction(GameObject other) {}
+
+    public void onFloatingContact(GameObject floating) {}
+
+    protected void refreshMode() {
+        this.switchTo(this.mode);
     }
 
     private static Integer nextId = 0;

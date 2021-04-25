@@ -6,7 +6,7 @@ import cr.ac.tec.ce3104.tc3.physics.Position;
 
 public abstract class Crocodile extends GameObject {
     @Override
-    public Dynamics getInteractionMode() {
+    public Dynamics getDynamics() {
         return Dynamics.INTERACTIVE;
     }
 

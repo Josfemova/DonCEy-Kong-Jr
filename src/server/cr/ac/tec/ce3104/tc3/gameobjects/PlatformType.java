@@ -1,18 +1,29 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
-public enum PlatformType {
-    BRICK(40,false),
-    DIRT(39, false),
-    WATER1(37, true),
-    WATER2(38, true),
-    GRASS1(41, false),
-    GRASS2(42, false),
-    GRASS3(43, false);
-    public final Integer spriteId;
-    public final Boolean dangerous;
+import cr.ac.tec.ce3104.tc3.resources.Sprite;
 
-    private PlatformType(Integer spriteId,Boolean dangerous){
-        this.spriteId = spriteId;
+public enum PlatformType {
+    BRICK(Sprite.BRICK, false),
+    DIRT(Sprite.DIRT, false),
+    WATER1(Sprite.WATER1, true),
+    WATER2(Sprite.WATER2, true),
+    GRASS1(Sprite.GRASS1, false),
+    GRASS2(Sprite.GRASS2, false),
+    GRASS3(Sprite.GRASS3, false);
+
+    public Sprite getSprite() {
+        return this.sprite;
+    }
+
+    public Boolean isDangerous() {
+        return this.dangerous;
+    }
+
+    private final Sprite sprite;
+    private final Boolean dangerous;
+
+    private PlatformType(Sprite sprite, Boolean dangerous){
+        this.sprite = sprite;
         this.dangerous = dangerous;
     }
 }
