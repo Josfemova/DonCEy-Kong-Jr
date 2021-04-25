@@ -7,5 +7,5 @@ import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 public interface Level {
     Size getGameAreaSize();
 
-    PlayerAvatar setup(Game game);
+    PlayerAvatar setup(Game game, Integer initialScore);
 }

@@ -44,6 +44,11 @@ public class Command {
                             .putIntList("seq", sequenceIds);
     }
 
+    public static Command cmdDelete(Integer id) {
+        return new Command().putString("op", "delete")
+                            .putInt("id", id);
+    }
+
     public Command() {
         this.json = new JSONObject();
     }

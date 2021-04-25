@@ -13,6 +13,11 @@ public class Speed {
         return new Speed(SpeedRatio.stationary(), vertical);
     }
 
+    public Speed(SpeedRatio x, SpeedRatio y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public SpeedRatio getX() {
         return this.x;
     }
@@ -23,9 +28,4 @@ public class Speed {
 
     private SpeedRatio x;
     private SpeedRatio y;
-
-    private Speed(SpeedRatio x, SpeedRatio y) {
-        this.x = x;
-        this.y = y;
-    }
 }

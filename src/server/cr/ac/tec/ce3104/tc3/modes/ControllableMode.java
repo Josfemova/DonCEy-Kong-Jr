@@ -1,8 +1,11 @@
 package cr.ac.tec.ce3104.tc3.modes;
 
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
+import cr.ac.tec.ce3104.tc3.physics.HorizontalDirection;
 
 public interface ControllableMode extends Mode {
+    HorizontalDirection getDirection();
+
     default void onRelease(PlayerAvatar player) {}
 
     default void onJump(PlayerAvatar player) {}

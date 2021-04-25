@@ -1,8 +1,11 @@
 package cr.ac.tec.ce3104.tc3.resources;
 
-public class Animation implements Sequence {
-    public static final Animation RUNNING_RIGHT = new Animation(4, 5, 6, 7);
-    public static final Animation RUNNING_LEFT  = new Animation(55, 54, 53, 52);
+public class Animation extends Sequence {
+    public static final Animation RUNNING_LEFT   = new Animation(55, 54, 53, 52);
+    public static final Animation RUNNING_RIGHT  = new Animation(4, 5, 6, 7);
+    public static final Animation CLIMBING_LEFT  = new Animation(50, 49);
+    public static final Animation CLIMBING_RIGHT = new Animation(9, 10);
+    public static final Animation DYING          = new Animation(12, 13);
 
     @Override
     public Sprite[] getSprites() {

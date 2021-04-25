@@ -157,12 +157,7 @@ public class ClientAdmin implements AutoCloseable {
 
         switch (operation) {
             case "press":
-                Key pressed = Key.parse(request.expectString("key"));
-                if (this.lastKey != null && this.lastKey != pressed) {
-                    this.game.onRelease();
-                }
-
-                this.lastKey = pressed;
+                this.lastKey = Key.parse(request.expectString("key"));
                 this.game.onPress(this.lastKey);
 
                 break;

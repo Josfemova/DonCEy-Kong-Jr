@@ -8,12 +8,23 @@ import javax.imageio.ImageIO;
 
 import cr.ac.tec.ce3104.tc3.physics.Size;
 
-public class Sprite implements Sequence {
-    public static final Sprite APPLE    = Sprite.byId(0);
-    public static final Sprite BANANA   = Sprite.byId(1);
-    public static final Sprite NISPERO  = Sprite.byId(2);
-    public static final Sprite VINES    = Sprite.byId(3);
-    public static final Sprite STANDING = Sprite.byId(5);
+public class Sprite extends Sequence {
+    public static final Sprite APPLE   = Sprite.byId(0);
+    public static final Sprite BANANA  = Sprite.byId(1);
+    public static final Sprite NISPERO = Sprite.byId(2);
+    public static final Sprite VINES   = Sprite.byId(3);
+
+    public static final Sprite STANDING_LEFT  = Sprite.byId(54);
+    public static final Sprite STANDING_RIGHT = Sprite.byId(5);
+    public static final Sprite JUMPING_LEFT   = Sprite.byId(52);
+    public static final Sprite JUMPING_RIGHT  = Sprite.byId(7);
+    public static final Sprite FALLING_LEFT   = Sprite.byId(51);
+    public static final Sprite FALLING_RIGHT  = Sprite.byId(8);
+    public static final Sprite HANGING_LEFT   = Sprite.byId(50);
+    public static final Sprite HANGING_RIGHT  = Sprite.byId(9);
+
+    public static final Sprite DONKEY_KONG = Sprite.byId(16);
+
     public static final Sprite WATER1   = Sprite.byId(37);
     public static final Sprite WATER2   = Sprite.byId(38);
     public static final Sprite DIRT     = Sprite.byId(39);

@@ -2,9 +2,11 @@ package cr.ac.tec.ce3104.tc3.modes;
 
 import cr.ac.tec.ce3104.tc3.physics.Speed;
 import cr.ac.tec.ce3104.tc3.physics.SpeedRatio;
+import cr.ac.tec.ce3104.tc3.physics.Orientation;
 import cr.ac.tec.ce3104.tc3.physics.HorizontalDirection;
 import cr.ac.tec.ce3104.tc3.resources.Animation;
 import cr.ac.tec.ce3104.tc3.resources.Sequence;
+import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
 public class Running implements ControllableMode {
@@ -28,8 +30,28 @@ public class Running implements ControllableMode {
     }
 
     @Override
+    public HorizontalDirection getDirection() {
+        return this.direction;
+    }
+
+    @Override
+    public void onFreeFall(GameObject player) {
+        player.switchTo(new Falling(this, player.getPosition()));
+    }
+
+    @Override
+    public void onHit(GameObject player, Orientation orientation) {
+        this.onRelease((PlayerAvatar)player);
+    }
+
+    @Override
     public void onRelease(PlayerAvatar player) {
-        player.switchTo(new Standing());
+        player.switchTo(new Standing(this.direction));
+    }
+
+    @Override
+    public void onJump(PlayerAvatar player) {
+        player.switchTo(new Jumping(this, player));
     }
 
     @Override

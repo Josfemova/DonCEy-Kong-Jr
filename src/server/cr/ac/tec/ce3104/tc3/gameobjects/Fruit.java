@@ -11,7 +11,7 @@ public abstract class Fruit extends GameObject {
     }
 
     @Override
-    public Dynamics getInteractionMode() {
+    public Dynamics getDynamics() {
         return Dynamics.FLOATING;
     }
 
