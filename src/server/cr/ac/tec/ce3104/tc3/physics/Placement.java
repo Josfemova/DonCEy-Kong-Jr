@@ -40,6 +40,7 @@ public class Placement {
     private GameObject placed;
     private Bounds bounds;
     private Orientation hitOrientation = null;
+    private Integer bestDistanceSquare = null;
     private GameObject interactionTarget = null;
     private Collection<GameObject> touchedFloatings = new ArrayList<>();
     private Boolean freeFall = false;
@@ -93,7 +94,7 @@ public class Placement {
                     break;
 
                 case INTERACTIVE:
-                    this.interactionTarget = other;
+                    this.tryInteractionTarget(other);
                     break;
             }
         }
@@ -103,6 +104,17 @@ public class Placement {
         // Las colisiones rígidas verticales tienen precedencia por sobre las horizontales
         if (this.hitOrientation == null || this.hitOrientation != Orientation.VERTICAL) {
             this.hitOrientation = hitOrientation;
+        }
+    }
+
+    private void tryInteractionTarget(GameObject other) {
+        Integer deltaX = other.getPosition().getX() - this.bounds.getOrigin().getX();
+        Integer deltaY = other.getPosition().getY() - this.bounds.getOrigin().getY();
+        Integer distanceSquare = deltaX * deltaX + deltaY * deltaY;
+
+        if (this.bestDistanceSquare == null || distanceSquare <= this.bestDistanceSquare) {
+            this.bestDistanceSquare = distanceSquare;
+            this.interactionTarget = other;
         }
     }
 }
