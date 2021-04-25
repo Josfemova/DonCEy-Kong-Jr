@@ -60,12 +60,12 @@ public class Climbing implements ControllableMode {
 
     @Override
     public void onMoveLeft(PlayerAvatar player) {
-        player.switchTo(new Hanging(HorizontalDirection.RIGHT, this.hangingMode.getPlatform()));
+        this.hangingMode.onMoveLeft(player);
     }
 
     @Override
     public void onMoveRight(PlayerAvatar player) {
-        player.switchTo(new Hanging(HorizontalDirection.LEFT, this.hangingMode.getPlatform()));
+        this.hangingMode.onMoveRight(player);
     }
 
     @Override

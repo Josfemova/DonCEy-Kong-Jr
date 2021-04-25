@@ -1,6 +1,7 @@
 package cr.ac.tec.ce3104.tc3.modes;
 
 import cr.ac.tec.ce3104.tc3.physics.Speed;
+import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.physics.SpeedRatio;
 import cr.ac.tec.ce3104.tc3.physics.VerticalDirection;
 import cr.ac.tec.ce3104.tc3.physics.HorizontalDirection;
@@ -61,7 +62,14 @@ public class Hanging implements ControllableMode {
     private void onFaceDirection(PlayerAvatar player, HorizontalDirection newDirection) {
         this.direction = this.direction.invert();
         if (this.direction == newDirection) {
-            player.switchTo(new Jumping(this, player));
+            Integer jumpX = player.getSize().getWidth() * 2 / 3;
+            if (newDirection == HorizontalDirection.LEFT) {
+                jumpX = -jumpX;
+            }
+
+            Position jumpTo = new Position(player.getPosition().getX() + jumpX, player.getPosition().getY());
+            player.relocate(jumpTo);
+            player.switchTo(new Falling(new Jumping(this, player), jumpTo));
         } else {
             player.switchTo(this);
         }
