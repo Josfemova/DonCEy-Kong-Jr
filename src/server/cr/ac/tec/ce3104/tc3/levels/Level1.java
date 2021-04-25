@@ -27,7 +27,7 @@ public class Level1 implements Level {
         game.spawn(new Platform(new Position(180, 105), PlatformType.WATER1));
         game.spawn(Platform.makeGrass(new Position(210, 170), this, 3));
 
-        Platform[] ps = Platform.repeat(new Position(80, 50), PlatformType.BRICK, 2);
+        Platform[] ps = Platform.repeat(new Position(80, 40), PlatformType.BRICK, 2);
         game.spawn(ps);
         game.spawn(Vines.makeChain(ps[0], 1));
         game.spawn(Vines.makeChain(ps[1], 2));

@@ -12,9 +12,16 @@ import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
 public class Hanging implements ControllableMode {
-    public Hanging(HorizontalDirection direction, Platform platform) {
+    public Hanging(HorizontalDirection direction, Platform platform, PlayerAvatar player) {
         this.direction = direction;
         this.platform = platform;
+
+        Integer x = platform.getBounds().getHorizontalCenter();
+        if (direction == HorizontalDirection.RIGHT) {
+            x -= Sprite.HANGING_RIGHT.getSize().getWidth();
+        }
+
+        player.relocate(new Position(x, player.getPosition().getY()));
     }
 
     @Override
@@ -62,16 +69,16 @@ public class Hanging implements ControllableMode {
     private void onFaceDirection(PlayerAvatar player, HorizontalDirection newDirection) {
         this.direction = this.direction.invert();
         if (this.direction == newDirection) {
-            Integer jumpX = player.getSize().getWidth() * 2 / 3;
-            if (newDirection == HorizontalDirection.LEFT) {
+            Integer jumpX = this.platform.getSize().getWidth();
+            if (this.direction == HorizontalDirection.LEFT) {
                 jumpX = -jumpX;
             }
 
             Position jumpTo = new Position(player.getPosition().getX() + jumpX, player.getPosition().getY());
             player.relocate(jumpTo);
-            player.switchTo(new Falling(new Jumping(this, player), jumpTo));
+            player.switchTo(new Falling(new Running(this.direction), jumpTo));
         } else {
-            player.switchTo(this);
+            player.switchTo(new Hanging(this.direction, this.platform, player));
         }
     }
 }

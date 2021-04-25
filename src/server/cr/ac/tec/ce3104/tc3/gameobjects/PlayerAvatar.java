@@ -30,11 +30,7 @@ public class PlayerAvatar extends GameObject {
             ControllableMode mode = (ControllableMode)this.getMode();
             if (!(mode instanceof Climbing) && !(mode instanceof Hanging)) {
                 Vines vines = (Vines)other;
-                Position vinesAt = vines.getPosition();
-                Position jumpTo = new Position(vinesAt.getX() - this.getSize().getWidth() / 2, vinesAt.getY() + vines.getSize().getHeight() / 2);
-
-                this.relocate(jumpTo);
-                this.switchTo(new Hanging(mode.getDirection(), vines.getPlatform()));
+                this.switchTo(new Hanging(mode.getDirection(), vines.getPlatform(), this));
             }
         }
     }
