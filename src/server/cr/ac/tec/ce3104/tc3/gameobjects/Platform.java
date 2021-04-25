@@ -56,7 +56,12 @@ public class Platform extends GameObject {
 
     @Override
     public Dynamics getDynamics() {
-        return this.type.isDangerous() ? Dynamics.INTERACTIVE : Dynamics.RIGID;
+        if (this.type == PlatformType.DIRT) {
+            // La tierra solo se dibuja por estética
+            return Dynamics.FLOATING;
+        } else {
+            return this.type.isDangerous() ? Dynamics.INTERACTIVE : Dynamics.RIGID;
+        }
     }
 
     public boolean attach(Vines[] vines) {

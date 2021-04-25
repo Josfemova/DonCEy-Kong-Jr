@@ -25,6 +25,7 @@ public class Level1 implements Level {
         game.spawn(new DonkeyKong(new Position(40, 170 - Sprite.DONKEY_KONG.getSize().getHeight())));
         game.spawn(new Platform(new Position(170, 105), PlatformType.GRASS2));
         game.spawn(new Platform(new Position(180, 105), PlatformType.WATER1));
+        game.spawn(new Platform(new Position(200, 105), PlatformType.DIRT));
         game.spawn(Platform.makeGrass(new Position(210, 170), this, 3));
 
         Platform[] ps = Platform.repeat(new Position(80, 40), PlatformType.BRICK, 2);
