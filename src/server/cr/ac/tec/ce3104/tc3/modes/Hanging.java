@@ -71,7 +71,7 @@ public class Hanging implements ControllableMode {
         if (this.direction == newDirection) {
             Integer jumpX = this.platform.getSize().getWidth();
             if (this.direction == HorizontalDirection.LEFT) {
-                jumpX = -jumpX;
+                jumpX = -jumpX - 1;
             }
 
             Position jumpTo = new Position(player.getPosition().getX() + jumpX, player.getPosition().getY());
