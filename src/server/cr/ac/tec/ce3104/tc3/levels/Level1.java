@@ -15,7 +15,6 @@ public class Level1 implements Level {
 
     @Override
     public PlayerAvatar setup(Game game, Integer initialScore) {
-        
         Integer waterHeight = Sprite.WATER1.getSize().getHeight()*2;
         Integer screenChunks = getGameAreaSize().getWidth()/Sprite.BRICK.getSize().getWidth();
         Platform[][] platforms = new Platform[][]{

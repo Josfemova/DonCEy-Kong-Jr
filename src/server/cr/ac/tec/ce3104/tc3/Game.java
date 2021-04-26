@@ -141,7 +141,7 @@ public class Game implements GameObjectObserver {
      * @return Si en dicha posicion el objeto colisiona, true, false de lo contrario
      */
     public synchronized Boolean wouldHit(GameObject object, Position position) {
-        return new Placement(object, position, this.level, this.gameObjects.values()).getHitOrientation() != null;
+        return new Placement(object, position, this.level, this.gameObjects.values(), false).getHitOrientation() != null;
     }
     /**
      * Indica los pasos a llevar a cabo una vez que se ha detectado una accion de movimiento por parte del jugador
