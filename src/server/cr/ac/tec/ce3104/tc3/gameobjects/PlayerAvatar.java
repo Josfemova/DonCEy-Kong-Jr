@@ -1,5 +1,6 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
+import cr.ac.tec.ce3104.tc3.Game;
 import cr.ac.tec.ce3104.tc3.modes.Falling;
 import cr.ac.tec.ce3104.tc3.modes.Standing;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
@@ -8,9 +9,10 @@ import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.physics.HorizontalDirection;
 
 public class PlayerAvatar extends GameObject {
-    public PlayerAvatar(Position position, Integer initialScore) {
+    public PlayerAvatar(Position position, Integer initialScore, Game game) {
         super(new Falling(new Standing(HorizontalDirection.RIGHT), position), position);
         this.score = initialScore;
+        this.game = game;
     }
 
     @Override
@@ -49,6 +51,10 @@ public class PlayerAvatar extends GameObject {
         return this.hasKey;
     }
 
+    public Game getGame() {
+        return this.game;
+    }
+
     public void die() {
         if (!this.lost) {
             this.lost = true;
@@ -64,4 +70,5 @@ public class PlayerAvatar extends GameObject {
     private Integer score;
     private Boolean lost = false;
     private Boolean hasKey = false;
+    private Game game;
 }

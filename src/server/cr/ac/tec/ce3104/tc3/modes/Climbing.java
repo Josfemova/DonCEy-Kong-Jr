@@ -45,12 +45,26 @@ public class Climbing implements ControllableMode {
             }
         }
 
-        player.switchTo(new Falling(this, player.getPosition()));
+        player.switchTo(new Falling(this, player.getPosition(), this.hangingMode.getPlatform()));
     }
 
     @Override
     public void onHit(GameObject player, Orientation orientation) {
-        player.switchTo(this.hangingMode);
+        switch (orientation) {
+            case HORIZONTAL:
+                PlayerAvatar avatar = (PlayerAvatar)player;
+                if(this.getDirection() == HorizontalDirection.LEFT) {
+                    this.hangingMode.onMoveLeft(avatar);
+                } else {
+                    this.hangingMode.onMoveRight(avatar);
+                }
+
+                break;
+
+            case VERTICAL:
+                player.switchTo(this.hangingMode);
+                break;
+        }
     }
 
     @Override

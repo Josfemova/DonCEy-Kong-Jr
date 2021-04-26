@@ -110,6 +110,10 @@ public class Game implements GameObjectObserver {
         }
     }
 
+    public synchronized Boolean wouldHit(GameObject object, Position position) {
+        return new Placement(object, position, this.level, this.gameObjects.values()).getHitOrientation() != null;
+    }
+
     public synchronized void onMove(Integer objectId, Position position) {
         GameObject object = this.gameObjects.get(objectId);
         if (object == null) {
