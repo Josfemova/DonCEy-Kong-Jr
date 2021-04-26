@@ -130,6 +130,7 @@ class Admin {
                     System.out.println("attach-vines <game> <platform> <length>: Adds vines to a platform");
                     System.out.println("put-fruit <game> <x> <y> [apple|banana|nispero] <score>: Adds a fruit");
                     System.out.println("put-crocodile <game> <platform> [red|blue]: Adds a crocodile");
+                    System.out.println("highlight <game> <object> [yes|no]: (Un)highlights an entity");
                     break;
 
                 case "clear":
@@ -266,8 +267,36 @@ class Admin {
                             throw new BadCommand();
                     }
 
-                    Crocodile crocodile = game.spawn(new CrocodileFactory().createCrocodile(type, platform));
+                    Integer difficulty = game.getDifficulty();
+                    System.out.println("Current difficulty: " + difficulty);
+
+                    Crocodile crocodile = game.spawn(new CrocodileFactory().createCrocodile(type, platform, difficulty));
                     System.out.println("Created crocodile " + objectDescription(crocodile));
+                    break;
+                }
+
+                case "highlight":
+                {
+                    Game game = expectGame(command, 1);
+                    GameObject object = expectGameObject(game, command, 2);
+
+                    Boolean highlight;
+                    switch (expectArgument(command, 3)) {
+                        case "yes":
+                            highlight = true;
+                            break;
+
+                        case "no":
+                            highlight = false;
+                            break;
+
+                        default:
+                            throw new BadCommand();
+                    }
+
+                    game.setHighlight(object.getId(), highlight);
+                    System.out.println("Updated highlight state of " + objectDescription(object));
+
                     break;
                 }
 

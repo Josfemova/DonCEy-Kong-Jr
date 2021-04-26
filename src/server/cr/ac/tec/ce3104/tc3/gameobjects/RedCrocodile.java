@@ -6,8 +6,8 @@ import cr.ac.tec.ce3104.tc3.modes.RedCrawling;
 import cr.ac.tec.ce3104.tc3.resources.Animation;
 
 public class RedCrocodile extends Crocodile {
-    public RedCrocodile(Platform platform) {
-        super(new RedCrawling(platform), RedCrocodile.positionFromPlatform(platform));
+    public RedCrocodile(Platform platform, Integer difficulty) {
+        super(new RedCrawling(platform, Crocodile.getSpeedDenominator(difficulty)), RedCrocodile.positionFromPlatform(platform));
     }
 
     private static Position positionFromPlatform(Platform platform) {

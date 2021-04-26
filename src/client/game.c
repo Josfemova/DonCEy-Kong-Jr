@@ -166,6 +166,55 @@ void handle_key(const SDL_KeyboardEvent *event)
 }
 
 /**
+ * @brief Reacciona a un click (enumeración de IDs).
+ *
+ * Entradas: evento de mouse.
+ */
+void handle_click(const SDL_MouseButtonEvent *event)
+{
+	// Solo se aceptan clicks izquierdos
+	if(event->button != SDL_BUTTON_LEFT)
+	{
+		return;
+	}
+
+	bool found = false;
+	for(size_t i = 0; i < game.entities.buckets.length; ++i)
+	{
+		struct vec *bucket = vec_get(&game.entities.buckets, i);
+		for(size_t j = 0; j < bucket->length; ++j)
+		{
+			struct entity *entity = bucket_get_value(&game.entities, bucket, j);
+			struct sprite *sprite = hash_map_get(&game.sprites, *(int*)vec_get(&entity->sequence, entity->next_sprite));
+
+			if(event->x < entity->x || event->x >= entity->x + sprite->surface->w
+			|| event->y < entity->y || event->y >= entity->y + sprite->surface->h)
+			{
+				// Fuera del área de la entidad
+				continue;
+			}
+
+			if(!found)
+			{
+				found = true;
+				printf("Click at (%d, %d) matches these IDs: %d", event->x, event->y, entity->id);
+			} else
+			{
+				printf(", %d", entity->id);
+			}
+		}
+	}
+
+	if(found)
+	{
+		puts("");
+	} else
+	{
+		printf("No IDs match click at (%d, %d)\n", event->x, event->y);
+	}
+}
+
+/**
  * @brief Pregunta al usuario por un id de juego para inicializar el cliente
  * 
  * Dado un id de cliente y una serie de id's que identifican los juegos activos, se le pregunta

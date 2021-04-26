@@ -59,6 +59,7 @@ struct entity
 	size_t       next_sprite;
 	struct ratio speed_x;
 	struct ratio speed_y;
+	bool         highlight;
 };
 
 /**
@@ -178,6 +179,13 @@ void update_stats(int lives, int score);
  * @param event Puntero a la estructura que describe el evento de presión de teclado
  */
 void handle_key(const SDL_KeyboardEvent *event);
+
+/**
+ * @brief Reacciona a un click (enumeración de IDs).
+ *
+ * Entradas: evento de mouse.
+ */
+void handle_click(const SDL_MouseButtonEvent *event);
 
 /**
  * @brief Emite el mensaje que le indica al servidor el modo de operación del cliente

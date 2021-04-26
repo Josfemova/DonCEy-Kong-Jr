@@ -13,13 +13,14 @@ import cr.ac.tec.ce3104.tc3.gameobjects.Platform;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
 public class RedCrawling implements Mode {
-    public RedCrawling(Platform platform) {
+    public RedCrawling(Platform platform, Integer speedDenominator) {
         this.platform = platform;
+        this.speedDenominator = speedDenominator;
     }
 
     @Override
     public Speed getSpeed() {
-        SpeedRatio ratio = RedCrawling.SPEED_RATIO;
+        SpeedRatio ratio = new SpeedRatio(RedCrawling.SPEED_NUMERATOR, this.speedDenominator);
         if (this.direction == VerticalDirection.UP) {
             ratio = ratio.negate();
         }
@@ -56,8 +57,9 @@ public class RedCrawling implements Mode {
             crocodile.switchTo(this);
     }
 
-    private static final SpeedRatio SPEED_RATIO = new SpeedRatio(2, 3);
+    private static final Integer SPEED_NUMERATOR = 2;
 
     private VerticalDirection direction = VerticalDirection.DOWN;
     private Platform platform;
+    private Integer speedDenominator;
 }
