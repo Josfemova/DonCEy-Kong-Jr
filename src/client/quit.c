@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
 #include <json-c/json_object.h>
@@ -45,6 +46,18 @@ void quit(int exit_code)
 	hash_map_clear(&game.sprites);
 	hash_map_clear(&game.entities);
 
+	if(game.stats_label.texture)
+	{
+		SDL_DestroyTexture(game.stats_label.texture);
+		SDL_FreeSurface(game.stats_label.surface);
+	}
+
+	if(game.font)
+	{
+		TTF_CloseFont(game.font);
+	}
+
+	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 
@@ -68,6 +81,16 @@ void sdl_fatal(void)
 void sdl_image_fatal(void)
 {
 	fprintf(stderr, "Fatal SDL_image error: %s\n", IMG_GetError());
+	quit(1);
+}
+
+/**
+ * @brief Escribe en la salida estándar de error sobre un error de SDL asociado a texto
+ * 
+ */
+void sdl_ttf_fatal(void)
+{
+	fprintf(stderr, "Fatal SDL_ttf error: %s\n", TTF_GetError());
 	quit(1);
 }
 

@@ -1,4 +1,3 @@
-
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +16,27 @@
 #include "util.h"
 #include "constants.h"
 #include "donceykongjr.h"
+
+/**
+ * @brief Renderiza una textura en una posición.
+ * 
+ * Entradas: textura a renderizar y sus coordenadas.
+ */
+static void render(const struct sprite *sprite, int x, int y)
+{
+	struct SDL_Rect destination =
+	{
+		.x = x,
+		.y = y,
+		.w = sprite->surface->w,
+		.h = sprite->surface->h
+	};
+
+	if(SDL_RenderCopy(game.renderer, sprite->texture, NULL, &destination) < 0)
+	{
+		sdl_fatal();
+	}
+}
 
 /**
  * @brief redibuja la pantalla de juego  
@@ -50,18 +70,7 @@ void redraw(void)
 				entity->next_sprite = 0;
 			}
 
-			struct SDL_Rect destination =
-			{
-				.x = entity->x,
-				.y = entity->y,
-				.w = sprite->surface->w,
-				.h = sprite->surface->h
-			};
-
-			if(SDL_RenderCopy(game.renderer, sprite->texture, NULL, &destination) < 0)
-			{
-				sdl_fatal();
-			}
+			render(sprite, entity->x, entity->y);
 
 			if(moved)
 			{
@@ -79,8 +88,12 @@ void redraw(void)
 		}
 	}
 
+	if(game.stats_label.texture)
+	{
+		render(&game.stats_label, STATS_LABEL_X, STATS_LABEL_Y);
+	}
+
 	SDL_RenderPresent(game.renderer);
-	game.state = READY;
 }
 
 /**

@@ -222,7 +222,20 @@ static void handle_command(struct json_object *message)
 		expect_position(message, &entity->x, &entity->y);
 	} else if(strcmp(operation, "delete") == 0)//comando para eliminar una entidad
 	{
-		hash_map_delete(&game.entities, expect_id(message));
+		int id = expect_id(message);
+
+		struct entity *entity = hash_map_get(&game.entities, id);
+		if(entity)
+		{
+			vec_clear(&entity->sequence);
+			hash_map_delete(&game.entities, id);
+		}
+	} else if(strcmp(operation, "stats") == 0) // Actualización de estadísticas
+	{
+		int lives = json_object_get_int(expect_key(message, "lives", json_type_int, true));
+		int score = json_object_get_int(expect_key(message, "score", json_type_int, true));
+
+		update_stats(lives, score);
 	} else if(strcmp(operation, "bye") == 0)//Servidor se despide del cliente
 	{
 		puts("Connection terminated by server");

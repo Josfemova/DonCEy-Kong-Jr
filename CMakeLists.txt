@@ -10,6 +10,7 @@ include(UseJava)
 set(CMAKE_JAVA_COMPILE_FLAGS "-Xlint:all")
 
 pkg_check_modules(json-c REQUIRED IMPORTED_TARGET json-c)
+pkg_check_modules(SDL2_ttf REQUIRED IMPORTED_TARGET SDL2_ttf)
 pkg_check_modules(SDL2_image REQUIRED IMPORTED_TARGET SDL2_image)
 
 add_subdirectory(src)
