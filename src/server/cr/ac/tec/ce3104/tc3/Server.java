@@ -9,16 +9,6 @@ import java.util.HashMap;
 import cr.ac.tec.ce3104.tc3.networking.ClientAdmin;
 
 public class Server {
-    private Server() {
-        try {
-            serverSocket = new ServerSocket(PORT);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Fatal error: unable to start server");
-            System.exit(-1);
-        }
-    }
-
     public static Server getInstance() {
         if (instance == null) {
             instance = new Server();
@@ -31,11 +21,17 @@ public class Server {
      * @return
      */
     public Game initPlayer(ClientAdmin player) {
+        if (this.games.size() >= 2) {
+            player.sendError("the maximum number of active games has been reached");
+            return null;
+        }
+
         Game game = new Game(player);
         this.games.put(game.getPlayerId(), game);
 
         return game;
     }
+
     /**
      * Busca un juego cuyo jugador sea identificado por playerId
      * @param playerId
@@ -75,4 +71,15 @@ public class Server {
 
     private ServerSocket serverSocket;
     private HashMap<Integer, Game> games = new HashMap<>();
+
+    private Server() {
+        try {
+            serverSocket = new ServerSocket(PORT);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Fatal error: unable to start server");
+            System.exit(-1);
+        }
+    }
+
 }

@@ -66,16 +66,12 @@ public class ClientAdmin implements AutoCloseable {
     }
 
     public void sendError(String message) {
-        if (this.game != null) {
-            this.game = null;
-
-            try {
-                this.sendSingle(Command.cmdError(message));
-                this.close();
-            } catch (Exception exception) {
-                exception.printStackTrace();
-                this.socket = null;
-            }
+        try {
+            this.sendSingle(Command.cmdError(message));
+            this.close();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            this.socket = null;
         }
     }
 
@@ -132,15 +128,14 @@ public class ClientAdmin implements AutoCloseable {
             this.type = ClientType.SPECTATOR;
             this.game = Server.getInstance().getGame(gameId);
 
-            if (game == null) {
+            if (this.game == null) {
                 this.sendError("invalid game ID");
-                return false;
+            } else {
+                this.game.attachClient(this);
             }
-
-            this.game.attachClient(this);
         }
 
-        return true;
+        return this.game != null;
     }
 
     private Boolean processNext() throws IOException {

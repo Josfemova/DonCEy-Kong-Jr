@@ -268,7 +268,7 @@ void receive(const char *line)
 	struct json_object *error = expect_key(root, "error", json_type_string, false);
 	if(error)
 	{
-		fprintf(stderr, "Error: server protocol error: %s\n", json_object_get_string(error));
+		fprintf(stderr, "Error: server failure: %s\n", json_object_get_string(error));
 		quit(1);
 	}
 

@@ -164,6 +164,7 @@ void event_loop(void)
 
 					if(feof(game.net_file))
 					{
+						puts("The server has closed the connection");
 						return;
 					} else if(errno == EAGAIN)
 					{
