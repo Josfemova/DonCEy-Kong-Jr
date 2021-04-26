@@ -66,7 +66,7 @@ public class Running implements ControllableMode {
         player.switchTo(this);
     }
 
-    private static final SpeedRatio SPEED_RATIO = new SpeedRatio(4, 3);
+    private static final SpeedRatio SPEED_RATIO = new SpeedRatio(5, 3);
 
     private HorizontalDirection direction;
 }
