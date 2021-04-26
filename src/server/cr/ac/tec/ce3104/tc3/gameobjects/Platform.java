@@ -56,11 +56,15 @@ public class Platform extends GameObject {
 
     @Override
     public Dynamics getDynamics() {
-        if (this.type == PlatformType.DIRT) {
-            // La tierra solo se dibuja por estética
-            return Dynamics.FLOATING;
-        } else {
-            return this.type.isDangerous() ? Dynamics.INTERACTIVE : Dynamics.RIGID;
+        switch (this.type) {
+            case DIRT:
+            case GRASS1:
+            case GRASS3:
+                // Solo se dibujan por estética
+                return Dynamics.FLOATING;
+
+            default:
+                return this.type.isDangerous() ? Dynamics.INTERACTIVE : Dynamics.RIGID;
         }
     }
 
