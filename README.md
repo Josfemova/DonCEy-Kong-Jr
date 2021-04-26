@@ -79,11 +79,11 @@ Un juego en el cliente se representa como un struct el cual contiene los campos:
 Un sprite del está conformado por dos elementos:
 
 - `surface`: Conjunto de pixeles(superficie) en los que se dibuja el sprite
-- `texture`: Imagen que se dibuja sobre la superficie del sprite
+- `texture`: Imagen que se dibuja sobre la superficie del sprite.
 
 ### Razones
 
-Para expresar velocidades y otros valores relavos, se recurre a razones numéricas. Para esto se requiere de una forma de expresar fracciones matemáticas sin perder información. Dado que un tipo de dato de punto flotante era una opción inadecuada, se creo una estructura distinta que registra una razón entre dos números enteros, llamada `ratio`. Cada `ratio` tiene dos elementos:
+Para expresar velocidades y otros valores relativos, se recurre a razones numéricas. Para esto se requiere de una forma de expresar fracciones matemáticas sin perder información. Dado que un tipo de dato de punto flotante era una opción inadecuada, se creo una estructura distinta que registra una razón entre dos números enteros, llamada `ratio`. Cada `ratio` tiene dos elementos:
 
 * `numerator`: Numerador de la fracción
 * `denominator`: Denominador de la fracción
@@ -120,7 +120,7 @@ La rutina de inicio consiste en inicializar la biblioteca de gráficos y la cone
 
 Cada ciclo de juego se dan los mismos pasos:
 
-- Si se registró un evento de tecla, se envía un mensaje al servidor con la infromación de dicho evento.
+- Si se registró un evento de tecla, se envía un mensaje al servidor con la información de dicho evento.
 - Se lee el stream del socket y según la entrada se sigue uno de tres flujos:
   - Iniciar como jugador o espectador: Envía un mensaje de handshake al servidor para comunicarle como el jugador quiere comenzar su instancia cliente.
   - Post handshake: Crea la pantalla, inicializa el timer de juego y carga los recursos gráficos.
@@ -135,13 +135,13 @@ En el manejo de comandos, descifrado de instrucciones y control del juego, el cl
 
 ### Servidor
 
-![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/plan-actividades.png)
+El servidor es un programa en java compuesto por algunas clases base y 6 paquetes que controlan distintos aspectos de la lógica de juego. 
 
 ## 1.3. Problemas sin solución
 
 ## 1.4. Actividades realizadas por estudiante
 
-![]()
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/plan-actividades.png)
 
 ## 1.5. Problemas solucionados
 
