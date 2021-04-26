@@ -13,6 +13,7 @@
 #include <X11/Xlib.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_syswm.h>
 
@@ -181,11 +182,14 @@ void init_net(const char *node, const char *service)
  */
 void init_sdl(void)
 {
-	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0)
+	if(SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
 		sdl_fatal();
 	} else if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
 	{
 		sdl_image_fatal();
+	} else if(TTF_Init() != 0 || !(game.font = TTF_OpenFont(FONT_FILE, FONT_POINT_SIZE)))
+	{
+		sdl_ttf_fatal();
 	}
 }

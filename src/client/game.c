@@ -36,15 +36,17 @@
  */
 struct game game =
 {
-	.state      = HANDSHAKE_WHOAMI,
-	.net_fd     = -1,
-	.x11_fd     = -1,
-	.timer_fd   = -1,
-	.net_file   = NULL,
-	.window     = NULL,
-	.renderer   = NULL,
-	.ticks      = 0,
-	.fullscreen = false
+	.state       = HANDSHAKE_WHOAMI,
+	.net_fd      = -1,
+	.x11_fd      = -1,
+	.timer_fd    = -1,
+	.net_file    = NULL,
+	.window      = NULL,
+	.renderer    = NULL,
+	.font        = NULL,
+	.ticks       = 0,
+	.stats_label = { .texture = NULL, .surface = NULL },
+	.fullscreen  = false
 };
 
 /**
@@ -75,6 +77,34 @@ bool move_on_tick(int *coordinate, const struct ratio *speed)
 	}
 
 	return false;
+}
+
+/**
+ * @brief Actualiza la etiqueta de estadísticas en pantalla.
+ *
+ * @param lives cantidad de vidas restantes
+ * @param score puntaje
+ */
+void update_stats(int lives, int score)
+{
+	if(game.stats_label.texture)
+	{
+		SDL_DestroyTexture(game.stats_label.texture);
+		SDL_FreeSurface(game.stats_label.surface);
+	}
+
+	char text[STATS_LABEL_MAX_CHARS];
+	snprintf(text, sizeof text, STATS_LABEL_FORMAT, lives, score);
+
+	SDL_Color fg = STATS_LABEL_COLOR;
+	SDL_Color bg = { .r = 0, .g = 0, .b = 0, .a = 0 };
+	if(!(game.stats_label.surface = TTF_RenderUTF8_Shaded(game.font, text, fg, bg)))
+	{
+		sdl_ttf_fatal();
+	} else if(!(game.stats_label.texture = SDL_CreateTextureFromSurface(game.renderer, game.stats_label.surface)))
+	{
+		sdl_fatal();
+	}
 }
 
 /**

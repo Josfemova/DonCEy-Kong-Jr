@@ -8,6 +8,7 @@
 #include <X11/Xlib.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
 #include <json-c/json_object.h>
@@ -83,9 +84,11 @@ extern struct game
 	FILE             *net_file;
 	SDL_Window       *window;
 	SDL_Renderer     *renderer;
+	TTF_Font         *font;
 	size_t            ticks;
 	struct hash_map   sprites;
 	struct hash_map   entities;
+	struct sprite     stats_label;
 	bool              fullscreen;
 } game;
 
@@ -159,6 +162,14 @@ void event_loop(void);
 bool move_on_tick(int *coordinate, const struct ratio *speed);
 
 /**
+ * @brief Actualiza la etiqueta de estadísticas en pantalla.
+ *
+ * @param lives cantidad de vidas restantes
+ * @param score puntaje
+ */
+void update_stats(int lives, int score);
+
+/**
  * @brief Reponsable de manejar los eventos de presión de teclas  
  * 
  * Dado un evento de presión de tecla, de ser dicha tecla parte de los controles de juego, envía al servidor
@@ -230,6 +241,12 @@ void sdl_fatal(void);
  * 
  */
 void sdl_image_fatal(void);
+
+/**
+ * @brief Escribe en la salida estándar de error sobre un error de SDL asociado a texto
+ * 
+ */
+void sdl_ttf_fatal(void);
 
 /**
  * @brief Comunica un estado de error fatal y cierra la aplicación inmediatamente 

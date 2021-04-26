@@ -55,11 +55,10 @@ public class Level1 implements Level {
             Platform.repeat(new Position(0, 64), PlatformType.BRICK, 19),
             Platform.repeat(new Position(72, 40), PlatformType.BRICK, 3),
         };
-        for(Platform[] surface: platforms){
+
+        for (Platform[] surface : platforms){
             game.spawn(surface);
         }
-
-
         game.spawn(new DonkeyKong(new Position(16, 64 - Sprite.DONKEY_KONG.getSize().getHeight())));
 
         return game.spawn(new PlayerAvatar(new Position(8, 192), initialScore));

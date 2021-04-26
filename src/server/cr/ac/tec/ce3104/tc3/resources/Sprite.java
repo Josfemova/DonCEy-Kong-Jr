@@ -12,7 +12,9 @@ public class Sprite extends Sequence {
     public static final Sprite APPLE   = Sprite.byId(0);
     public static final Sprite BANANA  = Sprite.byId(1);
     public static final Sprite NISPERO = Sprite.byId(2);
-    public static final Sprite VINES   = Sprite.byId(36);
+
+    public static final Sprite VINES           = Sprite.byId(57);
+    public static final Sprite VINES_WITH_LEAF = Sprite.byId(58);
 
     public static final Sprite STANDING_LEFT  = Sprite.byId(54);
     public static final Sprite STANDING_RIGHT = Sprite.byId(5);

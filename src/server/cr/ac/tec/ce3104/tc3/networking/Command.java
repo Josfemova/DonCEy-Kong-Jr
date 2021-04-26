@@ -49,6 +49,12 @@ public class Command {
                             .putInt("id", id);
     }
 
+    public static Command cmdStats(Integer lives, Integer score) {
+        return new Command().putString("op", "stats")
+                            .putInt("lives", lives)
+                            .putInt("score", score);
+    }
+
     public Command() {
         this.json = new JSONObject();
     }
