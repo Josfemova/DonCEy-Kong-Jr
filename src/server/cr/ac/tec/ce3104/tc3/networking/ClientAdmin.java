@@ -18,6 +18,11 @@ enum ClientType {
 }
 
 public class ClientAdmin implements AutoCloseable {
+    /**
+     * Inicia una nueva instancia de la clase para administrar una conexion con un cliente
+     * @param socket informacion de conexion con el cliente
+     * @throws IOException error que puede surgir si hay problemas al leer el stream del socket
+     */
     public ClientAdmin(Socket socket) throws IOException {
         this.socket = socket;
         this.id = nextClientId++;
@@ -42,11 +47,17 @@ public class ClientAdmin implements AutoCloseable {
             this.game = null;
         }
     }
-
+    /**
+     * Obtiene el id del cliente que administra esta instania
+     * @return id del cliente que administra la instancia actual
+     */
     public Integer getClientId() {
         return id;
     }
-
+    /**
+     * Envia un solo comando al cliente
+     * @param command comando a enviarse al cliente
+     */
     public void sendSingle(Command command) {
         try {
             this.commandSender.println(command);
@@ -55,7 +66,10 @@ public class ClientAdmin implements AutoCloseable {
             this.sendError(exception);
         }
     }
-
+    /**
+     * Envia un conjunto de comandos al cliente
+     * @param batch collecion de comandos a ser enviados al cliente
+     */
     public void sendBatch(CommandBatch batch) {
         try {
             this.commandSender.print(batch);
@@ -64,7 +78,10 @@ public class ClientAdmin implements AutoCloseable {
             this.sendError(exception);
         }
     }
-
+    /**
+     * Le comunica al cliente que se ha enontrado un error durante la ejecucion
+     * @param message descripcion del error encontrado
+     */
     public void sendError(String message) {
         try {
             this.sendSingle(Command.cmdError(message));
@@ -74,7 +91,10 @@ public class ClientAdmin implements AutoCloseable {
             this.socket = null;
         }
     }
-
+    /**
+     * Envia una excepcion enontrada a stderr
+     * @param exception excepcion a enviar a la salida estandar de error
+     */
     public void sendError(Exception exception) {
         exception.printStackTrace();
         this.sendError(exception.toString());
@@ -92,6 +112,9 @@ public class ClientAdmin implements AutoCloseable {
     private BufferedReader requestReader;
     private PrintWriter commandSender;
 
+    /**
+     * Rutina de inicio del hilo del cliente
+     */
     private void run() {
         try (this) {
             try {
@@ -108,7 +131,11 @@ public class ClientAdmin implements AutoCloseable {
             nested.printStackTrace();
         }
     }
-
+    /**
+     * Procesa el mensaje de hanshake enviado por el cliente
+     * @return Estado del procesamiento del hanshake con el cliente
+     * @throws IOException error que puede surgir al haber problemas con leer el stream del socket
+     */
     private Boolean doHandshake() throws IOException {
         List<Integer> gameIds = Server.getInstance().getGameIds();
 
@@ -137,7 +164,11 @@ public class ClientAdmin implements AutoCloseable {
 
         return this.game != null;
     }
-
+    /**
+     * Procesa el siguiente comando pendiente obtenido del cliente (manejo del input del usuario)
+     * @return Booleano que indica estado en que finaliza el procesamiento
+     * @throws IOException error que surge al haber problemas en lectura del stream del socket
+     */
     private Boolean processNext() throws IOException {
         // inicia loop de cliente
         Command request = this.receive();
@@ -178,7 +209,11 @@ public class ClientAdmin implements AutoCloseable {
 
         return true;
     }
-
+    /**
+     * Lee un comando del stream del socket
+     * @return Comando construido desde el stream del socket
+     * @throws IOException error que surge al haber un problema  al leer del socket
+     */
     private Command receive() throws IOException {
         return new Command(this.requestReader.readLine());
     }
