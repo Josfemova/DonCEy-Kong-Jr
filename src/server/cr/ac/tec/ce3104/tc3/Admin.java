@@ -37,6 +37,11 @@ class BadCommand extends Exception {
 }
 
 class Admin {
+    /**
+     * Inicializa una nueva instancia de la consola de administrador de juegos
+     * @param realStdout Stream de salida estandar real
+     * @throws IOException Excepciones asociadas a operaciones de IO en streams
+     */
     public Admin(PrintStream realStdout) throws IOException {
         this.realStdout = realStdout;
         this.fakeStdout = new PipedOutputStream();
@@ -45,6 +50,10 @@ class Admin {
         SwingUtilities.invokeLater(() -> this.start());
     }
 
+    /**
+     * Obtiene el stream de salida de los logs de la consola de administracion
+     * @return stream de salida de los logs de la consola de administracion
+     */
     public OutputStream getOutputStream() {
         return this.fakeStdout;
     }
@@ -58,6 +67,9 @@ class Admin {
     private JTextField inputLine;
     private Thread sinkThread;
 
+    /**
+     * Inicia la ventana de administrador de juegos y la configura
+     */
     private void start() {
         this.frame = new JFrame("DonCEy Kong Jr. server");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -87,6 +99,9 @@ class Admin {
         this.sinkThread.start();
     }
 
+    /**
+     * Intenta leer informacion del stream de salida estandar
+     */
     private void readSink() {
         try {
             while (true) {
@@ -103,6 +118,9 @@ class Admin {
         }
     }
 
+    /**
+     * Indica como se deben manejar los comandos habilitados para el usuario administrador de juegos
+     */
     private void onCommand() {
         String line = this.inputLine.getText().trim();
         this.inputLine.setText("");
@@ -311,6 +329,14 @@ class Admin {
         }
     }
 
+    /**
+     * Obtiene argumento de plataforma de un comando del usuario administrador
+     * @param game referencia al juego siendo administrado
+     * @param command array de strings que componen el comando leido de la consola de administrador
+     * @param index index del argumento a extrae
+     * @return plataforma referenciada en el comando del administrador
+     * @throws BadCommand error dado una entrada invalida de administrador
+     */
     private static Platform expectPlatform(Game game, String[] command, Integer index) throws BadCommand {
         GameObject object = expectGameObject(game, command, index);
         if (!(object instanceof Platform)) {
@@ -321,6 +347,14 @@ class Admin {
         return (Platform)object;
     }
 
+    /**
+     * Obtiene argumento de entidad de juego de un comando capturado en la consola de administrador
+     * @param game juego referenciado en el comando
+     * @param command array string que contiene el comando capturado de consola
+     * @param index posicion del argumento a ser extraido
+     * @return Objeto referenciado en el comando del administrador
+     * @throws BadCommand error dado una entrada invalida del administrador
+     */
     private static GameObject expectGameObject(Game game, String[] command, Integer index) throws BadCommand {
         Integer id = expectInteger(command, index);
 
@@ -332,7 +366,13 @@ class Admin {
 
         return object;
     }
-
+    /**
+     * Obtiene la referencia de juego de un comando ingresado en la consola de administracion
+     * @param command array de strings que componen el comando leido de la consola de administracion
+     * @param index posicion del argumento a extraer en la linea de los comandos
+     * @return juego referenciado en el comando ingresado en la consola de administracion
+     * @throws BadCommand error que surge al haber una entrada invalida por parte del administrador
+     */
     private static Game expectGame(String[] command, Integer index) throws BadCommand {
         Integer id = expectInteger(command, index);
 
@@ -345,6 +385,13 @@ class Admin {
         return game;
     }
 
+    /**
+     * Extrae un valor entero da un comando ingresado desde la consola de administracion
+     * @param command array de strings que componen el comando ingresado
+     * @param index posicion del argumento a extraer en el array que representa la linea del comando
+     * @return Numero entero dado en el comando
+     * @throws BadCommand error qur surge al haber una entrada invalida por parte del administrador
+     */
     private static Integer expectInteger(String[] command, Integer index) throws BadCommand {
         try {
             return Integer.parseInt(expectArgument(command, index));
@@ -353,6 +400,13 @@ class Admin {
         }
     }
 
+    /**
+     * Extrae un argumento como string de un comando ingresado en la consola de administracion
+     * @param command array de strings que componen la linea de comando ejecutada
+     * @param index posicion en el array en la que se encuentra el valor a extraer
+     * @return valor string extraido
+     * @throws BadCommand error que surge al haber una entrada impropia por parte del administrador
+     */
     private static String expectArgument(String[] command, Integer index) throws BadCommand {
         if (index >= command.length) {
             throw new BadCommand();
@@ -361,6 +415,11 @@ class Admin {
         return command[index];
     }
 
+    /**
+     * COnstruye un string para describir de una manera simple una entidad de juego
+     * @param object entidad de juego a describir
+     * @return string que describe a la entidad dada
+     */
     private static String objectDescription(GameObject object) {
         Position position = object.getPosition();
         return object.getClass().getSimpleName() + " #" + object.getId()

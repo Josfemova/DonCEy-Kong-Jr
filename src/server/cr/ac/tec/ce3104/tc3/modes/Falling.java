@@ -12,36 +12,55 @@ import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
 public class Falling implements ControllableMode {
+    /**
+     * Inicia un nuevo estado de caida
+     * @param lastMode Modo anterior al actual
+     * @param initialPosition Posicion desde la que comienza el modo actual
+     */
     public Falling(ControllableMode lastMode, Position initialPosition) {
         this(lastMode, initialPosition, null);
     }
-
+    /**
+     * Inicia un nuevo estado de caida
+     * @param lastMode Modo anterior al actual
+     * @param initialPosition Posicion desde la que comienza el modo actual
+     * @param sourcePlatform Plataforma en la que se inicio el movimiento
+     */
     public Falling(ControllableMode lastMode, Position initialPosition, Platform sourcePlatform) {
         this.lastMode = lastMode;
         this.initialY = initialPosition.getY();
         this.sourcePlatform = sourcePlatform;
     }
 
+    /**
+     * Obtiene la velocidad asociada al modo
+     */
     @Override
     public Speed getSpeed() {
         return new Speed(this.lastMode.getSpeed().getX(), Falling.FREE_FALL_SPEED_RATIO);
     }
 
+    /**
+     * Obtiene la secuencia de sprites asociada al modo
+     */
     @Override
     public Sequence getSequence() {
         return this.getDirection() == HorizontalDirection.LEFT ? Sprite.FALLING_LEFT : Sprite.FALLING_RIGHT;
     }
 
+    /**
+     * Obtiene la direccion a la cual apunta el modo
+     */
     @Override
     public HorizontalDirection getDirection() {
         return this.lastMode.getDirection();
     }
-
+    
     @Override
     public void onRelocate(GameObject player) {
         this.lastWasHorizontalHit = false;
     }
-
+    
     @Override
     public void onHit(GameObject player, Orientation orientation) {
         Standing standingMode = new Standing(this.getDirection());
@@ -66,7 +85,10 @@ public class Falling implements ControllableMode {
                 break;
         }
     }
-
+    /**
+     * Obtiene la plataforma en la cual inicio el modo
+     * @return
+     */
     public Platform getSourcePlatform() {
         return this.sourcePlatform;
     }

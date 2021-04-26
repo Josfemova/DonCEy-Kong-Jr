@@ -11,6 +11,10 @@ import java.util.HashMap;
 import cr.ac.tec.ce3104.tc3.networking.ClientAdmin;
 
 public class Server {
+    /**
+     * Obtiene la instancia activa del servidor. Si el servidor no ha sido inicializado anteriormente, entonces lo inicializa
+     * @return Referencia a instancia unica del servidor
+     */
     public static Server getInstance() {
         if (instance == null) {
             instance = new Server();
@@ -20,9 +24,9 @@ public class Server {
     }
 
     /**
-     * Inicializa un nuevo juego (Hilo) y suscribe al jugador a las actualizaciones del servidor 
-     * @param player
-     * @return
+     * Inicializa un nuevo juego con el cliente dado como el cliente jugador
+     * @param player cliente a ser registrado como el cliente jugador de la partida a crear
+     * @return Juego con el cliente dado como jugador
      */
     public Game initPlayer(ClientAdmin player) {
         if (this.games.size() >= 2) {
@@ -38,18 +42,23 @@ public class Server {
 
     /**
      * Busca un juego cuyo jugador sea identificado por playerId
-     * @param playerId
-     * @param spectator
-     * @return
+     * @param playerId identificador del cliente jugador del juego
+     * @return juego cuyo jugador tiene el id dado
      */
     public Game getGame(Integer gameId) {
         return this.games.get(gameId);
     }
-
+    /**
+     * Elimina un juego del servidor
+     * @param gameId identificador del juego a eliminarse
+     */
     public void removeGame(Integer gameId) {
         this.games.remove(gameId);
     }
-
+    /**
+     * Obtiene la lista de los id's que identifican las partidas activas
+     * @return lista de ids de partidas activas
+     */
     public List<Integer> getGameIds() {
         return new ArrayList<>(this.games.keySet());
     }
@@ -86,6 +95,9 @@ public class Server {
     private HashMap<Integer, Game> games = new HashMap<>();
     private Admin adminWindow;
 
+    /**
+     * Constructor privado ya que la clase es un Singleton
+     */
     private Server() {
         try {
             serverSocket = new ServerSocket(PORT);
