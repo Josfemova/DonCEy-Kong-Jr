@@ -44,7 +44,7 @@ public class Jumping implements ControllableMode {
     }
 
     private static final Integer    FALL_THRESHOLD       = 17;
-    private static final SpeedRatio VERTICAL_SPEED_RATIO = new SpeedRatio(-5, 3);
+    private static final SpeedRatio VERTICAL_SPEED_RATIO = new SpeedRatio(-1, 1);
 
     private ControllableMode lastMode;
     private final Integer initialY;

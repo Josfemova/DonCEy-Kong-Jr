@@ -46,11 +46,11 @@ public class Level1 implements Level {
             Platform.repeat(new Position(0, 64), PlatformType.BRICK, 19),
             Platform.repeat(new Position(72, 40), PlatformType.BRICK, 3),
             //plataformas de pasto
-            Platform.makeGrass(new Position(-8, 216), this, 9,waterHeight),
+            Platform.makeGrass(new Position(-8, 216), this, 8,waterHeight),
             Platform.makeGrass(new Position(136, 208), this, 1,waterHeight),
             Platform.makeGrass(new Position(96, 200), this, 2,waterHeight),
             Platform.makeGrass(new Position(170, 200), this, 2,waterHeight),
-            Platform.makeGrass(new Position(208, 200), this, 2,waterHeight),
+            Platform.makeGrass(new Position(208, 192), this, 2,waterHeight),
             //agua
             Platform.repeat(new Position(1, 232), PlatformType.WATER1, screenChunks),
             Platform.repeat(new Position(1, 224), PlatformType.WATER2, screenChunks),
@@ -84,8 +84,9 @@ public class Level1 implements Level {
             game.spawn(vine);
         }
 
+        game.spawn(new Key(new Position(112, 32)));
         game.spawn(new DonkeyKong(new Position(16, 64 - Sprite.DONKEY_KONG.getSize().getHeight())));
 
-        return game.spawn(new PlayerAvatar(new Position(0, 192), initialScore));
+        return game.spawn(new PlayerAvatar(new Position(-4, 192), initialScore));
     }
 }

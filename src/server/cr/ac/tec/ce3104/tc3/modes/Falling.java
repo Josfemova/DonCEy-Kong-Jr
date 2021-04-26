@@ -51,7 +51,7 @@ public class Falling implements ControllableMode {
         }
     }
 
-    private static final SpeedRatio FREE_FALL_SPEED_RATIO = new SpeedRatio(2, 1);
+    private static final SpeedRatio FREE_FALL_SPEED_RATIO = new SpeedRatio(1, 1);
     private static final Integer    DEATH_THRESHOLD       = 50;
 
     private ControllableMode lastMode;

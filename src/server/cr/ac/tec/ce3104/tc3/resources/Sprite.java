@@ -34,6 +34,8 @@ public class Sprite extends Sequence {
     public static final Sprite GRASS1   = Sprite.byId(41);
     public static final Sprite GRASS2   = Sprite.byId(42);
     public static final Sprite GRASS3   = Sprite.byId(43);
+    
+    public static final Sprite KEY   = Sprite.byId(59);
 
     public static Sprite byId(Integer id) {
         if (Sprite.sprites == null) {
