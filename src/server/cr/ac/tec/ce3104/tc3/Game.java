@@ -55,6 +55,9 @@ public class Game implements GameObjectObserver {
 
         if (--this.lives > 0) {
             this.reset();
+        } else {
+            this.syncStats();
+            this.commit();
         }
     }
 
@@ -183,6 +186,7 @@ public class Game implements GameObjectObserver {
     private void updateStats() {
         if (this.score != this.player.getScore()) {
             this.score = this.player.getScore();
+            this.syncStats();
         }
 
         if (this.player.hasLost()) {
@@ -205,12 +209,17 @@ public class Game implements GameObjectObserver {
         }
 
         this.gameObjects.clear();
+        this.syncStats();
         this.commit();
 
         this.player = this.level.setup(this, this.score);
     }
 
-    private synchronized void commit() {
+    private void syncStats() {
+        this.outputQueue.add(Command.cmdStats(this.lives, this.score));
+    }
+
+    private void commit() {
         for (ClientAdmin client : this.clients) {
             client.sendBatch(this.outputQueue);
         }
