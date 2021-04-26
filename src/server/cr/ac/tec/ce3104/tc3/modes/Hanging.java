@@ -67,12 +67,12 @@ public class Hanging implements ControllableMode {
     }
 
     private static Integer calculateHorizontalBase(Platform platform, HorizontalDirection direction) {
-        Integer x = platform.getBounds().getHorizontalCenter();
+        Integer offset = -5; // Para que "agarre" la liana
         if (direction == HorizontalDirection.RIGHT) {
-            x -= Sprite.HANGING_RIGHT.getSize().getWidth();
+            offset = -offset - Sprite.HANGING_RIGHT.getSize().getWidth();
         }
 
-        return x;
+        return platform.getBounds().getHorizontalCenter() + offset;
     }
 
     private HorizontalDirection direction;
