@@ -15,9 +15,9 @@ public class Level1 implements Level {
 
     @Override
     public PlayerAvatar setup(Game game, Integer initialScore) {
+
         //TODO
-        game.spawn(new DonkeyKong(new Position(40, 170 - Sprite.DONKEY_KONG.getSize().getHeight())));
-        game.spawn(new Platform(new Position(170, 105), PlatformType.GRASS2));
+        /**game.spawn(new Platform(new Position(170, 105), PlatformType.GRASS2));
         game.spawn(new Platform(new Position(180, 105), PlatformType.WATER1));
         game.spawn(new Platform(new Position(200, 105), PlatformType.DIRT));
         game.spawn(Platform.makeGrass(new Position(210, 170), this, 3));
@@ -31,10 +31,38 @@ public class Level1 implements Level {
         game.spawn(new RedCrocodile(ps[2]));
 
         game.spawn(new Nispero(new Position(100, 115), 32));
-        game.spawn(new Banana(new Position(85, 70), 50));
+        game.spawn(new Banana(new Position(85, 70), 50));*/
+        
+        Integer waterHeight = Sprite.WATER1.getSize().getHeight()*2;
+        Integer screenChunks = getGameAreaSize().getWidth()/Sprite.BRICK.getSize().getWidth();
+        Platform[][] platforms = new Platform[][]{
+        //ceiling
+        Platform.repeat(new Position(0, -8), PlatformType.BRICK, screenChunks),
+        
+        Platform.makeGrass(new Position(-8, 216), this, 9,waterHeight),
+        Platform.makeGrass(new Position(136, 208), this, 1,waterHeight),
+        Platform.makeGrass(new Position(96, 200), this, 2,waterHeight),
+        Platform.makeGrass(new Position(170, 200), this, 2,waterHeight),
+        Platform.makeGrass(new Position(208, 200), this, 2,waterHeight),
+        //agua
+        Platform.repeat(new Position(1, 232), PlatformType.WATER1, screenChunks),
+        Platform.repeat(new Position(1, 224), PlatformType.WATER2, screenChunks),
+        //plataformas
+        Platform.repeat(new Position(48, 152), PlatformType.BRICK, 6),
+        Platform.repeat(new Position(192, 136), PlatformType.BRICK, 8),
+        Platform.repeat(new Position(48, 112), PlatformType.BRICK, 4),
+        Platform.repeat(new Position(144, 72), PlatformType.BRICK, 8),
+        Platform.repeat(new Position(0, 62), PlatformType.BRICK, 19),
+        Platform.repeat(new Position(72, 40), PlatformType.BRICK, 3),
+        };
+        for(Platform[] surface: platforms){
+            game.spawn(surface);
+        }
+        Vines vines[][] = new Vines[][]{
+            Vines.makeChain(platforms[0][1], 1);
+        };
 
-        game.spawn(Platform.repeat(new Position(90, 130), PlatformType.BRICK, 15));
-        game.spawn(Platform.repeat(new Position(40, 170), PlatformType.BRICK, 15));
+        game.spawn(new DonkeyKong(new Position(16, 64 - Sprite.DONKEY_KONG.getSize().getHeight())));
 
         return game.spawn(new PlayerAvatar(new Position(120, 100), initialScore));
     }
