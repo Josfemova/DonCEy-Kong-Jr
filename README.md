@@ -137,6 +137,15 @@ En el manejo de comandos, descifrado de instrucciones y control del juego, el cl
 
 El servidor es un programa en java compuesto por algunas clases base y 6 paquetes que controlan distintos aspectos de la lógica de juego. 
 
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/resources.png)
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/gameobjects.png)
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/modes.png)
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/levels.png)
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/networking.png)
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/core.png)
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/physics.png)
+
+
 ## 1.3. Problemas sin solución
 
 ## 1.4. Actividades realizadas por estudiante
