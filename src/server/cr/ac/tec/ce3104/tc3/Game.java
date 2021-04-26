@@ -52,6 +52,10 @@ public class Game implements GameObjectObserver {
         return this.player;
     }
 
+    public HashMap<Integer, GameObject> getGameObjects() {
+        return this.gameObjects;
+    }
+
     public synchronized void onPlayerLost() {
         this.player.freeze();
 
