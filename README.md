@@ -137,14 +137,67 @@ En el manejo de comandos, descifrado de instrucciones y control del juego, el cl
 
 El servidor es un programa en java compuesto por algunas clases base y 6 paquetes que controlan distintos aspectos de la lógica de juego. 
 
+Primeramente, véase el diagrama para el paquete `resources`:
+
 ![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/resources.png)
+
+EL paquete cumple una funcionalidad relativamente simple. Es un conjunto de utilidades que proveen la noción al servidor del apartado gráfico del juego, o en resumidas cuentas, es el encargado de administrar lo que concierne a sprites y conjuntos de sprite que conforman una animación, pero no la representación de las entidades a las cuales les corresponden dichos sprites. 
+
+Las entidades son en cambio, representadas utilizando las diferentes clases del paquete `gameobjects`, visto en el siguiente diagrama
+
 ![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/gameobjects.png)
+
+El paquete de `gameobjects` contiene lo necesario para representar todas las entidades que componen el juego, además de ofrecer algunas facilidades para construcción de escenarios. Como puede observarse, desde el jugador hasta las plataformas mismas son representados como instancias de `GameObject`.
+
+Cada subclase de `GameObject` contiene funcionalidad específica a sí misma, por ejemplo, puede observarse en Platform métodos que facilitan la creación tanto de plataformas de ladrillos como plataformas de pasto, facilitando considerablemente la creación de una escena de juego. 
+
+Para los objetos que puede ser colocados por el usuario administrador, se implementó un patrón de diseño factory, de manera que la creación de frutas y cocodrilos es relativamente transparente al usuario. 
+
+Se implementa además un patrón observer. Este patrón es una forma de permitirle a una clase ser notificada en caso de cambios en el estado interno de una entidad. Esto es principalmente utilizado para el objeto de juego en sí, el cual debe realizar ciertas operaciones si se da un cambio en el estado interno en alguna de todas las entidades que administra.
+
+Según el tipo de `GameObject` se puede tener una observación, ¿Qué sucede con aquellos objetos que tienen estados transitivos, es decir, un objeto que se puede encontrar en varios "modos de operación"?
+
+La respuesta a la pregunta anterior es dada por el paquete `modes`. Este paquete contiene diferentes clases que permiten definir en qué estado se encuentra un `GameObject`. Claramente no todas las entidades tienen estados transitivos, pero las entidades que sí, como el jugador, dependen fundamentalmente de poder diferencias entre estados como caminar, saltar, caer, etc.  
+
 ![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/modes.png)
-![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/levels.png)
-![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/networking.png)
-![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/core.png)
+
+Como puede observarse en el diagrama anterior, el paquete `modes` ofrece funcionalidad que le permite a una entidad distinguir entre sus estados, y las implicaciones de las diferencias entre los mismos. Por ejemplo, no todo estado tiene respuestas a un evento en específico. Lo anterior puede inferirse con solo pensar en si debería ser posible saltar mientras ya un jugador se encuentra en el aire. La respuesta a la cuestión anterior es un rotundo no, y por eso mismo puede observarse que a modos como `Falling` y `Jumping` no les concierne controlar que sucede una vez que se llame `onJump()`; simplemente si un jugador se encuentra en alguno de los dos estados anteriores, no puede suceder nada cuando el jugador presiona el botón de saltar.
+
+Es relevante discutir también la forma en la que el servidor es capaz de siquiera procesar un estado como "caer". Para esto, el servidor no solo debe tener una noción de qué hay(`gameobjects`), o cómo luce(`resources`); el servidor requiere de algo que le permita tener una noción de las reglas que rigen el comportamiento y las interacciones de las entidades del juego. Para esto, está el paquete `physics`, el cual se muestra en el siguiente diagrama:
+
 ![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/physics.png)
 
+Como puede observarse, el paquete anterior funciona como el administrador de función elemental del juego. Las dos tareas más importantes que administra este paquete son velocidades y colisiones.
+
+La primera tarea es esencial, puesto que no puede haber movimiento de una entidad si no se conoce qué distancia se mueve, en qué dirección, y en cuanto tiempo. El movimiento del jugador y cocodrilos depende fundamentalmente de este paquete.
+
+La segunda tarea no debe considerarse menos importante. Las reglas que rigen una interacción de colisión, y los eventos que desencadena una no serían posibles si no fuese por este paquete. Se sabe que el jugador no debe caer al vacío porque una colisión es detectada con el piso, se sabe que puede subir y bajar por una liana porque colisiona con la misma, sabemos que obtiene puntos al entrar en contacto con una fruta porque colisiona con ella. En síntesis, `physics` provee la lógica base que es el fundamento para establecer las reglas que rigen las interacciones entre entidades del juego.
+
+Otra capa fundacional del juego, aunque no relacionada directamente a las entidades del escenario de juego, es el paquete de `networking`.
+
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/networking.png)
+
+El paquete provee una capa de abstracción sobre el funcionamiento de la conexión con el cliente y lo que respecta a la misma, por ejemplo, como diferenciar entre clientes jugadores y clientes espectadores. Este paquete también provee la funcionalidad que permite notificarle a un cliente sobre los cambios que deben reproducirse en el escenario de juego, puesto que es aquí donde se forman y envían los mensajes en formato JSON que debe interpretar el cliente al momento de correr el videojuego. 
+
+Una vez comprendidos los fundamentos que conforman el juego, se puede proceder a analizar las partes del programa que funcionan sobre estas capas fundacionales.
+
+El primero de los paquetes de mayor nivel es precisamente el paquete `levels`. 
+
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/levels.png)
+
+Efectivamente el paquete solo es compuesto por una superclase Level, y una implementación de dicha clase para representar el nivel 1. El funcionamiento es relativamente simple, una instancia de `Level` permite dibujar un escenario de juego. Ya que el juego actual consta de un nivel único, solo hay una implementación de dicha superclase, sin embargo, planeando de forma anticipada, se provee una forma simple y fácil de agregar e interactuar con niveles adicionales si esto fuese necesario.
+
+Finalmente, las clases en el directorio base del código del servidor son la última capa de lógica en la funcionalidad del mismo:
+
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/core.png)
+
+La noción final del servidor es en sí un compuesto entre dos elementos, una aplicación de administración, y un conjunto de juegos activos. Es gracias a las capas inferiores que es posible expresar la lógica general en una forma tan simple, y relativamente transparente al usuario; El sistema visto solo desde esta capa pareciese administrarse por sí solo.
+
+Para evitar posibles conflictos en uso de puertos, entre otros posibles problemas, se recurre a utilizar el patrón de diseño Singleton en la implementación del Servidor. Solo se puede encontrar una instancia de Servidor activa, y no hay forma de crear una instancia adicional que pueda crear problemas, puesto que el constructor de la clase `Server` es privada.
+
+Esta capa de lógica es efectivamente, la capa administrativa. Es por eso que se ubica alojada aquí la clase `Admin`. Una instancia de esta clase habilita una interfaz gráfica para que un administrador de sistema pueda realizar tareas como crear frutas y cocodrilos en el juego, por medio de los comandos indicados en el manual de usuario.
+
+En el caso de game, se aprecia el flujo de inicio de una partida. El mismo constructor nos indica que es iniciado a través de una instancia de un cliente, dicho cliente es registrado como el dueño de la partida, y demás clientes de dicha partida son registrados como espectadores. Ya la lógica base ha sido administrada en capaz anteriores, por lo que a `Game` solo le conciernen cambios de estados mayores, por ejemplo, lo que sucede cuando un jugador pierde o gana, las vidas y puntaje del jugador, la integración de elementos de juego a la escena y las formas en las que un cliente puede interactuar con un juego. Como se mencionó anteriormente, `Game` funcionalmente es solo un administrador general, y solo le concierne controlar que sucede una vez que un elemento ya se ha auto-administrado. Es por eso que esta clase implementa la interface `GameObjectObserver`, puesto que si bien no le conciernen los detalles sobre los cambios de estado de un objeto, sí le conciernen las consecuencias macro que implican dichos cambios de estado. 
 
 ## 1.3. Problemas sin solución
 
