@@ -84,7 +84,7 @@ public class Platform extends GameObject {
     }
 
     public Vines[] getAttached() {
-        return this.vines != null ? this.vines : new Vines[0];
+        return this.vines;
     }
 
     private PlatformType type;

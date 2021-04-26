@@ -55,12 +55,13 @@ public class Sprite extends Sequence {
         return new Sprite[] { this };
     }
 
-    public Integer getId() {
-        return this.id;
-    }
-
+    @Override
     public Size getSize() {
         return this.size;
+    }
+
+    public Integer getId() {
+        return this.id;
     }
 
     private static HashMap<Integer, Sprite> sprites = null;

@@ -4,13 +4,7 @@ import cr.ac.tec.ce3104.tc3.Game;
 import cr.ac.tec.ce3104.tc3.physics.Size;
 import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
-import cr.ac.tec.ce3104.tc3.gameobjects.Vines;
-import cr.ac.tec.ce3104.tc3.gameobjects.Banana;
-import cr.ac.tec.ce3104.tc3.gameobjects.Nispero;
-import cr.ac.tec.ce3104.tc3.gameobjects.Platform;
-import cr.ac.tec.ce3104.tc3.gameobjects.DonkeyKong;
-import cr.ac.tec.ce3104.tc3.gameobjects.PlatformType;
-import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
+import cr.ac.tec.ce3104.tc3.gameobjects.*;
 
 public class Level1 implements Level {
     public Size getGameAreaSize() {
@@ -34,6 +28,7 @@ public class Level1 implements Level {
         game.spawn(Vines.makeChain(ps[2], 3));
         game.spawn(Vines.makeChain(ps[4], 2));
         game.spawn(Vines.makeChain(ps[5], 1));
+        game.spawn(new RedCrocodile(ps[2]));
 
         game.spawn(new Nispero(new Position(100, 115), 32));
         game.spawn(new Banana(new Position(85, 70), 50));

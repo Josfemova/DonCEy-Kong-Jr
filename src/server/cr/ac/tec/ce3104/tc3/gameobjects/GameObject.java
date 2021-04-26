@@ -57,6 +57,10 @@ public abstract class GameObject {
         this.observer = observer;
     }
 
+    public Boolean exists() {
+        return this.observer != null;
+    }
+
     public void switchTo(Mode mode) {
         this.mode = mode;
         if (this.observer != null) {

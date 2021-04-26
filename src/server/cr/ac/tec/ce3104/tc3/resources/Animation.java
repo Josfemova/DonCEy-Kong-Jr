@@ -7,6 +7,9 @@ public class Animation extends Sequence {
     public static final Animation CLIMBING_RIGHT = new Animation(9, 10);
     public static final Animation DYING          = new Animation(12, 13);
 
+    public static final Animation RED_CROCODILE_DOWN = new Animation(33, 34);
+    public static final Animation RED_CROCODILE_UP   = new Animation(35);
+
     @Override
     public Sprite[] getSprites() {
         return this.sprites;
