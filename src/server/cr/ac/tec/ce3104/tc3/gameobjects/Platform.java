@@ -18,14 +18,14 @@ public class Platform extends GameObject {
         return combined;
     }
 
-    public static Platform[] makeGrass(Position base, Level level, Integer plainLength) {
+    public static Platform[] makeGrass(Position base, Level level, Integer plainLength, Integer groundHeight) {
         Integer leftEdgeWidth = Sprite.GRASS1.getSize().getWidth();
         Size plainSize = Sprite.GRASS2.getSize();
         Integer plainWidth = plainSize.getWidth();
         Integer plainHeight = plainSize.getWidth();
         Integer dirtHeight = Sprite.DIRT.getSize().getHeight();
 
-        Integer dirtPerPlain = Math.max(0, (level.getGameAreaSize().getHeight() - base.getY() + dirtHeight) / dirtHeight - 1);
+        Integer dirtPerPlain = Math.max(0, (level.getGameAreaSize().getHeight() - base.getY() + dirtHeight - groundHeight) / dirtHeight - 2);
         Platform[] grass = new Platform[1 + plainLength * (1 + dirtPerPlain) + 1];
         grass[0] = new Platform(base, PlatformType.GRASS1);
 
