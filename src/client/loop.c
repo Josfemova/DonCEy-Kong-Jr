@@ -184,6 +184,10 @@ void event_loop(void)
 					handle_key(&event.key);
 					break;
 
+				case SDL_MOUSEBUTTONDOWN:
+					handle_click(&event.button);
+					break;
+
 				case X11_EVENT:
 					errno = 0;
 					while(getline(&input_line, &input_length, game.net_file) >= 0)

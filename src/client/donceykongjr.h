@@ -181,6 +181,13 @@ void update_stats(int lives, int score);
 void handle_key(const SDL_KeyboardEvent *event);
 
 /**
+ * @brief Reacciona a un click (enumeración de IDs).
+ *
+ * Entradas: evento de mouse.
+ */
+void handle_click(const SDL_MouseButtonEvent *event);
+
+/**
  * @brief Emite el mensaje que le indica al servidor el modo de operación del cliente
  * y a qué partida quiere unirse el mismo
  *
