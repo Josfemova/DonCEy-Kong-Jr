@@ -43,6 +43,11 @@ public class Hanging implements ControllableMode {
     }
 
     @Override
+    public void onJump(PlayerAvatar player) {
+        player.switchTo(new Falling(new Standing(this.direction), player.getPosition(), this.platform));
+    }
+
+    @Override
     public void onMoveLeft(PlayerAvatar player) {
         this.onFaceDirection(player, HorizontalDirection.LEFT);
     }

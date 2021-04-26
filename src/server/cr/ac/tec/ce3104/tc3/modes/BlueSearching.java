@@ -58,7 +58,7 @@ public class BlueSearching implements Mode {
             this.currentPlatform = platform;
             if (platform != null) {
                 Vines[] attached = platform.getAttached();
-                if (attached != null && BlueSearching.randomGenerator.nextInt(3) == 0) {
+                if (attached != null && BlueSearching.randomGenerator.nextInt(BlueSearching.UNLIKELIHOOD) == 0) {
                     Bounds first = attached[0].getBounds();
                     Position newOrigin = new Position
                     (
@@ -96,6 +96,7 @@ public class BlueSearching implements Mode {
     }
 
     private static final Integer SPEED_NUMERATOR = 5;
+    private static final Integer UNLIKELIHOOD = 5;
     private static final Random randomGenerator = new Random();
 
     private HorizontalDirection direction = HorizontalDirection.RIGHT;
