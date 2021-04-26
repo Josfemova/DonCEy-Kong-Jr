@@ -10,11 +10,11 @@ header-includes:
 lang: es-ES
 papersize: letter
 classoption: fleqn
-geometry: margin=0in
+geometry: margin=1in
 #fontfamily: sans
-fontsize: 11pt
-monofont: "Noto Mono"
-linestretch: 0.15
+fontsize: 12pt
+monofont: "Noto Sans Mono"
+linestretch: 1.15
 ...
 
 \maketitle
@@ -28,7 +28,7 @@ linestretch: 0.15
 
 # Requisitos del sistema
 
-- Cliente con sistema operativo GNU\Linux con X11 como servidor de pantalla
+- Cliente con sistema operativo GNU/Linux con X11 como servidor de pantalla
 - Servidor con JDK 15 instalado, preferiblemente OpenJDK 
 - Memoria RAM disponible: ~100KB para una experiencia agradable
 
@@ -150,14 +150,14 @@ Parámetros:
 
 Este comando es utilizado para crear cocodrilos según desee el administrador. Recordar que los cocodrilos rojos necesitan de una plataforma en la que se puedan encontrar lianas para descender. Los cocodrilos azules no poseen esta restricción
 
-![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/manual/put-crocodile.png)
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/manual/put-crododile.png)
 
 # Uso de cliente
 
 El cliente es un ejecutable de línea de comandos. El programa se ejecuta de la siguiente manera:
 
 ```Shell
-[usuario@equipo DirectorioEjecutable]$ ./donceykongjr [-h|--help] [-f|--fullscreen] <host> <port>
+$ ./donceykongjr [-h|--help] [-f|--fullscreen] <host> <port>
 ```
 
 Donde los parámetros de la línea de comandos significan lo siguiente:
@@ -170,7 +170,7 @@ Donde los parámetros de la línea de comandos significan lo siguiente:
 Suponiendo que el servidor se encuentra en la máquina local, se puede establecer conexión de la siguiente forma:
 
 ```Shell
-[usuario@equipo DirectorioEjecutable]$ ./donceykongjr localhost 8080
+$ ./donceykongjr localhost 8080
 This is client 0
 No games are currently running, starting game 0
 ```
@@ -178,7 +178,7 @@ No games are currently running, starting game 0
 Como se observa anteriormente, de no haber juego activos en el servidor, inmediatamente el cliente reconoce que debe comenzar un nuevo juego, por lo cual realiza la solicitud al servidor e inmediatamente comienza con la ejecución, sin embargo, qué tal si ya hay juegos disponibles?
 
 ```Shell
-[usuario@equipo DirectorioEjecutable]$ ./donceykongjr localhost 8080
+$ ./donceykongjr localhost 8080
 This is client 1
 - Game 0 is running
 
@@ -224,7 +224,7 @@ Para obtener puntos durante el transcurso del nivel, el jugador debe entrar en c
 
 ### Sobrepaso del máximo de espectadores de una partida
 
-El límite de clientes para cada juego es de 3. Un cliente jugador, y dos clientes espectadores. Si un tercer espectador trata de conectarse a la partida, el juego comunicará un mensaje de error e inmediatamente detendrá ejecución
+El límite de clientes para cada juego es de 3. Un cliente jugador, y dos clientes espectadores. Si un tercer espectador trata de conectarse a la partida, el juego comunicará un mensaje de error e inmediatamente detendrá ejecución:
 
 ```Shell
 This is client 3
@@ -253,7 +253,7 @@ Error: server failure: the maximum number of active games has been reached
 
 En caso de un problema externo al juego, por ejemplo, un error del sistema del usuario, el cliente maneja estos errores y los comunica según su clasificación. Mientras que algunos errores pueden ser fatales (como errores de conexión física del computador), pueden encontrarse errores menores durante la ejecución que no afectan sustancialmente la jugabilidad, pero se proveen como advertencias de posibles defectos en el sistema del usuario.
 
-Un ejemplo del tipo de errores mencionados es si el Servidor sufre un error y pierde comunicación, el cliente dará el siguiente mensaje
+Un ejemplo del tipo de errores mencionados es si el Servidor sufre un error y pierde comunicación, el cliente dará el siguiente mensaje:
 
 ```Shell
 The server has closed the connection
