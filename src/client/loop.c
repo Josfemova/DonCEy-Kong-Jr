@@ -79,40 +79,47 @@ void redraw(void)
 		sdl_fatal();
 	}
 
-	for(size_t i = 0; i < game.entities.buckets.length; ++i)
+	for(int depth = 0; depth <= game.max_depth; ++depth)
 	{
-		struct vec *bucket = vec_get(&game.entities.buckets, i);
-		for(size_t j = 0; j < bucket->length; ++j)
+		for(size_t i = 0; i < game.entities.buckets.length; ++i)
 		{
-			struct entity *entity = bucket_get_value(&game.entities, bucket, j);
-
-			// Evita lógica de corto-circuito
-			bool moved = move_on_tick(&entity->x, &entity->speed_x);
-			moved = move_on_tick(&entity->y, &entity->speed_y) || moved;
-
-			int sprite_id = *(int*)vec_get(&entity->sequence, entity->next_sprite);
-			struct sprite *sprite = hash_map_get(&game.sprites, sprite_id);
-			assert(sprite);
-
-			if(moved && ++entity->next_sprite == entity->sequence.length)
+			struct vec *bucket = vec_get(&game.entities.buckets, i);
+			for(size_t j = 0; j < bucket->length; ++j)
 			{
-				entity->next_sprite = 0;
-			}
-
-			render_entity(entity, sprite);
-
-			if(moved)
-			{
-				struct key_value items[] =
+				struct entity *entity = bucket_get_value(&game.entities, bucket, j);
+				if(entity->z != depth)
 				{
-					{"op", json_object_new_string("move")},
-					{"id", json_object_new_int(entity->id)},
-					{"x",  json_object_new_int(entity->x)},
-					{"y",  json_object_new_int(entity->y)},
-					{NULL, NULL}
-				};
+					continue;
+				}
 
-				transmit(items);
+				// Evita lógica de corto-circuito
+				bool moved = move_on_tick(&entity->x, &entity->speed_x);
+				moved = move_on_tick(&entity->y, &entity->speed_y) || moved;
+
+				int sprite_id = *(int*)vec_get(&entity->sequence, entity->next_sprite);
+				struct sprite *sprite = hash_map_get(&game.sprites, sprite_id);
+				assert(sprite);
+
+				if(moved && ++entity->next_sprite == entity->sequence.length)
+				{
+					entity->next_sprite = 0;
+				}
+
+				render_entity(entity, sprite);
+
+				if(moved)
+				{
+					struct key_value items[] =
+					{
+						{"op", json_object_new_string("move")},
+						{"id", json_object_new_int(entity->id)},
+						{"x",  json_object_new_int(entity->x)},
+						{"y",  json_object_new_int(entity->y)},
+						{NULL, NULL}
+					};
+
+					transmit(items);
+				}
 			}
 		}
 	}

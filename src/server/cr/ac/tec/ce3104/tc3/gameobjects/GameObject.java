@@ -45,7 +45,7 @@ public abstract class GameObject {
     }
 
     public Command makePutCommand() {
-        return Command.cmdPut(this.id, this.position, this.mode.getSpeed(), this.mode.getSequence());
+        return Command.cmdPut(this.id, this.position, this.getZ(), this.mode.getSpeed(), this.mode.getSequence());
     }
 
     public Command makeDeleteCommand() {
@@ -102,6 +102,10 @@ public abstract class GameObject {
 
     public Boolean isDangerous() {
         return false;
+    }
+
+    protected Integer getZ() {
+        return 0;
     }
 
     protected void refreshMode() {

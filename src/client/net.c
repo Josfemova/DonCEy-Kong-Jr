@@ -201,9 +201,6 @@ static void handle_command(struct json_object *message)
 		struct entity *entity = existing ? existing : &new;
 
 		entity->id = id;
-		entity->next_sprite = 0;
-		expect_position(message, &entity->x, &entity->y);
-
 		if(existing)
 		{
 			vec_resize(&existing->sequence, 0);
@@ -213,7 +210,16 @@ static void handle_command(struct json_object *message)
 			entity = hash_map_put(&game.entities, id, &new);
 		}
 
+		entity->next_sprite = 0;
+		expect_position(message, &entity->x, &entity->y);
 		expect_sequence(message, &entity->sequence);
+
+		entity->z = json_object_get_int(expect_key(message, "z", json_type_int, true));
+		if(entity->z > game.max_depth)
+		{
+			game.max_depth = entity->z;
+		}
+
 		entity->speed_x = expect_ratio(message, "num_x", "denom_x");
 		entity->speed_y = expect_ratio(message, "num_y", "denom_y");
 	} else if(strcmp(operation, "move") == 0)//comando de mover un entidad

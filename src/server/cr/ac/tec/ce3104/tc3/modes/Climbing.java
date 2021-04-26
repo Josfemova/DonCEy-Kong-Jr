@@ -94,7 +94,7 @@ public class Climbing implements ControllableMode {
         player.switchTo(this);
     }
 
-    private static final SpeedRatio SPEED_RATIO = new SpeedRatio(2, 3);
+    private static final SpeedRatio SPEED_RATIO = new SpeedRatio(4, 6);
 
     private Hanging hangingMode;
     private VerticalDirection direction;

@@ -27,7 +27,7 @@ public class Command {
                             .putInt("height", size.getHeight());
     }
 
-    public static Command cmdPut(Integer id, Position position, Speed speed, Sequence sequence) {
+    public static Command cmdPut(Integer id, Position position, Integer z, Speed speed, Sequence sequence) {
         List<Integer> sequenceIds = new ArrayList<>();
         for (Sprite sprite : sequence.getSprites()) {
             sequenceIds.add(sprite.getId());
@@ -37,6 +37,7 @@ public class Command {
                             .putInt("id", id)
                             .putInt("x", position.getX())
                             .putInt("y", position.getY())
+                            .putInt("z", z)
                             .putInt("num_x", speed.getX().getNumerator())
                             .putInt("num_y", speed.getY().getNumerator())
                             .putInt("denom_x", speed.getX().getDenominator())
