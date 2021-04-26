@@ -1,8 +1,6 @@
 package cr.ac.tec.ce3104.tc3;
 
-import java.util.List;
 import java.util.HashMap;
-import java.util.ArrayList;
 
 import cr.ac.tec.ce3104.tc3.levels.Level;
 import cr.ac.tec.ce3104.tc3.levels.Level1;
@@ -117,6 +115,12 @@ public class Game implements GameObjectObserver {
     }
 
     public synchronized void attachClient(ClientAdmin client) {
+        Integer maxClients = this.clients.get(this.playerId) != null ? 3 : 2;
+        if (this.clients.size() >= maxClients) {
+            client.sendError("no more expectators are allowed for this game");
+            return;
+        }
+
         this.commit();
 
         CommandBatch catchUp = new CommandBatch();
@@ -127,13 +131,18 @@ public class Game implements GameObjectObserver {
         }
 
         client.sendBatch(catchUp);
-        this.clients.add(client);
+        this.clients.put(client.getClientId(), client);
     }
 
     public synchronized void detachClient(ClientAdmin client) {
-        this.clients.remove(client);
+        this.clients.remove(client.getClientId());
         if (this.clients.isEmpty()) {
             Server.getInstance().removeGame(this.playerId);
+        } else if (client.getClientId() == this.playerId) {
+            // La partida se detiene inmediatamente si sale el jugador
+            for (GameObject object : this.gameObjects.values()) {
+                object.freeze();
+            }
         }
     }
 
@@ -180,7 +189,7 @@ public class Game implements GameObjectObserver {
     private Integer score = 5000;
 
     private Integer playerId;
-    private List<ClientAdmin> clients = new ArrayList<>(); //Observers
+    private HashMap<Integer, ClientAdmin> clients = new HashMap<>(); //Observers
     private CommandBatch outputQueue = new CommandBatch();
 
     private void updateStats() {
@@ -220,7 +229,7 @@ public class Game implements GameObjectObserver {
     }
 
     private void commit() {
-        for (ClientAdmin client : this.clients) {
+        for (ClientAdmin client : this.clients.values()) {
             client.sendBatch(this.outputQueue);
         }
 
