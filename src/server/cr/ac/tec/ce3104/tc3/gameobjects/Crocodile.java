@@ -10,6 +10,11 @@ public abstract class Crocodile extends GameObject {
         return Dynamics.INTERACTIVE;
     }
 
+    @Override
+    public Boolean isDangerous() {
+        return true;
+    }
+
     protected Crocodile(Mode mode, Position position) {
         super(mode, position);
     }

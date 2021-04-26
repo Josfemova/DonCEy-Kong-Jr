@@ -112,7 +112,7 @@ public class Placement {
         Integer deltaY = other.getPosition().getY() - this.bounds.getOrigin().getY();
         Integer distanceSquare = deltaX * deltaX + deltaY * deltaY;
 
-        if (this.bestDistanceSquare == null || distanceSquare <= this.bestDistanceSquare) {
+        if (other.isDangerous() || this.bestDistanceSquare == null || distanceSquare <= this.bestDistanceSquare) {
             this.bestDistanceSquare = distanceSquare;
             this.interactionTarget = other;
         }

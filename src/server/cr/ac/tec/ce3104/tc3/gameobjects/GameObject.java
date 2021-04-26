@@ -90,6 +90,10 @@ public abstract class GameObject {
 
     public void onFloatingContact(GameObject floating) {}
 
+    public Boolean isDangerous() {
+        return false;
+    }
+
     protected void refreshMode() {
         this.switchTo(this.mode);
     }

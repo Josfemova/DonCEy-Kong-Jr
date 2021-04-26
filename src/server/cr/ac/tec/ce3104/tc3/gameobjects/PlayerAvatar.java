@@ -23,7 +23,7 @@ public class PlayerAvatar extends GameObject {
 
     @Override
     public void onInteraction(GameObject other) {
-        if (!(other instanceof Vines)) {
+        if (other.isDangerous()) {
             // Se ha tocado un enemigo o agua
             this.die();
         } else {

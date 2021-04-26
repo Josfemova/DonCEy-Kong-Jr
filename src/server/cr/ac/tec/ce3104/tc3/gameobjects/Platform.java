@@ -64,6 +64,11 @@ public class Platform extends GameObject {
         }
     }
 
+    @Override
+    public Boolean isDangerous() {
+        return this.type.isDangerous();
+    }
+
     public boolean attach(Vines[] vines) {
         if (this.getDynamics() != Dynamics.RIGID || this.vines != null) {
             return false;
