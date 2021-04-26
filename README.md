@@ -19,7 +19,7 @@ linestretch: 1.15
 bibliography: bibliografia.bib
 csl: /home/josfemova/UsefulRepos/styles/apa.csl
 nocite: |
-    @perror, @getline, @poll, @read, @getaddrinfo, @ip, @socket, @connect, @getopt, @timerfd, @x11, @sdlwiki
+    @perror, @getline, @poll, @read, @getaddrinfo, @ip, @socket, @connect, @getopt, @timerfd, @x11, @sdlwiki, @booklet, @swing
 ...
 
 \maketitle
@@ -110,13 +110,59 @@ Dentro del cliente se hace uso del formato JSON para comunicación con el servid
 
 ## 1.2. Descripción detallada de algoritmos desarrollados
 
-![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/DonCEy-Kong-Jr-C.png?token=AL2FXBGIJSO5NDSTCTGDCLTAR6DGW)
+### Cliente 
+
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/DonCEy-Kong-Jr-C.png)
+
+Como se puede observar, el cliente tiene una funcionalidad relativamente simple en cuanto a relaciones entre componentes. Esto se debe a que, tal como se específico, el cliente solo es un intérprete de los comandos enviados por el servidor, ya que el servidor es quien maneja la lógica de juego en sí. El cliente no tiene noción ni siquiera de las colisiones, sino que su trabajo se centra en dibujar y captar acciones del usuario.
+
+La rutina de inicio consiste en inicializar la biblioteca de gráficos y la conexión con el servidor, y terminadas estas dos tareas, comenzar con el ciclo de juego. 
+
+Cada ciclo de juego se dan los mismos pasos:
+
+- Si se registró un evento de tecla, se envía un mensaje al servidor con la infromación de dicho evento.
+- Se lee el stream del socket y según la entrada se sigue uno de tres flujos:
+  - Iniciar como jugador o espectador: Envía un mensaje de handshake al servidor para comunicarle como el jugador quiere comenzar su instancia cliente.
+  - Post handshake: Crea la pantalla, inicializa el timer de juego y carga los recursos gráficos.
+  - Manejar comandos: Cuando ya el juego está activo, lee del socket los comandos que debe ejecutar localmente, tal crear entidades, dibujar objetos, entre otras operaciones posibles. 
+- Si el juego se encuentra en un estado en que debe refrescar la pantalla, la redibuja con `redraw()`
+
+En el manejo de comandos, descifrado de instrucciones y control del juego, el cliente hace uso de tres categorías distintas de utilidades. 
+
+1. Utilidades manejo de JSON: Utilizadas para obtener información de los mensaje enviados por el servidor.
+2. Utilidades de manejo de vectores: En varias secciones del programa se hace uso de vectores para diferentes propósitos. Esta funcionalidad es de utilidad general.
+3. Utilidades de manejo de hash maps: Los elementos que componen la pantalla de juego y algunos otros son registrados por medio del uso de hash maps tal como se desarrollo en la sección 1.1. Estas funciones son utilizadas para la consulta y manipulación de estos hash maps. 
+
+### Servidor
+
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/plan-actividades.png)
 
 ## 1.3. Problemas sin solución
 
 ## 1.4. Actividades realizadas por estudiante
 
+![]()
+
 ## 1.5. Problemas solucionados
+
+1. Pathfinding omite el ubicación inicial
+	
+	* _Descripción_: 
+
+	* _Intentos de solución_: 
+
+	* _Solución encontrada_: 
+
+	* _Conclusiones_:
+      - x
+      - y
+    * _Recomendaciones_:
+      - x
+      - y
+	* _Bibliografía_:
+      - x
+      - y
+      - z
 
 ## 1.6. Conclusiones y Recomendaciones del Proyecto
 

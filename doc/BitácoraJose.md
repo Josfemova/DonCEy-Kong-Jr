@@ -35,7 +35,8 @@
 
 - Se agregó una implementación de lista enlazada al lado del Servidor java.
 - Se agregó código para detección de colisiones entre dos objetos de juego. 
-- Se modificaron algunas implementaciones de elementos para representar objetos del juego de manera que si se diera un cambio de texturas o algo similar, se más fácil cambiar los valores utilizados para la detección de colisiones en el servidor. 
+- Se modificaron algunas implementaciones de elementos para representar objetos del juego de manera que si se diera un cambio de texturas o algo similar, se más fácil cambiar los valores utilizados para la detección de colisiones en el servidor.
+- Se agregó lógica primitiva de conexión al servidor.
 
 ### 19 de abril
 
@@ -61,3 +62,23 @@
 - Se comenzó con la modificación del diagrama UML prototipo
 - Se agregó mayor documentación interna del cliente
 - Se agregaron archivos de bibliografía de recursos consultados hasta ahora
+
+### 24 de abril
+
+- Se agregan archivos de bibliografía al proyecto.
+- Se agregó documentación de algunas funciones del cliente.
+
+### 25 de abril
+
+- Se realizan pruebas de funcionalidad.
+- Se agregan sprites nuevos a los assets del proyecto.
+- Se finaliza la rutina para renderizar el primer nivel del juego.
+- Se finaliza el diagrama de funcionamiento del cliente y se agrega a la documentación externa.
+
+### 26 de abril
+
+- Se agrega guía para uso de cliente al manual de usuario.
+- se agregan secciones referentes a algoritmos y estructuras utilizadas a documentación externa.
+- Se agregan imágenes de diagramas y plan de actividades a la documentación externa.
+- Se agrega documentación interna final del servidor.
+- Se realizan otras pruebas de calidad para terminar de pulir el cliente.
