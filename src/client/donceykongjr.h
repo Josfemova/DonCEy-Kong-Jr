@@ -59,6 +59,7 @@ struct entity
 	size_t       next_sprite;
 	struct ratio speed_x;
 	struct ratio speed_y;
+	bool         highlight;
 };
 
 /**

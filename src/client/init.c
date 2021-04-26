@@ -89,6 +89,7 @@ void init_graphics(struct json_object *message)
 	SDL_VERSION(&wm_info.version);
 
 	if(SDL_CreateWindowAndRenderer(width, height, 0, &game.window, &game.renderer) != 0
+	|| SDL_SetRenderDrawBlendMode(game.renderer, SDL_BLENDMODE_BLEND) < 0
 	|| !SDL_GetWindowWMInfo(game.window, &wm_info))
 	{
 		sdl_fatal();

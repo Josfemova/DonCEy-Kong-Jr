@@ -39,6 +39,35 @@ static void render(const struct sprite *sprite, int x, int y)
 }
 
 /**
+ * @brief Renderiza una entidad en su posición.
+ * 
+ * Entradas: entidad a renderizar y su textura
+ */
+static void render_entity(const struct entity *entity, const struct sprite *sprite)
+{
+	render(sprite, entity->x, entity->y);
+
+	// Resaltado en caso de ser necesario
+	if(entity->highlight)
+	{
+		struct SDL_Rect area =
+		{
+			.x = entity->x,
+			.y = entity->y,
+			.w = sprite->surface->w,
+			.h = sprite->surface->h
+		};
+
+		if(SDL_SetRenderDrawColor(game.renderer, 255, 255, 255, 128) < 0
+		|| SDL_RenderFillRect(game.renderer, &area) < 0
+		|| SDL_SetRenderDrawColor(game.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE) < 0)
+		{
+			sdl_fatal();
+		}
+	}
+}
+
+/**
  * @brief redibuja la pantalla de juego  
  * 
  * Redibuja todas las entidades de juego registradas en el hash map de entities pertenecientes al estado de juego game 
@@ -70,7 +99,7 @@ void redraw(void)
 				entity->next_sprite = 0;
 			}
 
-			render(sprite, entity->x, entity->y);
+			render_entity(entity, sprite);
 
 			if(moved)
 			{

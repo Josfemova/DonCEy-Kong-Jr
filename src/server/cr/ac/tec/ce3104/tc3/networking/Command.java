@@ -49,6 +49,16 @@ public class Command {
                             .putInt("id", id);
     }
 
+    public static Command cmdHighlight(Integer id) {
+        return new Command().putString("op", "highlight")
+                            .putInt("id", id);
+    }
+
+    public static Command cmdUnhighlight(Integer id) {
+        return new Command().putString("op", "unhighlight")
+                            .putInt("id", id);
+    }
+
     public static Command cmdStats(Integer lives, Integer score) {
         return new Command().putString("op", "stats")
                             .putInt("lives", lives)

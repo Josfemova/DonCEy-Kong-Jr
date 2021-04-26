@@ -200,6 +200,11 @@ public class Game implements GameObjectObserver {
         }
     }
 
+    public synchronized void setHighlight(Integer objectId, Boolean highlight) {
+        this.outputQueue.add(highlight ? Command.cmdHighlight(objectId) : Command.cmdUnhighlight(objectId));
+        this.commit();
+    }
+
     private Level level = new Level1();
     private PlayerAvatar player;
     private HashMap<Integer, GameObject> gameObjects = new HashMap<>();

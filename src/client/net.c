@@ -236,6 +236,12 @@ static void handle_command(struct json_object *message)
 		int score = json_object_get_int(expect_key(message, "score", json_type_int, true));
 
 		update_stats(lives, score);
+	} else if(strcmp(operation, "highlight") == 0) // Resaltado de guía
+	{
+		expect_entity(message)->highlight = true;
+	} else if(strcmp(operation, "unhighlight") == 0) // Quitar resaltado
+	{
+		expect_entity(message)->highlight = false;
 	} else if(strcmp(operation, "bye") == 0)//Servidor se despide del cliente
 	{
 		puts("Connection terminated by server");
