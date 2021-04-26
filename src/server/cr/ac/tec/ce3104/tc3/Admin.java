@@ -107,17 +107,14 @@ class Admin {
             while (true) {
                 String line = this.stdoutSink.readLine();
                 if (line == null) {
-                    break;
+                    continue;
                 }
 
                 this.realStdout.println(line);
                 SwingUtilities.invokeLater(() -> this.consoleOutput.append(line + "\n"));
             }
         } catch (Exception exception) {
-            System.setOut(this.realStdout);
-            System.setErr(this.realStdout);
-
-            exception.printStackTrace();
+            // Ignorado
         }
     }
 
