@@ -112,7 +112,7 @@ Dentro del cliente se hace uso del formato JSON para comunicación con el servid
 
 ### Cliente 
 
-![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/DonCEy-Kong-Jr-C.png?token=AL2FXBGIJSO5NDSTCTGDCLTAR6DGW)
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/DonCEy-Kong-Jr-C.png)
 
 Como se puede observar, el cliente tiene una funcionalidad relativamente simple en cuanto a relaciones entre componentes. Esto se debe a que, tal como se específico, el cliente solo es un intérprete de los comandos enviados por el servidor, ya que el servidor es quien maneja la lógica de juego en sí. El cliente no tiene noción ni siquiera de las colisiones, sino que su trabajo se centra en dibujar y captar acciones del usuario.
 
@@ -135,13 +135,13 @@ En el manejo de comandos, descifrado de instrucciones y control del juego, el cl
 
 ### Servidor
 
-
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/plan-actividades.png)
 
 ## 1.3. Problemas sin solución
 
 ## 1.4. Actividades realizadas por estudiante
 
-
+![]()
 
 ## 1.5. Problemas solucionados
 
