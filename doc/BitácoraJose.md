@@ -77,8 +77,12 @@
 
 ### 26 de abril
 
+- Se finaliza diagrama UML del Servidor.
 - Se agrega guía para uso de cliente al manual de usuario.
-- se agregan secciones referentes a algoritmos y estructuras utilizadas a documentación externa.
+- Se agregan secciones referentes a algoritmos y estructuras utilizadas a documentación externa.
 - Se agregan imágenes de diagramas y plan de actividades a la documentación externa.
 - Se agrega documentación interna final del servidor.
 - Se realizan otras pruebas de calidad para terminar de pulir el cliente.
+- Se finaliza el manual de usuario.
+- Se agregan recomendaciones y conclusiones al proyecto
+- Se confecciona presentación para defensa de proyecto
