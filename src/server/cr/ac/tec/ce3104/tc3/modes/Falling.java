@@ -38,12 +38,21 @@ public class Falling implements ControllableMode {
     }
 
     @Override
+    public void onRelocate(GameObject player) {
+        this.lastWasHorizontalHit = false;
+    }
+
+    @Override
     public void onHit(GameObject player, Orientation orientation) {
         Standing standingMode = new Standing(this.getDirection());
         switch (orientation) {
             case HORIZONTAL:
-                this.lastMode = standingMode;
-                player.switchTo(this);
+                if (!lastWasHorizontalHit) {
+                    this.lastMode = standingMode;
+                    player.switchTo(this);
+                    lastWasHorizontalHit = true;
+                }
+
                 break;
 
             case VERTICAL:
@@ -53,6 +62,7 @@ public class Falling implements ControllableMode {
                     ((PlayerAvatar)player).die();
                 }
 
+                lastWasHorizontalHit = false;
                 break;
         }
     }
@@ -67,4 +77,5 @@ public class Falling implements ControllableMode {
     private ControllableMode lastMode;
     private Integer          initialY;
     private Platform         sourcePlatform;
+    private Boolean          lastWasHorizontalHit = false;
 }
