@@ -2,6 +2,9 @@ package cr.ac.tec.ce3104.tc3.gameobjects;
 
 import java.util.Random;
 
+import cr.ac.tec.ce3104.tc3.modes.Hanging;
+import cr.ac.tec.ce3104.tc3.modes.Climbing;
+import cr.ac.tec.ce3104.tc3.modes.ControllableMode;
 import cr.ac.tec.ce3104.tc3.physics.Bounds;
 import cr.ac.tec.ce3104.tc3.physics.Dynamics;
 import cr.ac.tec.ce3104.tc3.physics.Position;
@@ -32,6 +35,16 @@ public class Vines extends GameObject {
     @Override
     public Dynamics getDynamics() {
         return Dynamics.INTERACTIVE;
+    }
+
+    @Override
+    public void onInteraction(GameObject other) {
+        if (other instanceof PlayerAvatar) {
+            ControllableMode mode = (ControllableMode)other.getMode();
+            if (!(mode instanceof Climbing) && !(mode instanceof Hanging)) {
+                other.switchTo(new Hanging(mode.getDirection(), this.platform, (PlayerAvatar)other));
+            }
+        }
     }
 
     public Platform getPlatform() {

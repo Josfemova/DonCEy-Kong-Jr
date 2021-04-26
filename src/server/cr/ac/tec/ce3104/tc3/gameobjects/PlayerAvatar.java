@@ -1,10 +1,7 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
 import cr.ac.tec.ce3104.tc3.modes.Falling;
-import cr.ac.tec.ce3104.tc3.modes.Hanging;
-import cr.ac.tec.ce3104.tc3.modes.Climbing;
 import cr.ac.tec.ce3104.tc3.modes.Standing;
-import cr.ac.tec.ce3104.tc3.modes.ControllableMode;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 import cr.ac.tec.ce3104.tc3.physics.Dynamics;
 import cr.ac.tec.ce3104.tc3.physics.Position;
@@ -26,12 +23,6 @@ public class PlayerAvatar extends GameObject {
         if (other.isDangerous()) {
             // Se ha tocado un enemigo o agua
             this.die();
-        } else {
-            ControllableMode mode = (ControllableMode)this.getMode();
-            if (!(mode instanceof Climbing) && !(mode instanceof Hanging)) {
-                Vines vines = (Vines)other;
-                this.switchTo(new Hanging(mode.getDirection(), vines.getPlatform(), this));
-            }
         }
     }
 
