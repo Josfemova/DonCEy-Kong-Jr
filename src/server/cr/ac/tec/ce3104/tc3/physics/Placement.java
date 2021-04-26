@@ -66,6 +66,12 @@ public class Placement {
         if (!this.bounds.rightOf(leftWall) || !this.bounds.leftOf(rightWall)) {
             this.tryHitOrientation(Orientation.HORIZONTAL);
         } else if (!this.bounds.aboveOf(bottomWall)) {
+            Position current = this.placed.getPosition();
+            Integer lowestValidY = areaHeight - this.bounds.getSize().getHeight();
+            if (current.getY() > lowestValidY) {
+                this.placed.relocate(new Position(current.getX(), lowestValidY));
+            }
+
             this.tryHitOrientation(Orientation.VERTICAL);
         }
     }
@@ -82,7 +88,17 @@ public class Placement {
             switch (other.getDynamics()) {
                 case RIGID:
                     Orientation orientation = Orientation.HORIZONTAL;
-                    if (beforeCollision.aboveOf(otherBounds) || beforeCollision.belowOf(otherBounds)) {
+                    Boolean above = beforeCollision.aboveOf(otherBounds);
+                    Boolean below = beforeCollision.belowOf(otherBounds);
+
+                    if (above) {
+                        Integer lowestValidY = otherBounds.getOrigin().getY() - this.bounds.getSize().getHeight();
+                        if (beforeCollision.getBaseline() - 1 > lowestValidY) {
+                            this.placed.relocate(new Position(beforeCollision.getOrigin().getX(), lowestValidY));
+                        }
+                    }
+
+                    if (above || below) {
                         orientation = Orientation.VERTICAL;
                     }
 
