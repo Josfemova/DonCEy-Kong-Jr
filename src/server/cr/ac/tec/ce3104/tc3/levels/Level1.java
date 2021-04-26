@@ -58,9 +58,7 @@ public class Level1 implements Level {
         for(Platform[] surface: platforms){
             game.spawn(surface);
         }
-        Vines vines[][] = new Vines[][]{
-            Vines.makeChain(platforms[0][1], 1);
-        };
+        
 
         game.spawn(new DonkeyKong(new Position(16, 64 - Sprite.DONKEY_KONG.getSize().getHeight())));
 
