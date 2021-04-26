@@ -55,6 +55,7 @@ struct entity
 	int          id;
 	int          x;
 	int          y;
+	int          z;
 	struct vec   sequence;
 	size_t       next_sprite;
 	struct ratio speed_x;
@@ -90,6 +91,7 @@ extern struct game
 	struct hash_map   sprites;
 	struct hash_map   entities;
 	struct sprite     stats_label;
+	int               max_depth;
 	bool              fullscreen;
 } game;
 

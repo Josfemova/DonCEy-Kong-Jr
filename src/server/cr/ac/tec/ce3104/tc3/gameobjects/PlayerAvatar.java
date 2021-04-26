@@ -62,6 +62,11 @@ public class PlayerAvatar extends GameObject {
         }
     }
 
+    @Override
+    protected Integer getZ() {
+        return 2;
+    }
+
     private void updateScore(Integer difference) {
         this.score += difference;
         this.refreshMode();

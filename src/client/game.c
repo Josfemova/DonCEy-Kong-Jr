@@ -46,6 +46,7 @@ struct game game =
 	.font        = NULL,
 	.ticks       = 0,
 	.stats_label = { .texture = NULL, .surface = NULL },
+	.max_depth   = 0,
 	.fullscreen  = false
 };
 

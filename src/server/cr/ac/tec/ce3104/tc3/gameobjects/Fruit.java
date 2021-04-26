@@ -19,5 +19,10 @@ public abstract class Fruit extends GameObject {
         return this.score;
     }
 
+    @Override
+    protected Integer getZ() {
+        return 1;
+    }
+
     private Integer score;
 }

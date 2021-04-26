@@ -22,4 +22,9 @@ public abstract class Crocodile extends GameObject {
     protected Crocodile(Mode mode, Position position) {
         super(mode, position);
     }
+
+    @Override
+    protected Integer getZ() {
+        return 2;
+    }
 }
