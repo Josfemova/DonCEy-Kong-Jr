@@ -39,7 +39,12 @@ Debe considerarse que entre las estructuras a listar solo se especificaran las d
 
 ### Vector
 
-Un vector es un arreglo dinámico en el cual cada uno de sus elementos se encuentran contiguos en memoria. En el cliente se implementa un vector capaz de almacenar elementos genéricos. Este vector es utilizado como pieza fundamental en la construcción de otras estructuras de datos a ser descritas en las secciones posteriores. 
+Un vector es un arreglo dinámico en el cual cada uno de sus elementos se encuentran contiguos en memoria. En el cliente se implementa un vector capaz de almacenar elementos genéricos. Este vector es utilizado como pieza fundamental en la construcción de otras estructuras de datos a ser descritas en las secciones posteriores. En la implementación, un vector es dado como un struct llamado `vec`, el cual contiene los siguientes campos:
+
+- `data`: Es un puntero que indica el bloque de memoria en el que comienzan los datos del vector
+- `lenght`: Indica cuantos elementos contiene el vector
+- `capacity`: Indica la capacidad actual del vector
+- `element_size`: Indica el tamaño en memoria que se requiere reservar para cada elemento del vector
 
 ### hash map
 
@@ -47,6 +52,11 @@ Un hash map es una estructura de datos en la cual se mapean llaves a cierto valo
 
 En el servidor, se utiliza un hash map para el control de diferentes datos, por ejemplo, las entidades y los sprites. Estos mapas rara vez se encuentran solos, más bien suelen ser uno de los campos de alguna otra estructura superior, entre ellas la estructura con la cual se representa el juego en el cliente.
 
+El hash map es representado pro un struct `hash_map` el cual contiene los campos:
+
+- `buckets`: Es un vector que contiene los distintos buckets que componen el mapa
+- `order`: Indica el orden del mapa. Se utiliza para el mapeo de valores
+- `value_size` :Indica el tamaño en memoria que se debe reservar para cada valor a almacenar en el mapa
 
 ### Juego
 
@@ -99,6 +109,8 @@ Dentro del cliente se hace uso del formato JSON para comunicación con el servid
 
 
 ## 1.2. Descripción detallada de algoritmos desarrollados
+
+![](https://raw.githubusercontent.com/Josfemova/DonCEy-Kong-Jr/main/doc/DonCEy-Kong-Jr-C.png?token=AL2FXBGIJSO5NDSTCTGDCLTAR6DGW)
 
 ## 1.3. Problemas sin solución
 

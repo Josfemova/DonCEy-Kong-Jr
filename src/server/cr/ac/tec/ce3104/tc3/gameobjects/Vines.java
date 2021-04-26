@@ -17,8 +17,10 @@ public class Vines extends GameObject {
         Integer baseY = platformBounds.getBaseline();
 
         Vines[] vines = new Vines[length];
+        Boolean random;
         for (Integer i = 0; i < length; ++i) {
-            Boolean withLeaf = i < length - 1 ? Vines.randomGenerator.nextBoolean() : true;
+            random = (Vines.randomGenerator.nextInt() % 5 ==0) ? true : false;
+            Boolean withLeaf = i < length - 1 ? random : true;
             Sprite sprite = withLeaf ? Sprite.VINES_WITH_LEAF : Sprite.VINES;
 
             vines[i] = new Vines(platform, new Position(baseX, baseY + i * unitHeight), sprite);
