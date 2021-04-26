@@ -69,6 +69,12 @@ public class Platform extends GameObject {
         return this.type.isDangerous();
     }
 
+    @Override
+    public void delete() {
+        this.detach();
+        super.delete();
+    }
+
     public boolean attach(Vines[] vines) {
         if (this.getDynamics() != Dynamics.RIGID || this.vines != null) {
             return false;
@@ -78,14 +84,17 @@ public class Platform extends GameObject {
         return true;
     }
 
-    public void detach() {
+    public Boolean detach() {
         if (this.vines != null) {
             for (Vines object : this.vines) {
                 object.delete();
             }
 
             this.vines = null;
+            return true;
         }
+
+        return false;
     }
 
     public Vines[] getAttached() {

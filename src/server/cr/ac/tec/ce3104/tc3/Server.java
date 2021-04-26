@@ -56,7 +56,7 @@ public class Server {
      */
     public void startUp() {
         try {
-            this.adminWindow = new AdminWindow(System.out);
+            this.adminWindow = new Admin(System.out);
 
             PrintStream fakeStdout = new PrintStream(adminWindow.getOutputStream());
             System.setOut(fakeStdout);
@@ -77,7 +77,7 @@ public class Server {
 
     private ServerSocket serverSocket;
     private HashMap<Integer, Game> games = new HashMap<>();
-    private AdminWindow adminWindow;
+    private Admin adminWindow;
 
     private Server() {
         try {
