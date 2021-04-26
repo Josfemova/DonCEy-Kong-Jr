@@ -261,6 +261,11 @@ class Admin {
 
                         case "red":
                             type = CrocodileType.RED;
+                            if (platform.getAttached() == null) {
+                                System.err.println("Error: red crocodiles require attached vines");
+                                throw new BadCommand();
+                            }
+
                             break;
 
                         default:
@@ -270,7 +275,7 @@ class Admin {
                     Integer difficulty = game.getDifficulty();
                     System.out.println("Current difficulty: " + difficulty);
 
-                    Crocodile crocodile = game.spawn(new CrocodileFactory().createCrocodile(type, platform, difficulty));
+                    Crocodile crocodile = game.spawn(new CrocodileFactory().createCrocodile(type, game, platform, difficulty));
                     System.out.println("Created crocodile " + objectDescription(crocodile));
                     break;
                 }

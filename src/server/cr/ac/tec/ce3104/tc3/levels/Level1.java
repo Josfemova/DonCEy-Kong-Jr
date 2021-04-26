@@ -15,24 +15,6 @@ public class Level1 implements Level {
 
     @Override
     public PlayerAvatar setup(Game game, Integer initialScore) {
-
-        //TODO
-        /**game.spawn(new Platform(new Position(170, 105), PlatformType.GRASS2));
-        game.spawn(new Platform(new Position(180, 105), PlatformType.WATER1));
-        game.spawn(new Platform(new Position(200, 105), PlatformType.DIRT));
-        game.spawn(Platform.makeGrass(new Position(210, 170), this, 3));
-
-        Platform[] ps = Platform.repeat(new Position(70, 10), PlatformType.BRICK, 6);
-        game.spawn(ps);
-        game.spawn(Vines.makeChain(ps[0], 1));
-        game.spawn(Vines.makeChain(ps[2], 3));
-        game.spawn(Vines.makeChain(ps[4], 2));
-        game.spawn(Vines.makeChain(ps[5], 1));
-        game.spawn(new RedCrocodile(ps[2]));
-
-        game.spawn(new Nispero(new Position(100, 115), 32));
-        game.spawn(new Banana(new Position(85, 70), 50));*/
-        
         Integer waterHeight = Sprite.WATER1.getSize().getHeight()*2;
         Integer screenChunks = getGameAreaSize().getWidth()/Sprite.BRICK.getSize().getWidth();
         Platform[][] platforms = new Platform[][]{

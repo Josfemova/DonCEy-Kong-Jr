@@ -25,8 +25,9 @@ public class Sprite extends Sequence {
     public static final Sprite HANGING_LEFT   = Sprite.byId(50);
     public static final Sprite HANGING_RIGHT  = Sprite.byId(9);
 
-    public static final Sprite DONKEY_KONG = Sprite.byId(16);
-    public static final Sprite MARIO       = Sprite.byId(21);
+    public static final Sprite DONKEY_KONG  = Sprite.byId(16);
+    public static final Sprite MARIO        = Sprite.byId(21);
+    public static final Sprite FALLING_BLUE = Sprite.byId(25);
 
     public static final Sprite WATER1   = Sprite.byId(37);
     public static final Sprite WATER2   = Sprite.byId(38);

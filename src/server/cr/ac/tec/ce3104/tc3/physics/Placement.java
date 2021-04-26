@@ -8,7 +8,11 @@ import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
 public class Placement {
     public Placement(GameObject placed, Position placedAt, Level level, Collection<GameObject> scene) {
-        this(placed, new Bounds(placedAt, placed.getSize()), level, scene);
+        this(placed, placedAt, level, scene, true);
+    }
+
+    public Placement(GameObject placed, Position placedAt, Level level, Collection<GameObject> scene, Boolean correct) {
+        this(placed, new Bounds(placedAt, placed.getSize()), level, scene, correct);
 
         if (this.hitOrientation == null) {
             Integer nextVerticalDisplacement = Math.max(1, Math.abs(placed.getMode().getSpeed().getY().getNumerator()));
@@ -16,7 +20,7 @@ public class Placement {
             Bounds nextBounds = new Bounds(nextPosition, this.bounds.getSize());
 
             if (this.hitOrientation == null) {
-                this.freeFall = new Placement(placed, nextBounds, level, scene).hitOrientation == null;
+                this.freeFall = new Placement(placed, nextBounds, level, scene, false).hitOrientation == null;
             }
         }
     }
@@ -44,10 +48,12 @@ public class Placement {
     private GameObject interactionTarget = null;
     private Collection<GameObject> touchedFloatings = new ArrayList<>();
     private Boolean freeFall = false;
+    private Boolean correct;
 
-    private Placement(GameObject placed, Bounds bounds, Level level, Collection<GameObject> scene) {
+    private Placement(GameObject placed, Bounds bounds, Level level, Collection<GameObject> scene, Boolean correct) {
         this.placed = placed;
         this.bounds = bounds;
+        this.correct = correct;
 
         this.testWalls(level.getGameAreaSize());
         if (placed.getDynamics() != Dynamics.FLOATING) {
@@ -68,7 +74,7 @@ public class Placement {
         } else if (!this.bounds.aboveOf(bottomWall)) {
             Position current = this.placed.getPosition();
             Integer lowestValidY = areaHeight - this.bounds.getSize().getHeight();
-            if (current.getY() > lowestValidY) {
+            if (this.correct && current.getY() > lowestValidY) {
                 this.placed.relocate(new Position(current.getX(), lowestValidY));
             }
 
@@ -93,7 +99,7 @@ public class Placement {
 
                     if (above) {
                         Integer lowestValidY = otherBounds.getOrigin().getY() - this.bounds.getSize().getHeight();
-                        if (beforeCollision.getBaseline() - 1 > lowestValidY) {
+                        if (this.correct && beforeCollision.getBaseline() - 1 > lowestValidY) {
                             this.placed.relocate(new Position(beforeCollision.getOrigin().getX(), lowestValidY));
                         }
                     }
