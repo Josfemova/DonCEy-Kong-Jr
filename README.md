@@ -230,7 +230,36 @@ En el caso de game, se aprecia el flujo de inicio de una partida. El mismo const
 
 ### Conclusiones
 
+- Si bien el paradigma de orientación a objetos tiene sus ventajas respecto a reutilización de código, también tiene una desventaja consirable que debe tomarse en cuenta a la hora de trabajar bajo el mismo, y es que es propenso a granulizar la lógica de un programa hasta puntos que pueden resultar relativamente imprácticos. Esta característica puede tener como consecuencia una reducción de complejidad aparente, pero aumento de la complejidad real.
+
+- SDL2 se mostró como una biblioteca de gráficos lo suficientemente capaz como para el desarrollo completo del cliente sin necesidad de recurrir a otra biblioteca de apoyo para tareas gráficas. Esta herramienta es simple, pero increíblemente útil.
+
+- El formato JSON sustancialmente útil y preferible para la comunicación entre diferentes agentes en una interacción por medio de internet. El hecho de que este formato sea relativamente simple y estandarizado lo hace fácil de parsear y utilizar, razón principal por la cual se escogió este formato para el desarrollo de la tarea.
+  
+- Las bibliotecas json-c y json-simple son utilidades simples pero efectivas para el procesamiento y uso de cadenas de caracteres formateadas según un formato JSON.
+
+- La implementación de un patrón Singleton permite evitar problemas que pueden surgir al tener varias instancias de una clase cuyo funcionamiento está diseñado alrededor de ser una clase de instancia única. Es decir, aplicar el patrón Singleton es una buena práctica para declarar de manera explícita que una clase solo debería tener una instancia en todo un programa. 
+
+- EL patrón de diseño observer es de gran utilidad para lograr un efecto de autoadministración del código, ya que en vez de tener que diseñar rutinas que se vean obligadas a buscar cambios de estado de cada objeto que es campo de una clase, el patrón observer es capaz de notificar al observador el origen único del cambio, lo cual resulta en economización de recursos. 
+
+- El patrón de diseño Factory simplifica la creación de objetos y hace el proceso detrás de la misma transparente al usuario, lo que se podría considerar según el contexto como una ventaja deseable en un subsistema.
+
+
 ### Recomendaciones
+
+- Dedicar un tiempo adecuado al planeamiento de un proyecto a desarrollarse bajo el paradigma de orientación a objetos, de manera que se puedan minimizar las desventajas y maximizar las ventajas de trabajar con el mismo.
+
+- Se recomienda utilizar la biblioteca de SDL2 para desarrollo de videojuegos o aplicaciones gráficas similares en el lenguaje de programación C. Si bien la curva de aprendizaje puede ser algo pronunciada, la utilidad de la biblioteca hace que valga la pena dedicarle el tiempo necesario para aprender a utilizarla de una forma apropiada. 
+
+- Si se quiere establecer un protocolo de comunicación entre un cliente y un servidor simple, sencillo y fácil de utilizar, JSON es un formato recomendado para esta tarea. Una comunicación relativamente compleja es fácil de expresar por medio de JSON. 
+
+- Para procesamiento de mensajes en formato JSON: si se trabaja en el lenguaje de programación Java, se recomienda utilizar la biblioteca json-simple. En caso de estar trabajando en el lenguaje de programación C, se recomienda utilizar la biblioteca de json-c.
+
+- Aplicar el patrón de diseño Singleton cuando se considere que una clase debería tener una única instancia durante la ejecución de un programa.
+
+- Aplicar el patrón de diseño Observer cuando se vea que un objeto necesita reaccionar al cambio de estado de algún otro objeto, y buscar formas alternativas de informar al primero sobre el cambio del segundo sea impráctico o desperdicie recursos.
+
+- Utilizar el patrón Factory cuando se requiera esconder detalles de implementación sobre la creación de una colección de objetos, pero igual se le quiere habilitar al usuario una forma simple de crear dichos objetos. 
 
 ## 1.8. Bibliografía
 
