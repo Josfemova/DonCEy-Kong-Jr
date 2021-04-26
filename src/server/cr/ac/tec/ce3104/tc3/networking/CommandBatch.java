@@ -16,11 +16,17 @@ public class CommandBatch {
         return this.memoizedString;
     }
 
+    /**
+     * limpia la coleccion de comandos creada
+     */
     public void clear() {
         this.batch.clear();
         this.memoizedString = null;
     }
-
+    /**
+     * Agrega un comando a la coleccion del batch
+     * @param command comando a agregar al batch
+     */
     public void add(Command command) {
         this.batch.add(command);
         this.memoizedString = null;
