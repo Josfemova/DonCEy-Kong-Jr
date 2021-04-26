@@ -15,6 +15,10 @@ public abstract class Crocodile extends GameObject {
         return true;
     }
 
+    protected static Integer getSpeedDenominator(Integer difficulty) {
+        return Math.max(1, 3 - difficulty);
+    }
+
     protected Crocodile(Mode mode, Position position) {
         super(mode, position);
     }

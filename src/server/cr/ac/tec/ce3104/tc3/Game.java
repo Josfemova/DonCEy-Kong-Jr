@@ -52,6 +52,10 @@ public class Game implements GameObjectObserver {
         return this.player;
     }
 
+    public Integer getDifficulty() {
+        return this.difficulty;
+    }
+
     public HashMap<Integer, GameObject> getGameObjects() {
         return this.gameObjects;
     }
@@ -68,7 +72,9 @@ public class Game implements GameObjectObserver {
     }
 
     public synchronized void onPlayerWon() {
-        //TODO
+        ++this.lives;
+        ++this.difficulty;
+
         this.reset();
     }
 
@@ -200,6 +206,7 @@ public class Game implements GameObjectObserver {
 
     private Integer lives = 3;
     private Integer score = 5000;
+    private Integer difficulty = 0;
 
     private Integer playerId;
     private HashMap<Integer, ClientAdmin> clients = new HashMap<>(); //Observers
