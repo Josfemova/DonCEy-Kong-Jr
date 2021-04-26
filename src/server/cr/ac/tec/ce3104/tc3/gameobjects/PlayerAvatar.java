@@ -40,6 +40,9 @@ public class PlayerAvatar extends GameObject {
         if (floating instanceof Fruit) {
             this.updateScore(+((Fruit)floating).getScore());
             floating.delete();
+        } else if (floating instanceof Key) {
+            this.hasKey = true;
+            floating.delete();
         }
     }
 
@@ -49,6 +52,10 @@ public class PlayerAvatar extends GameObject {
 
     public Boolean hasLost() {
         return this.lost;
+    }
+
+    public Boolean hasKey() {
+        return this.hasKey;
     }
 
     public void die() {
@@ -65,4 +72,5 @@ public class PlayerAvatar extends GameObject {
 
     private Integer score;
     private Boolean lost = false;
+    private Boolean hasKey = false;
 }
