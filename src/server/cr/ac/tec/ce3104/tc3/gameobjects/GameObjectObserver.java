@@ -4,4 +4,6 @@ public interface GameObjectObserver {
     void onObjectDeleted(GameObject object);
 
     void onObjectModeChanged(GameObject object);
+
+    void log(String message);
 }

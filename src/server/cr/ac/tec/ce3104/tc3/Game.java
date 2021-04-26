@@ -23,6 +23,7 @@ public class Game implements GameObjectObserver {
         this.playerId = playerClient.getClientId();
         this.attachClient(playerClient);
 
+        this.log("New game");
         this.reset();
     }
 
@@ -44,6 +45,11 @@ public class Game implements GameObjectObserver {
         this.commit();
     }
 
+    @Override
+    public void log(String message) {
+        System.out.println("[GAME" + this.playerId + "] " + message);
+    }
+
     public Integer getPlayerId() {
         return this.playerId;
     }
@@ -62,10 +68,12 @@ public class Game implements GameObjectObserver {
 
     public synchronized void onPlayerLost() {
         this.player.freeze();
+        this.log("The player has lost");
 
         if (--this.lives > 0) {
             this.reset();
         } else {
+            this.log("Game over");
             this.syncStats();
             this.commit();
         }
@@ -75,6 +83,7 @@ public class Game implements GameObjectObserver {
         ++this.lives;
         ++this.difficulty;
 
+        this.log("The player has won");
         this.reset();
     }
 
@@ -151,13 +160,20 @@ public class Game implements GameObjectObserver {
 
         client.sendBatch(catchUp);
         this.clients.put(client.getClientId(), client);
+
+        this.log("Client " + client.getClientId() + " has joined");
     }
 
     public synchronized void detachClient(ClientAdmin client) {
         this.clients.remove(client.getClientId());
+        this.log("Client " + client.getClientId() + " has left");
+
         if (this.clients.isEmpty()) {
+            this.log("No clients left; game finalized");
             Server.getInstance().removeGame(this.playerId);
         } else if (client.getClientId() == this.playerId) {
+            this.log("Player client has left, freezing all entities...");
+
             // La partida se detiene inmediatamente si sale el jugador
             for (GameObject object : this.gameObjects.values()) {
                 object.freeze();
@@ -238,6 +254,8 @@ public class Game implements GameObjectObserver {
     }
 
     private synchronized void reset() {
+        this.log("Begin level reset");
+
         for (GameObject object : this.gameObjects.values()) {
             this.outputQueue.add(object.makeDeleteCommand());
         }

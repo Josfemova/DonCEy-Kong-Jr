@@ -2,6 +2,7 @@ package cr.ac.tec.ce3104.tc3;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.Socket;
 import java.net.ServerSocket;
 import java.util.List;
 import java.util.ArrayList;
@@ -14,8 +15,10 @@ public class Server {
         if (instance == null) {
             instance = new Server();
         }
+
         return instance;
     }
+
     /**
      * Inicializa un nuevo juego (Hilo) y suscribe al jugador a las actualizaciones del servidor 
      * @param player
@@ -62,10 +65,14 @@ public class Server {
             System.setOut(fakeStdout);
             System.setErr(fakeStdout);
 
+            System.out.println("[SERVR] Listening on 127.0.0.1:" + PORT + "...");
+
             // listen for clients
             while (true) {
                 // empieza una nueva conexión con cliente
-                new ClientAdmin(serverSocket.accept());
+                Socket socket = serverSocket.accept();
+                System.out.println("[SERVR] Accepted connection from " + socket.getRemoteSocketAddress());
+                new ClientAdmin(socket);
             }
         } catch (IOException exception) {
             exception.printStackTrace();

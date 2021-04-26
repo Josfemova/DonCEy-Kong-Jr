@@ -55,16 +55,25 @@ public abstract class GameObject {
     public void addObserver(GameObjectObserver observer) {
         assert this.observer == null;
         this.observer = observer;
+        this.observer.log("New object " + this.id);
     }
 
     public Boolean exists() {
         return this.observer != null;
     }
 
-    public void switchTo(Mode mode) {
-        this.mode = mode;
+    public void switchTo(Mode newMode) {
+        Mode previous = this.mode;
+        this.mode = newMode;
+
         if (this.observer != null) {
             this.observer.onObjectModeChanged(this);
+            if (previous != newMode) {
+                String previousName = previous.getClass().getSimpleName();
+                String newName = newMode.getClass().getSimpleName();
+
+                this.observer.log("Object " + this.id + " switched from " + previousName + " to " + newName);
+            }
         }
     }
 
@@ -76,6 +85,7 @@ public abstract class GameObject {
     public void delete() {
         if (this.observer != null) {
             this.observer.onObjectDeleted(this);
+            this.observer.log("Object " + this.id + " deleted");
             this.observer = null;
         }
     }
