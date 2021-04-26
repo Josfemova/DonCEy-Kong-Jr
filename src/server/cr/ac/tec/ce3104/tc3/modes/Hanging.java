@@ -13,15 +13,18 @@ import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
 public class Hanging implements ControllableMode {
     public Hanging(HorizontalDirection direction, Platform platform, PlayerAvatar player) {
-        this.direction = direction;
         this.platform = platform;
 
-        Integer x = platform.getBounds().getHorizontalCenter();
-        if (direction == HorizontalDirection.RIGHT) {
-            x -= Sprite.HANGING_RIGHT.getSize().getWidth();
+        Integer y = player.getPosition().getY();
+        Position position = new Position(Hanging.calculateHorizontalBase(platform, direction), y);
+
+        if (player.getGame().wouldHit(player, position)) {
+            direction = direction.invert();
+            position = new Position(Hanging.calculateHorizontalBase(platform, direction), y);
         }
 
-        player.relocate(new Position(x, player.getPosition().getY()));
+        this.direction = direction;
+        player.relocate(position);
     }
 
     @Override
@@ -61,6 +64,15 @@ public class Hanging implements ControllableMode {
 
     public Platform getPlatform() {
         return this.platform;
+    }
+
+    private static Integer calculateHorizontalBase(Platform platform, HorizontalDirection direction) {
+        Integer x = platform.getBounds().getHorizontalCenter();
+        if (direction == HorizontalDirection.RIGHT) {
+            x -= Sprite.HANGING_RIGHT.getSize().getWidth();
+        }
+
+        return x;
     }
 
     private HorizontalDirection direction;
