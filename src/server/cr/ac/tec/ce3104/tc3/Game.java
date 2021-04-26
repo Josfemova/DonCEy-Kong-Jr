@@ -48,6 +48,10 @@ public class Game implements GameObjectObserver {
         return this.playerId;
     }
 
+    public PlayerAvatar getPlayer() {
+        return this.player;
+    }
+
     public synchronized void onPlayerLost() {
         this.player.freeze();
 
@@ -57,6 +61,11 @@ public class Game implements GameObjectObserver {
             this.syncStats();
             this.commit();
         }
+    }
+
+    public synchronized void onPlayerWon() {
+        //TODO
+        this.reset();
     }
 
     public <T extends GameObject> T spawn(T object) {
