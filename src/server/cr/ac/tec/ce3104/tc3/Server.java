@@ -1,6 +1,7 @@
 package cr.ac.tec.ce3104.tc3;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.util.List;
 import java.util.ArrayList;
@@ -54,15 +55,20 @@ public class Server {
      * Ejecuta un bucle infinito en búsqueda de nuevos clientes
      */
     public void startUp() {
-        // listen for clients
-        while (true) {
-            try {
+        try {
+            this.adminWindow = new AdminWindow(System.out);
+
+            PrintStream fakeStdout = new PrintStream(adminWindow.getOutputStream());
+            System.setOut(fakeStdout);
+            System.setErr(fakeStdout);
+
+            // listen for clients
+            while (true) {
                 // empieza una nueva conexión con cliente
                 new ClientAdmin(serverSocket.accept());
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
             }
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -71,6 +77,7 @@ public class Server {
 
     private ServerSocket serverSocket;
     private HashMap<Integer, Game> games = new HashMap<>();
+    private AdminWindow adminWindow;
 
     private Server() {
         try {
