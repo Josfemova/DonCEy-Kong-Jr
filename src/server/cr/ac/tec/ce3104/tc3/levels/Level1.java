@@ -38,6 +38,13 @@ public class Level1 implements Level {
         Platform[][] platforms = new Platform[][]{
             //ceiling
             Platform.repeat(new Position(0, -8), PlatformType.BRICK, screenChunks),
+            //plataformas
+            Platform.repeat(new Position(48, 152), PlatformType.BRICK, 6),
+            Platform.repeat(new Position(192, 136), PlatformType.BRICK, 8),
+            Platform.repeat(new Position(48, 112), PlatformType.BRICK, 4),
+            Platform.repeat(new Position(144, 72), PlatformType.BRICK, 8),
+            Platform.repeat(new Position(0, 64), PlatformType.BRICK, 19),
+            Platform.repeat(new Position(72, 40), PlatformType.BRICK, 3),
             //plataformas de pasto
             Platform.makeGrass(new Position(-8, 216), this, 9,waterHeight),
             Platform.makeGrass(new Position(136, 208), this, 1,waterHeight),
@@ -47,20 +54,38 @@ public class Level1 implements Level {
             //agua
             Platform.repeat(new Position(1, 232), PlatformType.WATER1, screenChunks),
             Platform.repeat(new Position(1, 224), PlatformType.WATER2, screenChunks),
-            //plataformas
-            Platform.repeat(new Position(48, 152), PlatformType.BRICK, 6),
-            Platform.repeat(new Position(192, 136), PlatformType.BRICK, 8),
-            Platform.repeat(new Position(48, 112), PlatformType.BRICK, 4),
-            Platform.repeat(new Position(144, 72), PlatformType.BRICK, 8),
-            Platform.repeat(new Position(0, 64), PlatformType.BRICK, 19),
-            Platform.repeat(new Position(72, 40), PlatformType.BRICK, 3),
         };
 
         for (Platform[] surface : platforms){
             game.spawn(surface);
         }
+        Vines vines[][] = new Vines[][]{
+            Vines.makeChain(platforms[0][13], 6),
+            Vines.makeChain(platforms[0][19], 5),
+            Vines.makeChain(platforms[0][26], 17),
+            Vines.makeChain(platforms[0][29], 17),
+
+            Vines.makeChain(platforms[1][2], 5),
+            
+            Vines.makeChain(platforms[2][2], 4),
+            Vines.makeChain(platforms[2][5], 4),
+            
+            Vines.makeChain(platforms[3][2], 4),
+            
+            Vines.makeChain(platforms[4][2], 12),
+            Vines.makeChain(platforms[4][5], 10),
+
+            Vines.makeChain(platforms[5][2], 16),
+            Vines.makeChain(platforms[5][5], 15),
+            Vines.makeChain(platforms[5][13], 13),
+            Vines.makeChain(platforms[5][17], 9),
+        };
+        for(Vines[] vine: vines){
+            game.spawn(vine);
+        }
+
         game.spawn(new DonkeyKong(new Position(16, 64 - Sprite.DONKEY_KONG.getSize().getHeight())));
 
-        return game.spawn(new PlayerAvatar(new Position(8, 192), initialScore));
+        return game.spawn(new PlayerAvatar(new Position(0, 192), initialScore));
     }
 }
