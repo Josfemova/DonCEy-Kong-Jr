@@ -45,7 +45,7 @@ public class Climbing implements ControllableMode {
             }
         }
 
-        player.switchTo(new Falling(this, player.getPosition()));
+        player.switchTo(new Falling(this, player.getPosition(), this.hangingMode.getPlatform()));
     }
 
     @Override

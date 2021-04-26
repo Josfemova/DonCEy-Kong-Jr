@@ -69,14 +69,7 @@ public class Hanging implements ControllableMode {
     private void onFaceDirection(PlayerAvatar player, HorizontalDirection newDirection) {
         this.direction = this.direction.invert();
         if (this.direction == newDirection) {
-            Integer jumpX = this.platform.getSize().getWidth();
-            if (this.direction == HorizontalDirection.LEFT) {
-                jumpX = -jumpX - 1;
-            }
-
-            Position jumpTo = new Position(player.getPosition().getX() + jumpX, player.getPosition().getY());
-            player.relocate(jumpTo);
-            player.switchTo(new Falling(new Running(this.direction), jumpTo));
+            player.switchTo(new Falling(new Running(this.direction), player.getPosition(), this.platform));
         } else {
             player.switchTo(new Hanging(this.direction, this.platform, player));
         }
