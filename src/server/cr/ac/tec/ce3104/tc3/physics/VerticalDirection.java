@@ -1,5 +1,8 @@
 package cr.ac.tec.ce3104.tc3.physics;
 
+/**
+ * Enumerador que indica las direcciones posibles en un eje vertical
+ */
 public enum VerticalDirection {
     UP,
     DOWN;

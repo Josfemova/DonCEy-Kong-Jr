@@ -7,10 +7,24 @@ import cr.ac.tec.ce3104.tc3.levels.Level;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
 public class Placement {
+    /**
+     * Crea un objeto que provee información sobre la posición de una entidad en el campo de juego
+     * @param placed referencia a la entidad del juego
+     * @param placedAt posicion en la que se encuentra la entidad
+     * @param level nivel asociado a las entidades 
+     * @param scene Colección de objetos que componen la escena de juego actual
+     */
     public Placement(GameObject placed, Position placedAt, Level level, Collection<GameObject> scene) {
         this(placed, placedAt, level, scene, true);
     }
-
+    /**
+     * Crea un objeto que provee información sobre la posición de una entidad en el campo de juego. 
+     * @param placed referencia a la entidad del juego
+     * @param placedAt posicion en la que se encuentra la entidad
+     * @param level nivel asociado a las entidades 
+     * @param scene Colección de objetos que componen la escena de juego actual
+     * @param correct indica si la posición de la entidad es correcta
+     */
     public Placement(GameObject placed, Position placedAt, Level level, Collection<GameObject> scene, Boolean correct) {
         this(placed, new Bounds(placedAt, placed.getSize()), level, scene, correct);
 
@@ -24,19 +38,33 @@ public class Placement {
             }
         }
     }
-
+    /**
+     * Indica de qué dirección provino una interacción que desató un hit (colisión)
+     * @return orinetación origen del hit
+     */
     public Orientation getHitOrientation() {
         return this.hitOrientation;
     }
 
+    /**
+     * Obtiene con cual entidad se está interactuando
+     * @return entidad con la que interactia la entidad asociada a la instancia actual
+     */
     public GameObject getInteractionTarget() {
         return this.interactionTarget;
     }
 
+    /**
+     * Obtiene la colección de entidades flotantes con los que se ha interactuado
+     * @return coleccion de entidades flotantes con las que se ha interactuado
+     */
     public Collection<GameObject> getTouchedFloatings() {
         return this.touchedFloatings;
     }
-
+    /**
+     * Indica si la entidad de juego se encuentra en un estado de caída libre
+     * @return true si la entidad se encuentra en caida libre, false de lo contrario
+     */
     public Boolean inFreeFall() {
         return this.freeFall;
     }
@@ -50,6 +78,14 @@ public class Placement {
     private Boolean freeFall = false;
     private Boolean correct;
 
+    /**
+     * Crea un objeto que provee información sobre la posición de una entidad en el campo de juego. 
+     * @param placed referencia a la entidad del juego
+     * @param Bounds caja de colision asociada a la entidad
+     * @param level nivel asociado a las entidades 
+     * @param scene Colección de objetos que componen la escena de juego actual
+     * @param correct indica si la posición de la entidad es correcta
+     */
     private Placement(GameObject placed, Bounds bounds, Level level, Collection<GameObject> scene, Boolean correct) {
         this.placed = placed;
         this.bounds = bounds;
@@ -61,6 +97,10 @@ public class Placement {
         }
     }
 
+    /**
+     * Prueba si existen colisiones contra límites de la pantalla de juego 
+     * @param gameAreaSize dimensiones del area de juego, dado como una resolución virtual
+     */
     private void testWalls(Size gameAreaSize) {
         Integer areaWidth = gameAreaSize.getWidth();
         Integer areaHeight = gameAreaSize.getHeight();
@@ -81,7 +121,10 @@ public class Placement {
             this.tryHitOrientation(Orientation.VERTICAL);
         }
     }
-
+    /**
+     * COmprueba colisiones contra el resto de entidades presentes en la escena de juego actual
+     * @param scene colección de entidades que componen el nivel dibujado actualmente en pantalla
+     */
     private void testCollisions(Collection<GameObject> scene) {
         Bounds beforeCollision = this.placed.getBounds();
 
@@ -121,7 +164,10 @@ public class Placement {
             }
         }
     }
-
+    /**
+     * comprueba si existe una colisión en una orientación dada
+     * @param hitOrientation orientación de la que proviene la posible colision
+     */
     private void tryHitOrientation(Orientation hitOrientation) {
         // Las colisiones rígidas verticales tienen precedencia por sobre las horizontales
         if (this.hitOrientation == null || this.hitOrientation != Orientation.VERTICAL) {
@@ -129,6 +175,12 @@ public class Placement {
         }
     }
 
+    /**
+     * Comprueba si se da una interacción/colisión con alguna otra entidad de juego, 
+     * y resuelve que acciones se deben tomar en el contexto de juego, tal como
+     * aumentar la cantidad de puntos del jugador, o reducir su cantidad de vidas
+     * @param other entidad contra la cual se quiere comprobar si hay colision
+     */
     private void tryInteractionTarget(GameObject other) {
         Integer deltaX = other.getPosition().getX() - this.bounds.getOrigin().getX();
         Integer deltaY = other.getPosition().getY() - this.bounds.getOrigin().getY();
