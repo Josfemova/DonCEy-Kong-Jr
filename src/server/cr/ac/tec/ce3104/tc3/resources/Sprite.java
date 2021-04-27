@@ -39,6 +39,11 @@ public class Sprite extends Sequence {
     
     public static final Sprite KEY   = Sprite.byId(59);
 
+    /**
+     * Crea y carga una imagen como sprite a utilizar en el juego
+     * @param id identificador asociado al archivo de imagen del sprite. Mismo para servidor y clientes
+     * @return Sprite asociado al id provisto
+     */
     public static Sprite byId(Integer id) {
         if (Sprite.sprites == null) {
             Sprite.sprites = new HashMap<>();
@@ -65,7 +70,10 @@ public class Sprite extends Sequence {
     public Size getSize() {
         return this.size;
     }
-
+    /**
+     * Obtiene el id asociado a la instancia de Sprite actual
+     * @return identificador de la imagen del sprite actual
+     */
     public Integer getId() {
         return this.id;
     }
@@ -74,7 +82,11 @@ public class Sprite extends Sequence {
 
     private Integer id;
     private Size size;
-
+    /**
+     * Crea una instancia de sprite a partir de una ruta de archivo
+     * @param path ruta del archivo de imagen
+     * @throws IOException error en caso de problemas al abrir archivo de imagen
+     */
     private Sprite(File path) throws IOException {
         String filename = path.getName();
         this.id = Integer.parseInt(filename.substring(0, filename.indexOf('-')));

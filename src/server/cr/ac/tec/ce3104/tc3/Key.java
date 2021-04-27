@@ -1,5 +1,8 @@
 package cr.ac.tec.ce3104.tc3;
 
+/**
+ * Enumerador para caracterizar las presiones de teclas de parte del cliente
+ */
 public enum Key {
     UP,
     DOWN,

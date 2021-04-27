@@ -19,7 +19,10 @@ public class Animation extends Sequence {
     }
 
     private Sprite[] sprites;
-
+    /**
+     * Crea una instancia de animación a partir de una lista de identificadores de imagen sprite
+     * @param spriteIds lista de inicialización con los identificadores de los sprites que conforman la animación
+     */
     private Animation(Integer... spriteIds) {
         this.sprites = new Sprite[spriteIds.length];
         for (Integer i = 0; i < spriteIds.length; ++i) {
