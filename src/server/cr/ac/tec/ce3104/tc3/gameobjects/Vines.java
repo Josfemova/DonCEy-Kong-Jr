@@ -12,6 +12,12 @@ import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 
 public class Vines extends GameObject {
+    /**
+     * Crea una liana conformada por distintas celdas unitarias hasta llegar a una cantidad de celdas dada. Coloca dicha liana bajo la plataforma especificada
+     * @param platform plataforma en la cual se desea crear la liana 
+     * @param length cantidad de celdas unitarias que conforman la liana 
+     * @return Arreglo que contiene las celdas unitarias que conforman la liana creada
+     */
     public static Vines[] makeChain(Platform platform, Integer length) {
         assert length > 0;
 
@@ -48,7 +54,10 @@ public class Vines extends GameObject {
             }
         }
     }
-
+    /**
+     * Obtiene la plataforma en la cual se encuentra la celda unitaria de liana actual
+     * @return
+     */
     public Platform getPlatform() {
         return this.platform;
     }
@@ -56,7 +65,12 @@ public class Vines extends GameObject {
     private static final Random randomGenerator = new Random();
 
     private Platform platform;
-
+    /**
+     * Construye una nueva celda unitaria de liana, dada una plataforma asociada, una posicion, y un sprite a utilizar para la celda unitaria
+     * @param platform plataforma asociada a la celda unitaria
+     * @param position posicion de la celda unitaria
+     * @param sprite sprite que indica el aspecto estético de la celda unitaria(con o sin hojas)
+     */
     private Vines(Platform platform, Position position, Sprite sprite) {
         super(sprite, position);
         this.platform = platform;

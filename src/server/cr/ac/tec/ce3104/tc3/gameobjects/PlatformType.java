@@ -11,17 +11,27 @@ public enum PlatformType {
     GRASS2(Sprite.GRASS2, false),
     GRASS3(Sprite.GRASS3, false);
 
+    /**
+     * Obtiene el sprite asociado al tipo de plataforma
+     */
     public Sprite getSprite() {
         return this.sprite;
     }
-
+    /**
+     * Indica si la plataforma es peligrosa para el jugador
+     * @return true si la plataforma puede ocasionar daño al jugador, false de lo contrario
+     */
     public Boolean isDangerous() {
         return this.dangerous;
     }
 
     private final Sprite sprite;
     private final Boolean dangerous;
-
+    /**
+     * Constructor que permite generar los valors del enum con valores importantes asociados
+     * @param sprite sprite asociado al tipo de plataforma
+     * @param dangerous booleano que indica si la plataforma representa un peligro para el jugador
+     */
     private PlatformType(Sprite sprite, Boolean dangerous){
         this.sprite = sprite;
         this.dangerous = dangerous;

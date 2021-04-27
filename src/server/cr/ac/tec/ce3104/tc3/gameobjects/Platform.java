@@ -7,6 +7,13 @@ import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 
 public class Platform extends GameObject {
+    /**
+     * Crea una serie de plataformas consecutivas dada una posición inicial, el tipo de plataforma a repetir y la cantidad de celdas unitarias que deben crearse
+     * @param base posicion de la primera celda de la pltaforma
+     * @param type tipo de la celda unitaria de la plataforma
+     * @param count extensión de la plataforma, dada en cantidad de celdas unitarias
+     * @return Arreglo que contiene una serie de plataformas que se pueden registrar en un juego
+     */
     public static Platform[] repeat(Position base, PlatformType type, Integer count) {
         Integer unitWidth = type.getSprite().getSize().getWidth();
 
@@ -17,7 +24,14 @@ public class Platform extends GameObject {
 
         return combined;
     }
-
+    /**
+     * Crea plataformas de pasto, las cuales en el juego tienen una base de tierra que llega hasta el suelo o plataforma más cercana
+     * @param base Posición en la que inicia la plataforma de pasto
+     * @param level Nivel en el cual se quiere colocar la plataforma
+     * @param plainLength Longitud de la plataforma, en cantidad de celdas unitarias en el centro
+     * @param groundHeight Distancia del la plataforma al suelo más próximo
+     * @return Arreglo que contiene una serie de plataformas para ser agregadas a un juego
+     */
     public static Platform[] makeGrass(Position base, Level level, Integer plainLength, Integer groundHeight) {
         Integer leftEdgeWidth = Sprite.GRASS1.getSize().getWidth();
         Size plainSize = Sprite.GRASS2.getSize();
@@ -48,7 +62,11 @@ public class Platform extends GameObject {
 
         return grass;
     }
-
+    /**
+     * Construye una instancia de plataforma dada una posición e indicado un tipo de plataforma
+     * @param position posición en la que se coloca la plataforma (según su esquina superior izquierda)
+     * @param type tipo de plataforma a crear
+     */
     public Platform(Position position, PlatformType type) {
         super(type.getSprite(), position);
         this.type = type;
@@ -79,6 +97,11 @@ public class Platform extends GameObject {
         super.delete();
     }
 
+    /**
+     * Agrega una serie de celdas unitarias de liana que conforman una sola unidad para ser registradas como las lianas del cuadro actual
+     * @param vines celdas unitarias que componen la liana
+     * @return true si se lograron colocar las lianas, falso si hubo un error por presencia previa de lianas, o porque el tipo de plataforma no permite lianas debajo suyo
+     */
     public boolean attach(Vines[] vines) {
         if (this.getDynamics() != Dynamics.RIGID || this.vines != null) {
             return false;
@@ -87,7 +110,10 @@ public class Platform extends GameObject {
         this.vines = vines;
         return true;
     }
-
+    /**
+     * Si la plataforma tiene una liana asociada, eliminar las unidades que componen la misma
+     * @return true si la plataforma contenía lianas y las eliminó, false de lo contrario
+     */
     public Boolean detach() {
         if (this.vines != null) {
             for (Vines object : this.vines) {
