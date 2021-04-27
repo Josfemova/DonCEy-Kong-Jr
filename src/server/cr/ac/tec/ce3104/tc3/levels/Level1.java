@@ -7,6 +7,9 @@ import cr.ac.tec.ce3104.tc3.resources.Sprite;
 import cr.ac.tec.ce3104.tc3.gameobjects.*;
 
 public class Level1 implements Level {
+    /**
+     * Establece la resolución de pantalla referencia para la pantalla de juego del cliente
+     */
     public Size getGameAreaSize() {
         //resolución original del NES
         //aspect ratio 16:15 en caso de querer escalar
