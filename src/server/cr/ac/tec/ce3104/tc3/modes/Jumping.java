@@ -11,6 +11,11 @@ import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
 public class Jumping implements ControllableMode {
+    /**
+     * Crea un nuevo modo de jugador que indica que el mismo se encuentra en el aire durante un salto
+     * @param lastMode Modo anterior al actual. Puede ser el modo antes de iniciar el salto, u otro modo de salto
+     * @param player entidada que representa el avatar del jugador
+     */
     public Jumping(ControllableMode lastMode, PlayerAvatar player) {
         this.lastMode = lastMode;
         this.initialY = player.getPosition().getY();

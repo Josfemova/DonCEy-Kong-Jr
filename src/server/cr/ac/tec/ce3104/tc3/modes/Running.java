@@ -10,6 +10,10 @@ import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
 public class Running implements ControllableMode {
+    /**
+     * Crea un nuevo estado para indicar que el jugador se encuentra corriendo en el escenario de juego
+     * @param direction direccion horizontal en la que corre el jugador
+     */
     public Running(HorizontalDirection direction) {
         this.direction = direction;
     }

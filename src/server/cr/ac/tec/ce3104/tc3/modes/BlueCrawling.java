@@ -12,6 +12,11 @@ import cr.ac.tec.ce3104.tc3.resources.Animation;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
 public class BlueCrawling implements Mode {
+    /**
+     * Crea un nuevo modo para cocodrilo azul que se encuentra en movimiento en una liana
+     * @param game juego en el que se encuentra el cocodrilo
+     * @param speedDenominator cada cuantos ticks debe moverser el cocodrilo
+     */
     public BlueCrawling(Game game, Integer speedDenominator) {
         this.speedDenominator = speedDenominator;
         this.game = game;

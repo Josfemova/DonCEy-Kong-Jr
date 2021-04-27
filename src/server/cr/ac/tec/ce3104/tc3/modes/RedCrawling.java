@@ -13,6 +13,11 @@ import cr.ac.tec.ce3104.tc3.gameobjects.Platform;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
 public class RedCrawling implements Mode {
+    /**
+     * Crea un nuevo modo de objeto que indica que un cocodrilo rojo se encuentra movimiento en una liana
+     * @param platform plataforma asociada a la liana en la cual se encuentra el cocodrilo
+     * @param speedDenominator cantidad de ticks necesarios hasta el próximo movimiento
+     */
     public RedCrawling(Platform platform, Integer speedDenominator) {
         this.platform = platform;
         this.speedDenominator = speedDenominator;

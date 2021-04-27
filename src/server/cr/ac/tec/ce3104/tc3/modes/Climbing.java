@@ -12,6 +12,11 @@ import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
 public class Climbing implements ControllableMode {
+    /**
+     * Genera un nuevo modo para el jugador, el cual indica que el jugador se encuentra escalando por una liana u objeto similar
+     * @param hangingMode modo anterior, el cual era un modo en el que el jugador está en la liana, pero no se mueve
+     * @param direction direccion vertical en la que se mueve el jugador por la liana
+     */
     public Climbing(Hanging hangingMode, VerticalDirection direction) {
         this.hangingMode = hangingMode;
         this.direction = direction;

@@ -16,6 +16,11 @@ import cr.ac.tec.ce3104.tc3.gameobjects.Platform;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
 public class BlueSearching implements Mode {
+    /**
+     * Crea un modo de búsqueda de liana para un cocodrilo azul
+     * @param game juego en el que se encuentra el cocodrilo azul
+     * @param speedDenominator cada cuantos ticks de mueve el cocodrilo
+     */
     public BlueSearching(Game game, Integer speedDenominator) {
         this.speedDenominator = speedDenominator;
         this.game = game;
@@ -104,6 +109,10 @@ public class BlueSearching implements Mode {
     private Platform currentPlatform = null;
     private Game game;
 
+    /**
+     * Cambia la dirección a la cual se dirige el cocodrilo actual 
+     * @param crocodile entidad que referencia al cocodrilo cuya orientación se quiere cambiar
+     */
     private void switchDirection(GameObject crocodile) {
         this.direction = this.direction.invert();
         crocodile.switchTo(this);

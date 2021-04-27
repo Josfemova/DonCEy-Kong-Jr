@@ -9,6 +9,10 @@ import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
 public class Standing implements ControllableMode {
+    /**
+     * Crea un nuevo modo para el jugador el cual indica que el avatar del jugador se encuentra inmóvil sobre alguna superficie
+     * @param direction dirección horizontal a la cual mira el avatar del jugador
+     */
     public Standing(HorizontalDirection direction) {
         this.direction = direction;
     }
