@@ -58,7 +58,7 @@ static void render_entity(const struct entity *entity, const struct sprite *spri
 			.h = sprite->surface->h
 		};
 
-		if(SDL_SetRenderDrawColor(game.renderer, 255, 255, 255, 128) < 0
+		if(SDL_SetRenderDrawColor(game.renderer, 255, 255, 255, 96) < 0
 		|| SDL_RenderFillRect(game.renderer, &area) < 0
 		|| SDL_SetRenderDrawColor(game.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE) < 0)
 		{

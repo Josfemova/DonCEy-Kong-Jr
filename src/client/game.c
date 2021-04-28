@@ -179,6 +179,13 @@ void handle_click(const SDL_MouseButtonEvent *event)
 		return;
 	}
 
+	float scale_x;
+	float scale_y;
+	SDL_RenderGetScale(game.renderer, &scale_x, &scale_y);
+
+	int click_x = event->x / scale_x;
+	int click_y = event->y / scale_y;
+
 	bool found = false;
 	for(struct hash_map_iter iter = hash_map_iter(&game.entities); iter.cell; hash_map_iter_next(&iter))
 	{
@@ -186,8 +193,8 @@ void handle_click(const SDL_MouseButtonEvent *event)
 		struct entity *entity = hash_map_iter_value(&iter);
 		struct sprite *sprite = hash_map_get(&game.sprites, *(int*)vec_get(&entity->sequence, entity->next_sprite));
 
-		if(event->x < entity->x || event->x >= entity->x + sprite->surface->w
-		|| event->y < entity->y || event->y >= entity->y + sprite->surface->h)
+		if(click_x < entity->x || click_x >= entity->x + sprite->surface->w
+		|| click_y < entity->y || click_y >= entity->y + sprite->surface->h)
 		{
 			// Fuera del área de la entidad
 			continue;
@@ -196,14 +203,14 @@ void handle_click(const SDL_MouseButtonEvent *event)
 		if(!found)
 		{
 			found = true;
-			printf("Click at (%d, %d) matches these IDs: %d", event->x, event->y, id);
+			printf("Click at (%d, %d) matches these IDs: %d", click_x, click_y, id);
 		} else
 		{
 			printf(", %d", id);
 		}
 	}
 
-	found ? putchar('\n') : printf("No IDs match click at (%d, %d)\n", event->x, event->y);
+	found ? putchar('\n') : printf("No IDs match click at (%d, %d)\n", click_x, click_y);
 }
 
 /**
