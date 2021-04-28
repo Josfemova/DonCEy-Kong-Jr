@@ -21,4 +21,6 @@
 #define STATS_LABEL_MAX_CHARS 32
 #define STATS_LABEL_COLOR     { .r = 255, .g = 255, .b = 255, .a = 255 }
 
+#define MAX_INPUT_LINE_SIZE 512
+
 #endif

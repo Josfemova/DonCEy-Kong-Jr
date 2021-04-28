@@ -171,8 +171,8 @@ void event_loop(void)
 	struct pollfd *x11_pollfd = &pollfds[1];
 	struct pollfd *timer_pollfd = &pollfds[2];
 
-	char *input_line = NULL;
-	size_t input_length = 0;
+	char input_line[MAX_INPUT_LINE_SIZE];
+	size_t input_offset = 0;
 
 	while(true)
 	{
@@ -196,19 +196,33 @@ void event_loop(void)
 
 				case X11_EVENT:
 					errno = 0;
-					while(getline(&input_line, &input_length, game.net_file) >= 0)
+					while(fgets(input_line + input_offset, sizeof input_line - input_offset, game.net_file))
 					{
+						if(!strchr(input_line + input_offset, '\n'))
+						{
+							input_offset += strlen(input_line + input_offset);
+							if(input_offset == sizeof input_line - 1)
+							{
+								fprintf(stderr, "Error: buffer overflow detected: %s\n", input_line);
+								quit(1);
+							}
+
+							errno = EAGAIN;
+							break;
+						}
+
 						receive(input_line);
+						input_offset = 0;
 					}
 
-					if(feof(game.net_file))
-					{
-						puts("The server has closed the connection");
-						return;
-					} else if(errno == EAGAIN)
+					if(errno == EAGAIN)
 					{
 						clearerr(game.net_file);
 						continue;
+					} else if(feof(game.net_file))
+					{
+						puts("The server has closed the connection");
+						return;
 					} else
 					{
 						sys_fatal();
