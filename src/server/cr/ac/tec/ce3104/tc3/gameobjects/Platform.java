@@ -110,7 +110,7 @@ public class Platform extends GameObject {
      * @return true si se lograron colocar las lianas, falso si hubo un error por presencia previa de lianas, o porque el tipo de plataforma no permite lianas debajo suyo
      */
     public boolean attach(Vines[] vines) {
-        if (this.getDynamics() != Dynamics.RIGID || this.vines != null) {
+        if (this.vines != null) {
             return false;
         }
 

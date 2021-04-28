@@ -79,7 +79,7 @@ public class BlueSearching implements Mode {
             }
         }
 
-        Integer offset = crocodile.getSize().getWidth();
+        Integer offset = BlueSearching.SPEED_NUMERATOR + 1;
         if (this.direction == HorizontalDirection.LEFT) {
             offset = -offset;
         }
