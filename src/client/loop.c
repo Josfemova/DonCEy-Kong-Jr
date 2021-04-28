@@ -106,7 +106,8 @@ void redraw(void)
 
 			render_entity(entity, sprite);
 
-			if(moved)
+			// Esto es una optimización, el servidor ignoraría un mensaje de espectador en todo caso
+			if(!(game.flags & GAME_FLAG_SPECTATOR) && moved)
 			{
 				struct key_value items[] =
 				{

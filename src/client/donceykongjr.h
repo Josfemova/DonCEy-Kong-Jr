@@ -84,7 +84,8 @@ extern struct game
 	enum
 	{
 		GAME_FLAG_FULLSCREEN_MODESET = 0x01,
-		GAME_FLAG_FULLSCREEN_FAKE    = 0x02
+		GAME_FLAG_FULLSCREEN_FAKE    = 0x02,
+		GAME_FLAG_SPECTATOR          = 0x04
 	} flags;
 
 	int               net_fd;

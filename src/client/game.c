@@ -261,6 +261,9 @@ static int32_t select_game(int32_t client_id, struct json_object *games)
 			{
 				if(json_object_get_int(json_object_array_get_idx(games, i)) == game_id)
 				{
+					game.flags |= GAME_FLAG_SPECTATOR;
+					puts("This client is a spectator");
+
 					valid = true;
 					break;
 				}
