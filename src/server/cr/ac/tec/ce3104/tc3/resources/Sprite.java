@@ -16,6 +16,7 @@ public class Sprite extends Sequence {
     public static final Sprite VINES           = Sprite.byId(57);
     public static final Sprite VINES_WITH_LEAF = Sprite.byId(58);
 
+    public static final Sprite STANDING_FIRST = Sprite.byId(14);
     public static final Sprite STANDING_LEFT  = Sprite.byId(54);
     public static final Sprite STANDING_RIGHT = Sprite.byId(5);
     public static final Sprite JUMPING_LEFT   = Sprite.byId(52);

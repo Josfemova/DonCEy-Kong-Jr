@@ -10,6 +10,17 @@ import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
 public class Standing implements ControllableMode {
     /**
+     * Crea un nuevo modo para el jugador en la posición de inicio de juego
+     * @param direction dirección horizontal a la cual mira el avatar del jugador
+     * @return Modo de pie que solo se usa en la posición inicial.
+     */
+    public static Standing initial() {
+         Standing mode = new Standing(HorizontalDirection.RIGHT);
+        mode.initial = true;
+        return mode;
+    }
+
+    /**
      * Crea un nuevo modo para el jugador el cual indica que el avatar del jugador se encuentra inmóvil sobre alguna superficie
      * @param direction dirección horizontal a la cual mira el avatar del jugador
      */
@@ -24,6 +35,10 @@ public class Standing implements ControllableMode {
 
     @Override
     public Sequence getSequence() {
+        if (this.initial) {
+            return Sprite.STANDING_FIRST;
+        }
+
         return this.direction == HorizontalDirection.LEFT ? Sprite.STANDING_LEFT : Sprite.STANDING_RIGHT;
     }
 
@@ -53,4 +68,5 @@ public class Standing implements ControllableMode {
     }
 
     private HorizontalDirection direction;
+    private Boolean initial = false;
 }

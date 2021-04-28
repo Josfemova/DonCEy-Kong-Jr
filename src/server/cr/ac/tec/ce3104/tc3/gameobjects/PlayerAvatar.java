@@ -22,7 +22,7 @@ public class PlayerAvatar extends GameObject{
      * @param game juego en el que se encuentra el jugador
      */
     public PlayerAvatar(Position position, Integer initialScore, Game game) {
-        super(new Falling(new Standing(HorizontalDirection.RIGHT), position), position);
+        super(Standing.initial(), position);
         this.score = initialScore;
         this.game = game;
     }

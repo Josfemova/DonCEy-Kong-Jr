@@ -73,6 +73,7 @@ public class Level1 implements Level {
         game.spawn(new Mario(new Position(65, 64 - Sprite.MARIO.getSize().getHeight())));
         game.spawn(new DonkeyKong(new Position(16, 64 - Sprite.DONKEY_KONG.getSize().getHeight()), game));
 
-        return game.spawn(new PlayerAvatar(new Position(30, 192), initialScore, game));
+        Integer initialX = 216 - Sprite.STANDING_FIRST.getSize().getHeight();
+        return game.spawn(new PlayerAvatar(new Position(30, initialX), initialScore, game));
     }
 }
