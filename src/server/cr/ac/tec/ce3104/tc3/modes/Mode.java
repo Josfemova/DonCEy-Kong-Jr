@@ -5,10 +5,14 @@ import cr.ac.tec.ce3104.tc3.physics.Orientation;
 import cr.ac.tec.ce3104.tc3.resources.Sequence;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
+// Un modo es un objeto que define la mecánica de movimiento de una entidad
 public interface Mode {
+    // Obtiene la velocidad de la entidad
     Speed getSpeed();
 
+    // Obtiene la secuencia de sprites actual
     Sequence getSequence();
+
     /**
      * Funcion que maneja eventos de relocalizacion
      * @param object objeto de juego que se quiere manejar

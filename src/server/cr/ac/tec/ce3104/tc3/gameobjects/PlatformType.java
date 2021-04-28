@@ -2,6 +2,7 @@ package cr.ac.tec.ce3104.tc3.gameobjects;
 
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 
+// Tipo de plataforma/terreno
 public enum PlatformType {
     BRICK(Sprite.BRICK, false),
     DIRT(Sprite.DIRT, false),
@@ -27,6 +28,7 @@ public enum PlatformType {
 
     private final Sprite sprite;
     private final Boolean dangerous;
+
     /**
      * Constructor que permite generar los valors del enum con valores importantes asociados
      * @param sprite sprite asociado al tipo de plataforma

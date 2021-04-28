@@ -2,6 +2,7 @@ package cr.ac.tec.ce3104.tc3.resources;
 
 import cr.ac.tec.ce3104.tc3.physics.Size;
 
+// Una secuencia de sprites, se usa para animar entidades
 public abstract class Sequence {
     /**
      * Obtiene la lista de sprites que componen la secuencia
@@ -16,6 +17,7 @@ public abstract class Sequence {
     public Size getSize() {
         return this.freeze().getSize();
     }
+
     /**
      * Obtiene cual es el sprite que indica un estado estático de la secuencia
      * @return

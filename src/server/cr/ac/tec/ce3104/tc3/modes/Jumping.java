@@ -10,6 +10,7 @@ import cr.ac.tec.ce3104.tc3.resources.Sequence;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
+// El jugador está saltando
 public class Jumping implements ControllableMode {
     /**
      * Crea un nuevo modo de jugador que indica que el mismo se encuentra en el aire durante un salto
@@ -33,6 +34,7 @@ public class Jumping implements ControllableMode {
 
     @Override
     public void onRelocate(GameObject player) {
+        // Eventualmente cae si es que no choca antes
         if (initialY - player.getPosition().getY() >= Jumping.FALL_THRESHOLD) {
             player.switchTo(new Falling(this, player.getPosition()));
         }

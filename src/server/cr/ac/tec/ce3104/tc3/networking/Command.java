@@ -13,6 +13,7 @@ import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 import cr.ac.tec.ce3104.tc3.resources.Sequence;
 
+// Un comando en formato JSON, sea recibido o enviado
 public class Command {
     /**
      * Crea un objeto json que contiene informacion sobre un error y retorna un comando construido a partir de dicho json
@@ -21,7 +22,8 @@ public class Command {
      */
     public static Command cmdError(String message) {
         return new Command().putString("error", message);
-    }   
+    }
+
     /**
      * Crea el comando de comunicacion inicial con un cliente
      * @param clientId id del cliente al que se le envia el comando
@@ -41,6 +43,7 @@ public class Command {
         return new Command().putInt("width", size.getWidth())
                             .putInt("height", size.getHeight());
     }
+
     /**
      * Crea un comando para indicarle al cliente que debe dibujar una nueva entidad de juego
      * @param id identificador de la entidad a crear
@@ -77,6 +80,7 @@ public class Command {
         return new Command().putString("op", "delete")
                             .putInt("id", id);
     }
+
     /**
      * Crea comando para indicarle al cliente que debe aplicar u efecto de resaltado a la entidad indicada 
      * @param id identificador de la entidad a resaltar
@@ -86,6 +90,7 @@ public class Command {
         return new Command().putString("op", "highlight")
                             .putInt("id", id);
     }
+
     /**
      * Crea comando para indicarle al cliente que debe remover el efecto de resaltado de una entidad
      * @param id identificador de la entidad
@@ -95,6 +100,7 @@ public class Command {
         return new Command().putString("op", "unhighlight")
                             .putInt("id", id);
     }
+
     /**
      * Crea un comando con la informacion de una partida de juego
      * @param lives vidas del jugador de la partida
@@ -106,12 +112,14 @@ public class Command {
                             .putInt("lives", lives)
                             .putInt("score", score);
     }
+
     /**
      * Inicializa un nuevo comando sin contenido
      */
     public Command() {
         this.json = new JSONObject();
     }
+
     /**
      * Inicializa un nuevo comando a partir de un string que se encuentra formateado como un objeto json
      * @param source string que contiene objeto json a representar
@@ -120,10 +128,12 @@ public class Command {
         this.json = (JSONObject)JSONValue.parse(source);
     }
 
+    // Convierte a representación textual
     @Override
     public String toString() {
         return this.json.toJSONString();
     }
+
     /**
      * Extrae un valor entero de un objeto json
      * @param key llave que identifica al campo que contiene el entero a extraer 
@@ -134,6 +144,7 @@ public class Command {
         Long value = (Long)this.json.get(key);
         return value != null ? value.intValue() : null;
     }
+
     /**
      * Extrae un valor string de un objeto json
      * @param key llave que identifica el campo en el que se encuentra el valor que se quiere extraer
@@ -142,6 +153,7 @@ public class Command {
     public String expectString(String key) {
         return (String)this.json.get(key);
     }
+
     /**
      * Coloca un par llave-valor en el objeto JSON actual. El valor es un Integer
      * @param key llave del valor Integer a insertar
@@ -151,6 +163,7 @@ public class Command {
     public Command putInt(String key, Integer value) {
         return this.put(key, value);
     }
+
     /**
      * Coloca un par llave-valor en el objeto JSON actual. El valor es un string
      * @param key llave del valor string a insertar
@@ -160,6 +173,7 @@ public class Command {
     public Command putString(String key, String value) {
         return this.put(key, value);
     }
+
     /**
      * Crea un campo de que almacena una llave-lista en el objeto json del comando actual
      * @param key llave para identificar la lista
@@ -174,6 +188,7 @@ public class Command {
         return this.put(key, array);
     }
 
+    // Objeto JSON interno
     private JSONObject json;
 
     /**

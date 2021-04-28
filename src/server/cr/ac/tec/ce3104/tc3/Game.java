@@ -18,6 +18,7 @@ import cr.ac.tec.ce3104.tc3.networking.Command;
 import cr.ac.tec.ce3104.tc3.networking.ClientAdmin;
 import cr.ac.tec.ce3104.tc3.networking.CommandBatch;
 
+// Juego en curso
 public class Game implements GameObjectObserver {
     /**
      * Inicializa una nueva partica como el cliente argumento como cliente jugador
@@ -28,9 +29,10 @@ public class Game implements GameObjectObserver {
         this.attachClient(playerClient);
 
         this.log("New game");
-        this.reset();
+        this.reset(); // Se inicia la partida
     }
 
+    // Llamado al eliminar una entidad
     @Override
     public synchronized void onObjectDeleted(GameObject object) {
         this.outputQueue.add(object.makeDeleteCommand());
@@ -39,9 +41,11 @@ public class Game implements GameObjectObserver {
         this.commit();
     }
 
+    // Llamado al cambiar el modo de una entidad
     @Override
     public synchronized void onObjectModeChanged(GameObject object) {
         if (object == this.player) {
+            // El jugador pudo haber muerto o cambiado sus estadísticas
             this.updateStats();
         }
 
@@ -49,10 +53,12 @@ public class Game implements GameObjectObserver {
         this.commit();
     }
 
+    // Muestra un mensaje de log a consola de administrador
     @Override
     public void log(String message) {
         System.out.println("[GAME" + this.playerId + "] " + message);
     }
+
     /**
      * Obtiene el id del cliente jugador del juego
      * @return id del cliente jugador
@@ -60,6 +66,7 @@ public class Game implements GameObjectObserver {
     public Integer getPlayerId() {
         return this.playerId;
     }
+
     /**
      * Obtiene la referencia al jugador activo de la partida
      * @return referencia al jugador activo de la partida
@@ -67,6 +74,7 @@ public class Game implements GameObjectObserver {
     public PlayerAvatar getPlayer() {
         return this.player;
     }
+
     /**
      * Obtiene la dificultad del estado actual del juego
      * @return Nivel de dificultad de juego
@@ -74,6 +82,7 @@ public class Game implements GameObjectObserver {
     public Integer getDifficulty() {
         return this.difficulty;
     }
+
     /**
      * Obtiene el hash map de las entidades activas en el juego
      * @return hash map de entidades de juego
@@ -81,6 +90,7 @@ public class Game implements GameObjectObserver {
     public HashMap<Integer, GameObject> getGameObjects() {
         return this.gameObjects;
     }
+
     /**
      * Indica que se debe hacer en caso de un estado de partida perdida
      */
@@ -88,6 +98,7 @@ public class Game implements GameObjectObserver {
         this.player.freeze();
         this.log("The player has lost");
 
+        // Si no quedan cero vidas, la partida se acaba
         if (--this.lives > 0) {
             this.reset();
         } else {
@@ -101,12 +112,14 @@ public class Game implements GameObjectObserver {
      * Indica la rutina a llevar a cabo una vez que el jugador ha ganado
      */
     public synchronized void onPlayerWon() {
+        // La dificultad (velocidad de enemigos) incrementa, se reinicia el nivel
         ++this.lives;
         ++this.difficulty;
 
         this.log("The player has won");
         this.reset();
     }
+
     /**
      * Agrega una entidad al escenario de juego de la partida
      */
@@ -144,6 +157,7 @@ public class Game implements GameObjectObserver {
     public synchronized Placement testCollisions(GameObject object, Position position) {
         return new Placement(object, position, this.level, this.gameObjects.values(), false);
     }
+
     /**
      * Indica los pasos a llevar a cabo una vez que se ha detectado una accion de movimiento por parte del jugador
      * @param objectId identificador de entidad que se movio
@@ -156,6 +170,7 @@ public class Game implements GameObjectObserver {
             return;
         }
 
+        // Se prueban casos de choque y colisión
         Placement placement = new Placement(object, position, this.level, this.gameObjects.values());
 
         Orientation hitOrientation = placement.getHitOrientation();
@@ -168,14 +183,17 @@ public class Game implements GameObjectObserver {
 
         GameObject target = placement.getInteractionTarget();
         if (target != null) {
+            // Interacción mutua entre dos entidades interactivas
             object.onInteraction(target);
             target.onInteraction(object);
         }
 
+        // Frutas, lianas, etc
         for (GameObject floating : placement.getTouchedFloatings()) {
             object.onFloatingContact(floating);
         }
 
+        // El caso de caída libre es un tipo especial de "colisión"
         if (placement.inFreeFall()) {
             object.getMode().onFreeFall(object);
         }
@@ -191,8 +209,10 @@ public class Game implements GameObjectObserver {
             return;
         }
 
+        // Se sincroniza el estado de los demás clientes hasta el momento
         this.commit();
 
+        // Se construye el estado completo de juego para indicárselo al nuevo cliente
         CommandBatch catchUp = new CommandBatch();
         catchUp.add(Command.cmdGameArea(this.level.getGameAreaSize()));
 
@@ -213,6 +233,7 @@ public class Game implements GameObjectObserver {
         this.clients.remove(client.getClientId());
         this.log("Client " + client + " has left");
 
+        // Ocurren cambios a la partida al desconectarse cada cliente
         if (this.clients.isEmpty()) {
             this.log("No clients left; game finalized");
             Server.getInstance().removeGame(this.playerId);
@@ -230,6 +251,7 @@ public class Game implements GameObjectObserver {
      * @param key tecla presionada
      */
     public void onPress(Key key) {
+        // Se ignoran teclas durante Dying (el cliente es ignorante de esto)
         if (this.player.hasLost()) {
             return;
         }
@@ -275,26 +297,32 @@ public class Game implements GameObjectObserver {
         this.commit();
     }
 
+    // Entidades y estado de juego
     private Level level = new Level1();
     private PlayerAvatar player;
     private HashMap<Integer, GameObject> gameObjects = new HashMap<>();
 
+    // Estadísticas
     private Integer lives = 3;
     private Integer score = 5000;
     private Integer difficulty = 0;
 
+    // Estado de clientes y cola de comandos
     private Integer playerId;
     private HashMap<Integer, ClientAdmin> clients = new HashMap<>(); //Observers
     private CommandBatch outputQueue = new CommandBatch();
+
     /**
      * Actualiza los valores relacionados al estado de juego
      */
     private void updateStats() {
+        // Solo se actualiza score si hubo un cambio
         if (this.score != this.player.getScore()) {
             this.score = this.player.getScore();
             this.syncStats();
         }
 
+        // Se congela la partida si el jugador pierde
         if (this.player.hasLost()) {
             Mode mode = this.player.getMode();
             if (!(mode instanceof Dying) && !(mode instanceof Static)) {
@@ -308,29 +336,36 @@ public class Game implements GameObjectObserver {
             }
         }
     }
+
     /**
      * Reinicia el nivel actual 
      */
     private synchronized void reset() {
         this.log("Begin level reset");
+        // `this.player == null` silencia mensajes de log (evitando spam al hacer reset)
         this.player = null;
 
+        // Se eliminan objetos viejos de la instancia pasada
         for (GameObject object : this.gameObjects.values()) {
             this.outputQueue.add(object.makeDeleteCommand());
         }
 
+        // Se limpia
         this.gameObjects.clear();
         this.syncStats();
         this.commit();
 
+        // Inicio de nivel
         this.player = this.level.setup(this, this.score);
     }
+
     /**
      * Agrega comandos a la lista de espera para sincronizar el status de jugador en los clientes segun el estatus en el servidor
      */
     private void syncStats() {
         this.outputQueue.add(Command.cmdStats(this.lives, this.score));
     }
+
     /**
      * Envia los comandos acumulados en lista de espera
      */

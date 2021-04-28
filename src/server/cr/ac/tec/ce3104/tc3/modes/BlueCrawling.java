@@ -11,6 +11,7 @@ import cr.ac.tec.ce3104.tc3.resources.Sequence;
 import cr.ac.tec.ce3104.tc3.resources.Animation;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
+// Un cocodrilo azul está pasando por una liana
 public class BlueCrawling implements Mode {
     /**
      * Crea un nuevo modo para cocodrilo azul que se encuentra en movimiento en una liana
@@ -34,6 +35,7 @@ public class BlueCrawling implements Mode {
 
     @Override
     public void onHit(GameObject crocodile, Orientation orientation) {
+        // Semejante al cocodrilo rojo, pero sí deja caerse
         if (this.sequence == Animation.BLUE_CROCODILE_DOWN) {
             this.sequence = Sprite.FALLING_BLUE;
             crocodile.switchTo(this);

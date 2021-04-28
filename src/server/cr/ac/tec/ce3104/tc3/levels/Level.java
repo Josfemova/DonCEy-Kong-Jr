@@ -4,6 +4,7 @@ import cr.ac.tec.ce3104.tc3.Game;
 import cr.ac.tec.ce3104.tc3.physics.Size;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
+// Un nivel jugable
 public interface Level {
     /**
      * Obtiene el tamaño del area de juego de referencia (resolución virtual del juego)

@@ -1,5 +1,6 @@
 package cr.ac.tec.ce3104.tc3.physics;
 
+// Posición (x, y)
 public class Position {
     /**
      * Crea una representación de coordenadas

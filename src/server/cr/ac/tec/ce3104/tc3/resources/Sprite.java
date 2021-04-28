@@ -8,14 +8,18 @@ import javax.imageio.ImageIO;
 
 import cr.ac.tec.ce3104.tc3.physics.Size;
 
+// Un sprite, las constantes publicas no forman parte de una animación
 public class Sprite extends Sequence {
+    // Frutas
     public static final Sprite APPLE   = Sprite.byId(0);
     public static final Sprite BANANA  = Sprite.byId(1);
     public static final Sprite NISPERO = Sprite.byId(2);
 
+    // Lianas
     public static final Sprite VINES           = Sprite.byId(57);
     public static final Sprite VINES_WITH_LEAF = Sprite.byId(58);
 
+    // Jugador
     public static final Sprite STANDING_FIRST = Sprite.byId(14);
     public static final Sprite STANDING_LEFT  = Sprite.byId(54);
     public static final Sprite STANDING_RIGHT = Sprite.byId(5);
@@ -26,10 +30,12 @@ public class Sprite extends Sequence {
     public static final Sprite HANGING_LEFT   = Sprite.byId(50);
     public static final Sprite HANGING_RIGHT  = Sprite.byId(9);
 
+    // Varios
     public static final Sprite DONKEY_KONG  = Sprite.byId(16);
     public static final Sprite MARIO        = Sprite.byId(21);
     public static final Sprite FALLING_BLUE = Sprite.byId(25);
 
+    // Plataformas y terrenos
     public static final Sprite WATER1   = Sprite.byId(37);
     public static final Sprite WATER2   = Sprite.byId(38);
     public static final Sprite DIRT     = Sprite.byId(39);
@@ -37,7 +43,8 @@ public class Sprite extends Sequence {
     public static final Sprite GRASS1   = Sprite.byId(41);
     public static final Sprite GRASS2   = Sprite.byId(42);
     public static final Sprite GRASS3   = Sprite.byId(43);
-    
+
+    // La llave
     public static final Sprite KEY   = Sprite.byId(59);
 
     /**
@@ -62,15 +69,18 @@ public class Sprite extends Sequence {
         return Sprite.sprites.get(id);
     }
 
+    // Obtiene este sprite en forma de un arreglo de uno
     @Override
     public Sprite[] getSprites() {
         return new Sprite[] { this };
     }
 
+    // Obtiene el tamaño del sprite
     @Override
     public Size getSize() {
         return this.size;
     }
+
     /**
      * Obtiene el id asociado a la instancia de Sprite actual
      * @return identificador de la imagen del sprite actual
@@ -79,10 +89,13 @@ public class Sprite extends Sequence {
         return this.id;
     }
 
+    // Sprites conocidos
     private static HashMap<Integer, Sprite> sprites = null;
 
+    // ID y tamaño de sprite
     private Integer id;
     private Size size;
+
     /**
      * Crea una instancia de sprite a partir de una ruta de archivo
      * @param path ruta del archivo de imagen

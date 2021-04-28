@@ -2,6 +2,7 @@ package cr.ac.tec.ce3104.tc3.gameobjects;
 
 import cr.ac.tec.ce3104.tc3.Game;
 
+// Una fábrica de cocodrilos
 public class CrocodileFactory {
     /**
      * Interfaz para la creación de cocodrilos de diversos tipos. 

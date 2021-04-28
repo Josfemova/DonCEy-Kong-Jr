@@ -1,5 +1,6 @@
 package cr.ac.tec.ce3104.tc3.physics;
 
+// Tamaño (ancho, alto)
 public class Size {
     /**
      * Representa las dimensiones de un objeto

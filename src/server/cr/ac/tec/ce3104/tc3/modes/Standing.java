@@ -8,6 +8,7 @@ import cr.ac.tec.ce3104.tc3.resources.Sequence;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
+// El jugador se encuentra quieto sobre una plataforma
 public class Standing implements ControllableMode {
     /**
      * Crea un nuevo modo para el jugador en la posición de inicio de juego

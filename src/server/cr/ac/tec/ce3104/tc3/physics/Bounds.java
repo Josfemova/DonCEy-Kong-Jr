@@ -1,5 +1,6 @@
 package cr.ac.tec.ce3104.tc3.physics;
 
+// Caja posición-tamaño que delimita una entidad
 public class Bounds {
     /**
      * Crea una caja de colisión en base a un tamaño

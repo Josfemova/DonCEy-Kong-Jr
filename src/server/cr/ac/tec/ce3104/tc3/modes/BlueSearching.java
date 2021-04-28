@@ -15,6 +15,7 @@ import cr.ac.tec.ce3104.tc3.gameobjects.Vines;
 import cr.ac.tec.ce3104.tc3.gameobjects.Platform;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
+// Un cocodrilo azul está buscando una liana por la cual bajar
 public class BlueSearching implements Mode {
     /**
      * Crea un modo de búsqueda de liana para un cocodrilo azul
@@ -46,6 +47,7 @@ public class BlueSearching implements Mode {
         Position oneBelow = new Position(crocodile.getPosition().getX(), crocodile.getPosition().getY() + 1);
         Bounds frictionBounds = new Bounds(oneBelow, crocodile.getSize());
 
+        // Identifica la plataforma sobre la que se encuentra
         Platform platform = null;
         for (GameObject other : this.game.getGameObjects().values()) {
             if (other == crocodile || !(other instanceof Platform)) {
@@ -59,10 +61,13 @@ public class BlueSearching implements Mode {
             }
         }
 
+        // Selección de plataforma actual
         if (this.currentPlatform != platform) {
             this.currentPlatform = platform;
             if (platform != null) {
                 Vines[] attached = platform.getAttached();
+
+                // Aleatoriamente baja por una liana
                 if (attached != null && BlueSearching.randomGenerator.nextInt(BlueSearching.UNLIKELIHOOD) == 0) {
                     Bounds first = attached[0].getBounds();
                     Position newOrigin = new Position

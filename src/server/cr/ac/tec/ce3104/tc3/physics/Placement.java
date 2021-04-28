@@ -6,6 +6,10 @@ import java.util.Collection;
 import cr.ac.tec.ce3104.tc3.levels.Level;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
+/**
+ * Recolecta las implicaciones de hipotéticamente mover una entidad a una posición,
+ * como colisiones e interacción con flotantes.
+ */
 public class Placement {
     /**
      * Crea un objeto que provee información sobre la posición de una entidad en el campo de juego
@@ -33,6 +37,7 @@ public class Placement {
             Position nextPosition = new Position(placedAt.getX(), placedAt.getY() + nextVerticalDisplacement);
             Bounds nextBounds = new Bounds(nextPosition, this.bounds.getSize());
 
+            // Caída libre ocurre si en dos movimientos consecutivos no existe un choque
             if (this.hitOrientation == null) {
                 this.freeFall = new Placement(placed, nextBounds, level, scene, false).hitOrientation == null;
             }
@@ -109,6 +114,7 @@ public class Placement {
         Bounds rightWall = new Bounds(new Position(areaWidth, 0), new Size(1, areaHeight));
         Bounds bottomWall = new Bounds(new Position(0, areaHeight), new Size(areaWidth, 1));
 
+        // Colisiones con paredes inherentes del mapa
         if (!this.bounds.rightOf(leftWall) || !this.bounds.leftOf(rightWall)) {
             this.tryHitOrientation(Orientation.HORIZONTAL);
         } else if (!this.bounds.aboveOf(bottomWall)) {
@@ -128,14 +134,17 @@ public class Placement {
     private void testCollisions(Collection<GameObject> scene) {
         Bounds beforeCollision = this.placed.getBounds();
 
+        // Se buscan colisiones
         for (GameObject other : scene) {
             Bounds otherBounds = other.getBounds();
             if (other == this.placed || !this.bounds.collidesWith(otherBounds)) {
                 continue;
             }
 
+            // Casos de colisión/interacción
             switch (other.getDynamics()) {
                 case RIGID:
+                    // Se considera un posible cambio de orientación de choque
                     Orientation orientation = Orientation.HORIZONTAL;
                     Boolean above = beforeCollision.aboveOf(otherBounds);
                     Boolean below = beforeCollision.belowOf(otherBounds);
@@ -182,6 +191,7 @@ public class Placement {
      * @param other entidad contra la cual se quiere comprobar si hay colision
      */
     private void tryInteractionTarget(GameObject other) {
+        // Se prefiere siempre al target más cercano
         Integer deltaX = other.getPosition().getX() - this.bounds.getOrigin().getX();
         Integer deltaY = other.getPosition().getY() - this.bounds.getOrigin().getY();
         Integer distanceSquare = deltaX * deltaX + deltaY * deltaY;

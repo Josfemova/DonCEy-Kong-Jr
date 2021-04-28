@@ -14,6 +14,7 @@ import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.physics.Placement;
 import cr.ac.tec.ce3104.tc3.physics.HorizontalDirection;
 
+// El jugador
 public class PlayerAvatar extends GameObject{
     /**
      * Constructor para generar la entidad que representa al jugador de la partida

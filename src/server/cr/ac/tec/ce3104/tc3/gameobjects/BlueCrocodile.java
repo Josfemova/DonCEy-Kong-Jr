@@ -7,6 +7,7 @@ import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.modes.BlueSearching;
 import cr.ac.tec.ce3104.tc3.resources.Animation;
 
+// Un cocodrilo azul
 public class BlueCrocodile extends Crocodile {
     /**
      * Crea un nuevo cocodrilo azul bajo un juego en una plataforma dada y con caracteristicas adaptadas segun el nivel de dificultad

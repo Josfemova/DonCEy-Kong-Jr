@@ -1,5 +1,6 @@
 package cr.ac.tec.ce3104.tc3.physics;
 
+// Velocidad unidimensional expresada como fracción distancia/tiempo
 public class SpeedRatio {
     /**
      * Crea una representación de velocidad para un objeto estacionario

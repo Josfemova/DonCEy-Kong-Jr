@@ -12,11 +12,13 @@ import cr.ac.tec.ce3104.tc3.Game;
 import cr.ac.tec.ce3104.tc3.Server;
 import cr.ac.tec.ce3104.tc3.physics.Position;
 
+// Alguno de los dos tipos de clientes
 enum ClientType {
     PLAYER,
     SPECTATOR;
 }
 
+// Las instancias de estas de clase administran cada una un cliente en particula
 public class ClientAdmin implements AutoCloseable {
     /**
      * Inicia una nueva instancia de la clase para administrar una conexion con un cliente
@@ -48,6 +50,7 @@ public class ClientAdmin implements AutoCloseable {
         return string;
     }
 
+    // Cierra y finaliza recursos, terminando la conexión
     @Override
     public void close() throws IOException {
         if (this.game == null) {
@@ -64,6 +67,7 @@ public class ClientAdmin implements AutoCloseable {
             this.game = null;
         }
     }
+
     /**
      * Obtiene el id del cliente que administra esta instania
      * @return id del cliente que administra la instancia actual
@@ -71,6 +75,7 @@ public class ClientAdmin implements AutoCloseable {
     public Integer getClientId() {
         return id;
     }
+
     /**
      * Envia un solo comando al cliente
      * @param command comando a enviarse al cliente
@@ -83,6 +88,7 @@ public class ClientAdmin implements AutoCloseable {
             this.sendError(exception);
         }
     }
+
     /**
      * Envia un conjunto de comandos al cliente
      * @param batch collecion de comandos a ser enviados al cliente
@@ -95,6 +101,7 @@ public class ClientAdmin implements AutoCloseable {
             this.sendError(exception);
         }
     }
+
     /**
      * Le comunica al cliente que se ha enontrado un error durante la ejecucion
      * @param message descripcion del error encontrado
@@ -108,6 +115,7 @@ public class ClientAdmin implements AutoCloseable {
             this.socket = null;
         }
     }
+
     /**
      * Envia una excepcion enontrada a stderr
      * @param exception excepcion a enviar a la salida estandar de error
@@ -117,14 +125,17 @@ public class ClientAdmin implements AutoCloseable {
         this.sendError(exception.toString());
     }
 
+    // Generador de IDs de clientes
     private static Integer nextClientId = 0;
 
+    // Estado de cliente
     private Game game;
     private Socket socket;
     private Integer id;
     private ClientType type;
     private Key lastKey = null;
 
+    // Recursos de I/O para este cliente
     private Thread runnerThread;
     private BufferedReader requestReader;
     private PrintWriter commandSender;
@@ -133,8 +144,10 @@ public class ClientAdmin implements AutoCloseable {
      * Rutina de inicio del hilo del cliente
      */
     private void run() {
+        // `try (this)` cierra los recursos automáticamente al salir con o sin excepción
         try (this) {
             try {
+                // Primero se realiza un handshake según define el protocolo
                 if (this.doHandshake())    {
                     while (this.processNext()) {
                         continue;
@@ -198,6 +211,7 @@ public class ClientAdmin implements AutoCloseable {
             return true;
         }
 
+        // Dispatch de comandos enviados por el cliente
         switch (operation) {
             case "press":
                 this.lastKey = Key.parse(request.expectString("key"));

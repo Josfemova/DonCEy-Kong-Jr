@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 
+// Control de directorio "assets/"
 public class Assets {
     /**
      * Obtiene todas las rutas de archivo de imágen de sprites en el folder de assets del juego

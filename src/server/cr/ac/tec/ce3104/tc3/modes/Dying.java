@@ -9,6 +9,7 @@ import cr.ac.tec.ce3104.tc3.resources.Sequence;
 import cr.ac.tec.ce3104.tc3.resources.Animation;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
+// El jugador ha perdido
 public class Dying implements ControllableMode {
     public Dying(Game game) {
         this.game = game;

@@ -11,6 +11,7 @@ import cr.ac.tec.ce3104.tc3.gameobjects.Platform;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
+// El jugador se encuentra colgando de una liana
 public class Hanging implements ControllableMode {
     /**
      * Crea un nuevo modo para el jugador, el cual indica que el avatar del jugador se encuentra estático en una liana
@@ -24,6 +25,7 @@ public class Hanging implements ControllableMode {
         Integer y = player.getPosition().getY();
         Position position = new Position(Hanging.calculateHorizontalBase(platform, direction), y);
 
+        // Determina la validez de este movimiento
         if (player.getGame().testCollisions(player, position).getHitOrientation() != null) {
             direction = direction.invert();
             position = new Position(Hanging.calculateHorizontalBase(platform, direction), y);
@@ -102,7 +104,8 @@ public class Hanging implements ControllableMode {
      * @return resultado del calculo
      */
     private static Integer calculateHorizontalBase(Platform platform, HorizontalDirection direction) {
-        Integer offset = -5; // Para que "agarre" la liana
+        // Para que "agarre" la liana
+        Integer offset = -5;
         if (direction == HorizontalDirection.RIGHT) {
             offset = -offset - Sprite.HANGING_RIGHT.getSize().getWidth();
         }
@@ -110,6 +113,7 @@ public class Hanging implements ControllableMode {
         return platform.getBounds().getHorizontalCenter() + offset;
     }
 
+    // Dirección y plataforma asociadas
     private HorizontalDirection direction;
     private Platform platform;
     private Boolean valid = true;

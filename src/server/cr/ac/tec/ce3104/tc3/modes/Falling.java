@@ -10,6 +10,7 @@ import cr.ac.tec.ce3104.tc3.resources.Sequence;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
+// El jugador está cayendo
 public class Falling implements ControllableMode {
     /**
      * Inicia un nuevo estado de caida
@@ -47,11 +48,13 @@ public class Falling implements ControllableMode {
     
     @Override
     public void onRelocate(GameObject player) {
+        // Evita deadlocks
         this.lastWasHorizontalHit = false;
     }
-    
+
     @Override
     public void onHit(GameObject player, Orientation orientation) {
+        // Los golpes horizontales son propensos a deadlocks, se manejan diferente
         Standing standingMode = new Standing(this.getDirection());
         switch (orientation) {
             case HORIZONTAL:

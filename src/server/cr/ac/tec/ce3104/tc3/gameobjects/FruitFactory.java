@@ -2,6 +2,7 @@ package cr.ac.tec.ce3104.tc3.gameobjects;
 
 import cr.ac.tec.ce3104.tc3.physics.Position;
 
+// Fábrica de frutas
 public class FruitFactory {
     /**
      * Interfaz para creación de frutas de diversos tipos

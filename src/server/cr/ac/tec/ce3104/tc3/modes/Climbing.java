@@ -11,6 +11,7 @@ import cr.ac.tec.ce3104.tc3.gameobjects.Vines;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
+// El jugador se está moviendo a lo vertical de una liana
 public class Climbing implements ControllableMode {
     /**
      * Genera un nuevo modo para el jugador, el cual indica que el jugador se encuentra escalando por una liana u objeto similar
@@ -44,6 +45,7 @@ public class Climbing implements ControllableMode {
 
     @Override
     public void onRelocate(GameObject player) {
+        // Se cae si por alguna razón se sale de la liana
         for (Vines vines : this.hangingMode.getPlatform().getAttached()) {
             if (vines.getBounds().collidesWith(player.getBounds())) {
                 return;
@@ -55,6 +57,7 @@ public class Climbing implements ControllableMode {
 
     @Override
     public void onHit(GameObject player, Orientation orientation) {
+        // Los golpes al subir/bajar de una liana tienen una mecánica distinta
         switch (orientation) {
             case HORIZONTAL:
                 PlayerAvatar avatar = (PlayerAvatar)player;
@@ -80,6 +83,7 @@ public class Climbing implements ControllableMode {
     @Override
     public void onMoveLeft(PlayerAvatar player) {
         Hanging mode = new Hanging(HorizontalDirection.RIGHT, this.hangingMode.getPlatform(), player);
+        // Puede no permitirse
         if (mode.isValid()) {
             player.switchTo(mode);
         }
@@ -88,6 +92,7 @@ public class Climbing implements ControllableMode {
     @Override
     public void onMoveRight(PlayerAvatar player) {
         Hanging mode = new Hanging(HorizontalDirection.LEFT, this.hangingMode.getPlatform(), player);
+        // Puede no permitirse
         if (mode.isValid()) {
             player.switchTo(mode);
         }
@@ -107,6 +112,7 @@ public class Climbing implements ControllableMode {
 
     private static final SpeedRatio SPEED_RATIO = new SpeedRatio(4, 6);
 
+    // Modo de colgado del que proviene
     private Hanging hangingMode;
     private VerticalDirection direction;
 }

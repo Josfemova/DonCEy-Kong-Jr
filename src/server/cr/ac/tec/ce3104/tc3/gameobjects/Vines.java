@@ -11,6 +11,7 @@ import cr.ac.tec.ce3104.tc3.physics.Dynamics;
 import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 
+// Elemento de liana
 public class Vines extends GameObject {
     /**
      * Crea una liana conformada por distintas celdas unitarias hasta llegar a una cantidad de celdas dada. Coloca dicha liana bajo la plataforma especificada

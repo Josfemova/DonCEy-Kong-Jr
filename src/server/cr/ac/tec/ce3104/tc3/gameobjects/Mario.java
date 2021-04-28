@@ -4,6 +4,7 @@ import cr.ac.tec.ce3104.tc3.physics.Dynamics;
 import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 
+// Mario
 public class Mario extends GameObject {
     /**
      * Constructor para crear una entidad con el aspecto de Mario, el responsable de la captura de Donkey Kong

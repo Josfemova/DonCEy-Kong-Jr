@@ -4,6 +4,7 @@ import cr.ac.tec.ce3104.tc3.physics.Dynamics;
 import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 
+// Una fruta
 public abstract class Fruit extends GameObject {
     /**
      * Constructor general para objetos tipo fruta en el juego

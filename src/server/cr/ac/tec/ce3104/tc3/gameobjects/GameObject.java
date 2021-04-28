@@ -11,6 +11,7 @@ import cr.ac.tec.ce3104.tc3.networking.Command;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 import cr.ac.tec.ce3104.tc3.resources.Sequence;
 
+// Una entidad de juego
 public abstract class GameObject {
     /**
      * Crea una nueva entidad a partir de un sprite y una posicion
@@ -200,6 +201,7 @@ public abstract class GameObject {
 
     private static Integer nextId = 0;
 
+    // Propiedades internas de la entidad
     private Integer id;
     private Position position;
     private Mode mode;

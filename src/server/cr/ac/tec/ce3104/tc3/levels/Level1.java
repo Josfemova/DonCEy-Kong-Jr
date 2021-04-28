@@ -6,6 +6,7 @@ import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 import cr.ac.tec.ce3104.tc3.gameobjects.*;
 
+// Primer nivel
 public class Level1 implements Level {
     /**
      * Establece la resolución de pantalla referencia para la pantalla de juego del cliente
@@ -16,6 +17,7 @@ public class Level1 implements Level {
         return new Size(256, 240);
     }
 
+    // Se montan los objetos fijos de nivel.
     @Override
     public PlayerAvatar setup(Game game, Integer initialScore) {
         Integer waterHeight = Sprite.WATER1.getSize().getHeight()*2;
@@ -69,10 +71,12 @@ public class Level1 implements Level {
             game.spawn(vine);
         }
 
+        // Varios
         game.spawn(new Key(new Position(112, 32)));
         game.spawn(new Mario(new Position(65, 64 - Sprite.MARIO.getSize().getHeight())));
         game.spawn(new DonkeyKong(new Position(16, 64 - Sprite.DONKEY_KONG.getSize().getHeight()), game));
 
+        // Jugador
         Integer initialX = 216 - Sprite.STANDING_FIRST.getSize().getHeight();
         return game.spawn(new PlayerAvatar(new Position(30, initialX), initialScore, game));
     }

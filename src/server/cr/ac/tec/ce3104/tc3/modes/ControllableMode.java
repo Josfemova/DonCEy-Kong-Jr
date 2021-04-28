@@ -3,6 +3,7 @@ package cr.ac.tec.ce3104.tc3.modes;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 import cr.ac.tec.ce3104.tc3.physics.HorizontalDirection;
 
+// Un modo controlable es aquel que responde a eventos de entrada
 public interface ControllableMode extends Mode {
     /**
      * Obtiene en a qué direccionn mira el sprite del modo actual

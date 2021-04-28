@@ -6,6 +6,7 @@ import cr.ac.tec.ce3104.tc3.physics.Dynamics;
 import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 
+// Elemento de plataforma o terreno
 public class Platform extends GameObject {
     /**
      * Crea una serie de plataformas consecutivas dada una posición inicial, el tipo de plataforma a repetir y la cantidad de celdas unitarias que deben crearse

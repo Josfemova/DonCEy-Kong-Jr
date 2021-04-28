@@ -10,6 +10,13 @@ public enum Key {
     RIGHT,
     JUMP;
 
+    /**
+     * @brief Parsea una tecla a partir de su textualización.
+     *
+     * @param source Texto representativo
+     *
+     * @return Key Tecla respectiva
+     */
     public static Key parse(String source) {
         switch (source) {
             case "up":

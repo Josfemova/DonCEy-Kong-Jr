@@ -32,10 +32,12 @@ import cr.ac.tec.ce3104.tc3.gameobjects.FruitFactory;
 import cr.ac.tec.ce3104.tc3.gameobjects.CrocodileType;
 import cr.ac.tec.ce3104.tc3.gameobjects.CrocodileFactory;
 
+// Excepción que indica un comando inválido
 class BadCommand extends Exception {
     public static final long serialVersionUID = 0;
 }
 
+// Consola de administración
 class Admin {
     /**
      * Inicializa una nueva instancia de la consola de administrador de juegos
@@ -47,16 +49,20 @@ class Admin {
         this.stdoutSink = new BufferedReader(new InputStreamReader(new PipedInputStream(stdoutPipe)));
         this.realStdout = realStdout;
 
+        // Se reemplaza stdout
         PrintStream fakeStdout = new PrintStream(stdoutPipe, true);
         System.setOut(fakeStdout);
         System.setErr(fakeStdout);
 
+        // Se inicia la ventana
         SwingUtilities.invokeLater(() -> this.start());
     }
 
+    // Stdout original y con pipe
     private final PrintStream realStdout;
     private final BufferedReader stdoutSink;
 
+    // Elementos gráficos
     private JFrame frame;
     private JTextArea consoleOutput;
     private JTextField inputLine;
@@ -66,6 +72,8 @@ class Admin {
      * Inicia la ventana de administrador de juegos y la configura
      */
     private void start() {
+        // Se inicializan elementos gráficos
+
         this.frame = new JFrame("DonCEy Kong Jr. server");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.getContentPane().setLayout(new BoxLayout(this.frame.getContentPane(), BoxLayout.PAGE_AXIS));
@@ -90,6 +98,7 @@ class Admin {
         this.frame.pack();
         this.frame.setVisible(true);
 
+        // Se inicia el hilo que lee los contenidos de consola
         this.sinkThread = new Thread(() -> this.readSink());
         this.sinkThread.start();
     }
@@ -105,17 +114,21 @@ class Admin {
                     try {
                         line = this.stdoutSink.readLine();
                     } catch (IOException exception) {
+                        // Esto pasa cuando termina el hilo de un cliente
                         continue;
                     }
 
+                    // Esto nunca debería pasar
                     if (line == null) {
                         break;
                     }
 
+                    // Se muestra en tanto stdout real como consola
                     this.realStdout.println(line);
                     SwingUtilities.invokeLater(() -> this.consoleOutput.append(line + "\n"));
                 }
             } finally {
+                // Se restaura stdout/stderr en caso de un problema
                 System.setOut(this.realStdout);
                 System.setErr(this.realStdout);
             }
@@ -138,6 +151,7 @@ class Admin {
         String[] command = line.split(" +");
         System.out.println("> " + line);
 
+        // Se parsea la línea de comando
         try {
             switch (command[0]) {
                 case "help":
@@ -329,6 +343,7 @@ class Admin {
                     System.err.println("Error: unknown command '" + command[0] + "'. Type 'help' for more information.");
                     break;
             }
+        // BadCommand se utiliza para indicar un comando inválido
         } catch (BadCommand badCommand) {
             System.err.println("Error: bad usage. Type 'help' for more information.");
         }

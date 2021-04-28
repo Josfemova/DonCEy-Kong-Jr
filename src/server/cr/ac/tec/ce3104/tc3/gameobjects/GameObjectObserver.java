@@ -1,5 +1,6 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
+// Patrón observer. Un observador sobre una entidad.
 public interface GameObjectObserver {
     /**
      * Indica que acciones tomar cuando la entidad dada es eliminada del escenario de juego

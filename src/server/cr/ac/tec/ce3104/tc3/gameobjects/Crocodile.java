@@ -4,16 +4,20 @@ import cr.ac.tec.ce3104.tc3.modes.Mode;
 import cr.ac.tec.ce3104.tc3.physics.Dynamics;
 import cr.ac.tec.ce3104.tc3.physics.Position;
 
+// Un cocodrilo
 public abstract class Crocodile extends GameObject {
+    // Siempre son interactivos
     @Override
     public Dynamics getDynamics() {
         return Dynamics.INTERACTIVE;
     }
 
+    // Siempre matan al jugador
     @Override
     public Boolean isDangerous() {
         return true;
     }
+
     /**
      * Obtiene cada cuantos ticks se da un movimiento de la entidad
      * @param difficulty indica el nivel de dificultad, entre más grande sea, más afecta la velocidad del cocodrilo

@@ -12,6 +12,7 @@ import cr.ac.tec.ce3104.tc3.gameobjects.Vines;
 import cr.ac.tec.ce3104.tc3.gameobjects.Platform;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 
+// Un cocodrilo rojo se mueve a lo vertical de una liana
 public class RedCrawling implements Mode {
     /**
      * Crea un nuevo modo de objeto que indica que un cocodrilo rojo se encuentra movimiento en una liana
@@ -40,10 +41,12 @@ public class RedCrawling implements Mode {
 
     @Override
     public void onRelocate(GameObject crocodile) {
+        // Muere si se sale de la liana por cualquier razón
         Vines[] vines = this.platform.getAttached();
         if (!this.platform.exists() || vines == null) {
             crocodile.delete();
         } else if (this.direction == VerticalDirection.DOWN) {
+            // Rebota algún tiempo antes de llegar al borde exacto
             Bounds crocodileBounds = crocodile.getBounds();
             Bounds lastBounds = vines[vines.length - 1].getBounds();
             Integer crocodileHeight = crocodileBounds.getSize().getHeight();
@@ -58,12 +61,14 @@ public class RedCrawling implements Mode {
 
     @Override
     public void onHit(GameObject crocodile, Orientation orientation) {
-            this.direction = this.direction.invert();
-            crocodile.switchTo(this);
+        // Si pega cambia de dirección
+        this.direction = this.direction.invert();
+        crocodile.switchTo(this);
     }
 
     private static final Integer SPEED_NUMERATOR = 2;
 
+    // Dirección de movimiento y plataforma
     private VerticalDirection direction = VerticalDirection.DOWN;
     private Platform platform;
     private Integer speedDenominator;

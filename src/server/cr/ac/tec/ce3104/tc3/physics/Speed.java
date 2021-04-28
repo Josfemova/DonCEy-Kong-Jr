@@ -1,5 +1,6 @@
 package cr.ac.tec.ce3104.tc3.physics;
 
+// Velocidad (x, y)
 public class Speed {
     /**
      * Crea una instancia de velocidad que representa un estado estacionario

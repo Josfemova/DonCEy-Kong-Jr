@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import cr.ac.tec.ce3104.tc3.networking.ClientAdmin;
 
+// Clase raíz: constituye una instancia del servidor
 public class Server {
     /**
      * Obtiene la instancia activa del servidor. Si el servidor no ha sido inicializado anteriormente, entonces lo inicializa
@@ -72,9 +73,9 @@ public class Server {
             this.adminWindow = new Admin(System.out);
             System.out.println("[SERVR] Listening on 127.0.0.1:" + PORT + "...");
 
-            // listen for clients
+            // Bucle principal de escucha a nuevos clientes
             while (true) {
-                // empieza una nueva conexión con cliente
+                // Empieza una nueva conexión con cliente
                 ClientAdmin client = new ClientAdmin(this.serverSocket.accept());
                 System.out.println("[SERVR] Accepted connection from client " + client);
             }
@@ -83,11 +84,17 @@ public class Server {
         }
     }
 
+    // Patrón singleton
     private static Server instance;
     private static final Integer PORT = 8080;
 
+    // Socket pasivo
     private ServerSocket serverSocket;
+
+    // Juegos activos
     private HashMap<Integer, Game> games = new HashMap<>();
+
+    // Consola de administración
     private Admin adminWindow;
 
     /**
@@ -96,8 +103,9 @@ public class Server {
     private Server() {
         try {
             serverSocket = new ServerSocket(PORT);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+
             System.out.println("Fatal error: unable to start server");
             System.exit(-1);
         }

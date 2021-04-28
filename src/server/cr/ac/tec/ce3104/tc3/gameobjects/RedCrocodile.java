@@ -5,6 +5,7 @@ import cr.ac.tec.ce3104.tc3.physics.Position;
 import cr.ac.tec.ce3104.tc3.modes.RedCrawling;
 import cr.ac.tec.ce3104.tc3.resources.Animation;
 
+// Cocodrilo rojo
 public class RedCrocodile extends Crocodile {
     /**
      * Crea un nuevo cocodrilo rojo una plataforma dada y con caracteristicas adaptadas segun el nivel de dificultad
