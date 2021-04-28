@@ -36,7 +36,8 @@
  */
 struct game game =
 {
-	.state       = HANDSHAKE_WHOAMI,
+	.state       = GAME_STATE_HANDSHAKE_WHOAMI,
+	.flags       = 0,
 	.net_fd      = -1,
 	.x11_fd      = -1,
 	.timer_fd    = -1,
@@ -46,8 +47,7 @@ struct game game =
 	.font        = NULL,
 	.ticks       = 0,
 	.stats_label = { .texture = NULL, .surface = NULL },
-	.max_depth   = 0,
-	.fullscreen  = false
+	.max_depth   = 0
 };
 
 /**

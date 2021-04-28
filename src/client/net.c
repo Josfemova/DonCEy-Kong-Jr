@@ -285,17 +285,17 @@ void receive(const char *line)
 
 	switch(game.state)
 	{
-		case HANDSHAKE_WHOAMI:
+		case GAME_STATE_HANDSHAKE_WHOAMI:
 			start_or_watch_game(root);
-			game.state = HANDSHAKE_INIT;
+			game.state = GAME_STATE_HANDSHAKE_INIT;
 			break;
 
-		case HANDSHAKE_INIT:
+		case GAME_STATE_HANDSHAKE_INIT:
 			init_graphics(root);
 			init_sprites();
 			init_clock();
 
-			game.state = READY;
+			game.state = GAME_STATE_READY;
 			break;
 
 		default:

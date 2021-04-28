@@ -16,17 +16,6 @@
 #include "util.h"
 
 /**
- * @brief Estados posibles en los que se puede encontrar un jugador
- * 
- */
-enum client_state
-{
-	HANDSHAKE_WHOAMI,
-	HANDSHAKE_INIT,
-	READY
-};
-
-/**
  * @brief Representa los componentes de un sprite
  * 
  */
@@ -78,7 +67,26 @@ struct key_value
  */
 extern struct game
 {
-	enum client_state state;
+	/**
+	 * @brief Estados posibles en los que se puede encontrar un jugador
+	 * 
+	 */
+	enum
+	{
+		GAME_STATE_HANDSHAKE_WHOAMI,
+		GAME_STATE_HANDSHAKE_INIT,
+		GAME_STATE_READY
+	} state;
+
+	/**
+	 * @brief Bitflags que indican distintas opciones bajo las que puede operar el cliente.
+	 */
+	enum
+	{
+		GAME_FLAG_FULLSCREEN_MODESET = 0x01,
+		GAME_FLAG_FULLSCREEN_FAKE    = 0x02
+	} flags;
+
 	int               net_fd;
 	int               x11_fd;
 	int               timer_fd;
@@ -91,7 +99,6 @@ extern struct game
 	struct hash_map   entities;
 	struct sprite     stats_label;
 	int               max_depth;
-	bool              fullscreen;
 } game;
 
 /**

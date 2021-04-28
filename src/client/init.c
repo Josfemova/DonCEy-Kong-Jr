@@ -100,16 +100,17 @@ void init_graphics(struct json_object *message)
 	}
 
 	game.x11_fd = XConnectionNumber(wm_info.info.x11.display);
-
 	SDL_SetWindowTitle(game.window, "DonCEy Kong Jr.");
-	if(!game.fullscreen)
+
+	if(!(game.flags & GAME_FLAG_FULLSCREEN_MODESET) && !(game.flags & GAME_FLAG_FULLSCREEN_FAKE))
 	{
 		SDL_SetWindowPosition(game.window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); //centra la pantalla
 	} else
 	{
 		SDL_DisplayMode display_mode;
+		int mode = (game.flags & GAME_FLAG_FULLSCREEN_FAKE) ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_FULLSCREEN;
 
-		if(SDL_SetWindowFullscreen(game.window, SDL_WINDOW_FULLSCREEN) != 0
+		if(SDL_SetWindowFullscreen(game.window, mode) != 0
 		|| SDL_GetCurrentDisplayMode(0, &display_mode) != 0
 		|| SDL_RenderSetScale(game.renderer, (float)display_mode.w / width, (float)display_mode.h / height) != 0)
 		{

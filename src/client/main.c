@@ -29,27 +29,32 @@ int main(int argc, char *argv[])
 {
 	const struct option CMDLINE_OPTIONS[] =
 	{
-		{"help",       no_argument, NULL, 'h'},
-		{"version",    no_argument, NULL, 'v'},
-		{"fullscreen", no_argument, NULL, 'f'},
-		{NULL,         0,           NULL, 0}
+		{"help",            no_argument, NULL, 'h'},
+		{"version",         no_argument, NULL, 'v'},
+		{"fullscreen",      no_argument, NULL, 'f'},
+		{"fullscreen-fake", no_argument, NULL, 'F'},
+		{NULL,              0,           NULL, 0}
 	};
 
 	game.sprites = hash_map_new(8, sizeof(struct sprite));
 	game.entities = hash_map_new(8, sizeof(struct entity));
 
-	while(true)
+	int option;
+	while((option = getopt_long(argc, argv, "hvfF", CMDLINE_OPTIONS, NULL)) != -1)
 	{
-		int option = getopt_long(argc, argv, "hvf", CMDLINE_OPTIONS, NULL);
-		if(option == -1)
-		{
-			break;
-		}
-
 		switch(option)
 		{
 			case 'h':
-				fprintf(stderr, "Usage: %s [-f|--fullscreen] <host> <port>\n", argv[0]);
+				fprintf
+				(
+					stderr,
+					"Usage: %s [OPTION]... <host> <port>\n"
+					"\n"
+					"    -f|--fullscreen       Enters fullscreen through Kernel Mode Setting\n"
+					"    -F|--fake-fullscreen  Displays a maximized and borderless X11 window\n",
+					argv[0]
+				);
+
 				return 0;
 
 			case 'v':
@@ -57,7 +62,11 @@ int main(int argc, char *argv[])
 				return 0;
 
 			case 'f':
-				game.fullscreen = true;
+				game.flags |= GAME_FLAG_FULLSCREEN_MODESET;
+				break;
+
+			case 'F':
+				game.flags |= GAME_FLAG_FULLSCREEN_FAKE;
 				break;
 
 			case '?':
