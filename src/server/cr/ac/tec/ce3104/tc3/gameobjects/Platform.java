@@ -20,6 +20,9 @@ public class Platform extends GameObject {
         Platform[] combined = new Platform[count];
         for (Integer i = 0; i < count; ++i) {
             combined[i] = new Platform(new Position(base.getX() + i * unitWidth, base.getY()), type);
+            if ((i == 0 || i == count - 1) && count >= 3) {
+                combined[i].forceFloat = true;
+            }
         }
 
         return combined;
@@ -82,6 +85,10 @@ public class Platform extends GameObject {
                 return Dynamics.FLOATING;
 
             default:
+                if (this.forceFloat) {
+                    return Dynamics.FLOATING;
+                }
+
                 return this.type.isDangerous() ? Dynamics.INTERACTIVE : Dynamics.RIGID;
         }
     }
@@ -133,4 +140,5 @@ public class Platform extends GameObject {
 
     private PlatformType type;
     private Vines[] vines = null;
+    private Boolean forceFloat = false;
 }
