@@ -31,16 +31,19 @@ void quit(int exit_code)
 		SDL_DestroyWindow(game.window);
 	}
 
-	for(size_t i = 0; i < game.sprites.buckets.length; ++i)
+	for(struct hash_map_iter iter = hash_map_iter(&game.entities); iter.cell; hash_map_iter_next(&iter))
 	{
-		struct vec *bucket = vec_get(&game.sprites.buckets, i);
-		for(size_t j = 0; j < bucket->length; ++j)
-		{
-			struct sprite *sprite = bucket_get_value(&game.sprites, bucket, j);
+		struct entity *entity = hash_map_iter_value(&iter);
 
-			SDL_DestroyTexture(sprite->texture);
-			SDL_FreeSurface(sprite->surface);
-		}
+		vec_clear(&entity->sequence);
+	}
+
+	for(struct hash_map_iter iter = hash_map_iter(&game.sprites); iter.cell; hash_map_iter_next(&iter))
+	{
+		struct sprite *sprite = hash_map_iter_value(&iter);
+
+		SDL_DestroyTexture(sprite->texture);
+		SDL_FreeSurface(sprite->surface);
 	}
 
 	hash_map_clear(&game.sprites);

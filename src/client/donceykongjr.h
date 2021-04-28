@@ -52,7 +52,6 @@ struct ratio
  */
 struct entity
 {
-	int          id;
 	int          x;
 	int          y;
 	int          z;

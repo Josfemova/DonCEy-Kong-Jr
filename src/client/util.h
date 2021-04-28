@@ -27,6 +27,18 @@ struct hash_map
 };
 
 /**
+ * @brief Iterador sobre un hash map
+ */
+struct hash_map_iter
+{
+	struct hash_map *map;
+	void            *cell;
+	size_t           current_bucket;
+	size_t           next_index;
+};
+
+
+/**
  * @brief Crea e inicializa un nuevo vector
  * 
  * @param element_size Tamaño en memoria de cada elemento
@@ -118,13 +130,33 @@ void *hash_map_put(struct hash_map *map, int key, const void *value);
 void hash_map_delete(struct hash_map *map, int key);
 
 /**
- * @brief Obtiene un valor en el índice dado de un bucket de un hash map
- * 
- * @param map Hash map en el que se encuentra el valor
- * @param bucket Bucket del hash map en el que se encuentra el valor
- * @param index Índice en el bucket del valor que se quiere obtener
- * @return void* puntero al valor obtenido
+ * @brief Comienza una iteración sobre un mapa.
+ *
+ * @param map El mapa sobre el que se iterará.
+ * @return struct hash_map_iter Iterador sobre el hash_map
  */
-void *bucket_get_value(struct hash_map *map, struct vec *bucket, size_t index);
+struct hash_map_iter hash_map_iter(struct hash_map *map);
+
+/**
+ * @brief Avanza el iterador. Solo es válido llamar a este
+ * procedimiento si `iter->cell` no es un puntero nulo.
+ *
+ * @param iter Iterador a avanzar
+ */
+void hash_map_iter_next(struct hash_map_iter *iter);
+
+/**
+ * @brief Obtiene la llave del elemento actual en el iterador.
+ *
+ * @return int Llave del elemento actual.
+ */
+int hash_map_iter_key(struct hash_map_iter *iter);
+
+/**
+ * @brief Obtiene un puntero al valor actual del iterador.
+ *
+ * @return int Valor del elemento actual.
+ */
+void *hash_map_iter_value(struct hash_map_iter *iter);
 
 #endif

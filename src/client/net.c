@@ -200,7 +200,6 @@ static void handle_command(struct json_object *message)
 		struct entity *existing = hash_map_get(&game.entities, id);
 		struct entity *entity = existing ? existing : &new;
 
-		entity->id = id;
 		if(existing)
 		{
 			vec_resize(&existing->sequence, 0);
