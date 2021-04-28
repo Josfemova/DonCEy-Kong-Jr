@@ -44,16 +44,6 @@ public class Vines extends GameObject {
         return Dynamics.INTERACTIVE;
     }
 
-    @Override
-    public void onInteraction(GameObject other) {
-        if (other instanceof PlayerAvatar) {
-            ControllableMode mode = (ControllableMode)other.getMode();
-            if (!(mode instanceof Climbing) && !(mode instanceof Hanging)
-             && (!(mode instanceof Falling) || ((Falling)mode).getSourcePlatform() != this.platform)) {
-                other.switchTo(new Hanging(mode.getDirection(), this.platform, (PlayerAvatar)other));
-            }
-        }
-    }
     /**
      * Obtiene la plataforma en la cual se encuentra la celda unitaria de liana actual
      * @return

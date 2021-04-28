@@ -85,7 +85,7 @@ public class BlueSearching implements Mode {
         }
 
         Position nextBelow = new Position(oneBelow.getX() + offset, oneBelow.getY());
-        if (!game.wouldHit(crocodile, nextBelow)) {
+        if (game.testCollisions(crocodile, nextBelow).getHitOrientation() == null) {
             this.switchDirection(crocodile);
         }
     }

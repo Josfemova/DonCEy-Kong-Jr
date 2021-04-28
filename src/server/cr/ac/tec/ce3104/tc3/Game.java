@@ -139,10 +139,10 @@ public class Game implements GameObjectObserver {
      * Indica si un objeto colisionaria si se enontrase en una posicion dada
      * @param object objeto cuyo status de colision quiere chequearse
      * @param position posicion hipotetica
-     * @return Si en dicha posicion el objeto colisiona, true, false de lo contrario
+     * @return Un objecto `Placement` que describe aspectos de colisión
      */
-    public synchronized Boolean wouldHit(GameObject object, Position position) {
-        return new Placement(object, position, this.level, this.gameObjects.values(), false).getHitOrientation() != null;
+    public synchronized Placement testCollisions(GameObject object, Position position) {
+        return new Placement(object, position, this.level, this.gameObjects.values(), false);
     }
     /**
      * Indica los pasos a llevar a cabo una vez que se ha detectado una accion de movimiento por parte del jugador

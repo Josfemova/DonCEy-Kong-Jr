@@ -1,11 +1,17 @@
 package cr.ac.tec.ce3104.tc3.gameobjects;
 
 import cr.ac.tec.ce3104.tc3.Game;
+import cr.ac.tec.ce3104.tc3.modes.Mode;
 import cr.ac.tec.ce3104.tc3.modes.Falling;
+import cr.ac.tec.ce3104.tc3.modes.Running;
+import cr.ac.tec.ce3104.tc3.modes.Hanging;
+import cr.ac.tec.ce3104.tc3.modes.Climbing;
 import cr.ac.tec.ce3104.tc3.modes.Standing;
+import cr.ac.tec.ce3104.tc3.modes.ControllableMode;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 import cr.ac.tec.ce3104.tc3.physics.Dynamics;
 import cr.ac.tec.ce3104.tc3.physics.Position;
+import cr.ac.tec.ce3104.tc3.physics.Placement;
 import cr.ac.tec.ce3104.tc3.physics.HorizontalDirection;
 
 public class PlayerAvatar extends GameObject{
@@ -26,11 +32,39 @@ public class PlayerAvatar extends GameObject{
         return this.lost ? Dynamics.FLOATING : Dynamics.INTERACTIVE;
     }
 
+    /**
+     * @brief Cambia el modo de dinámica del jugador.
+     */
+    @Override
+    public void switchTo(Mode newMode) {
+        if (this.getMode() != newMode && newMode instanceof Running && this.lastVines != null) {
+            Placement placement = this.game.testCollisions(this, this.getPosition());
+
+            GameObject target = placement.getInteractionTarget();
+            if (target == null || !(target instanceof Vines) || !this.inLastVines((Vines)target)) {
+                this.lastVines = null;
+            }
+        }
+
+        super.switchTo(newMode);
+    }
+
     @Override
     public void onInteraction(GameObject other) {
         if (other.isDangerous()) {
             // Se ha tocado un enemigo o agua
             this.die();
+        } else if (other instanceof Vines) {
+            Vines vines = (Vines)other;
+            ControllableMode mode = (ControllableMode)this.getMode();
+
+            if (!this.inLastVines(vines) && !(mode instanceof Climbing) && !(mode instanceof Hanging)) {
+                Hanging newMode = new Hanging(mode.getDirection(), vines.getPlatform(), this);
+                if (newMode.isValid()) {
+                    this.lastVines = vines.getPlatform().getAttached();
+                    this.switchTo(newMode);
+                }
+            }
         }
     }
 
@@ -88,6 +122,11 @@ public class PlayerAvatar extends GameObject{
         return 2;
     }
     
+    private Integer score;
+    private Boolean lost = false;
+    private Boolean hasKey = false;
+    private Game game;
+    private Vines[] lastVines = null;
     
     /**
      * Agrega la diferencia de puntaje dada al puntaje actual del jugador
@@ -98,8 +137,21 @@ public class PlayerAvatar extends GameObject{
         this.refreshMode();
     }
 
-    private Integer score;
-    private Boolean lost = false;
-    private Boolean hasKey = false;
-    private Game game;
+    /**
+     * @brief Determina si una liana se encuentra dentro de la blacklist temporal.
+     *
+     * @param other Liana contra la cual comparar.
+     * @return Indicación de si se debe evitar temporalmente esta liana.
+     */
+    private Boolean inLastVines(Vines other) {
+        if (this.lastVines != null) {
+            for (Vines vines : this.lastVines) {
+                if (vines == other) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

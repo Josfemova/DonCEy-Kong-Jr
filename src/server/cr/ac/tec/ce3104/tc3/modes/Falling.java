@@ -7,7 +7,6 @@ import cr.ac.tec.ce3104.tc3.physics.Orientation;
 import cr.ac.tec.ce3104.tc3.physics.HorizontalDirection;
 import cr.ac.tec.ce3104.tc3.resources.Sprite;
 import cr.ac.tec.ce3104.tc3.resources.Sequence;
-import cr.ac.tec.ce3104.tc3.gameobjects.Platform;
 import cr.ac.tec.ce3104.tc3.gameobjects.GameObject;
 import cr.ac.tec.ce3104.tc3.gameobjects.PlayerAvatar;
 
@@ -18,18 +17,8 @@ public class Falling implements ControllableMode {
      * @param initialPosition Posicion desde la que comienza el modo actual
      */
     public Falling(ControllableMode lastMode, Position initialPosition) {
-        this(lastMode, initialPosition, null);
-    }
-    /**
-     * Inicia un nuevo estado de caida
-     * @param lastMode Modo anterior al actual
-     * @param initialPosition Posicion desde la que comienza el modo actual
-     * @param sourcePlatform Plataforma en la que se inicio el movimiento
-     */
-    public Falling(ControllableMode lastMode, Position initialPosition, Platform sourcePlatform) {
         this.lastMode = lastMode;
         this.initialY = initialPosition.getY();
-        this.sourcePlatform = sourcePlatform;
     }
 
     /**
@@ -85,19 +74,11 @@ public class Falling implements ControllableMode {
                 break;
         }
     }
-    /**
-     * Obtiene la plataforma en la cual inicio el modo
-     * @return
-     */
-    public Platform getSourcePlatform() {
-        return this.sourcePlatform;
-    }
 
     private static final SpeedRatio FREE_FALL_SPEED_RATIO = new SpeedRatio(3, 1);
     private static final Integer    DEATH_THRESHOLD       = 50;
 
     private ControllableMode lastMode;
     private Integer          initialY;
-    private Platform         sourcePlatform;
     private Boolean          lastWasHorizontalHit = false;
 }

@@ -24,13 +24,19 @@ public class Hanging implements ControllableMode {
         Integer y = player.getPosition().getY();
         Position position = new Position(Hanging.calculateHorizontalBase(platform, direction), y);
 
-        if (player.getGame().wouldHit(player, position)) {
+        if (player.getGame().testCollisions(player, position).getHitOrientation() != null) {
             direction = direction.invert();
             position = new Position(Hanging.calculateHorizontalBase(platform, direction), y);
+
+            if (player.getGame().testCollisions(player, position).getHitOrientation() != null) {
+                this.valid = false;
+            }
         }
 
-        this.direction = direction;
-        player.relocate(position);
+        if (this.valid) {
+            this.direction = direction;
+               player.relocate(position);
+        }
     }
 
     @Override
@@ -50,7 +56,7 @@ public class Hanging implements ControllableMode {
 
     @Override
     public void onJump(PlayerAvatar player) {
-        player.switchTo(new Falling(new Standing(this.direction), player.getPosition(), this.platform));
+        player.switchTo(new Falling(new Standing(this.direction), player.getPosition()));
     }
 
     @Override
@@ -81,6 +87,15 @@ public class Hanging implements ControllableMode {
     }
 
     /**
+     * @brief Determina si el modo es válido antes de cambiar al mismo,
+     *
+     * @return Estado de validez.
+     */
+    public Boolean isValid() {
+        return this.valid;
+    }
+
+    /**
      * Calcula la posicion horizontal en la que se debe encontrar el jugador al sujetarse de la liana
      * @param platform plataforma asociada a una liana
      * @param direction direccion en la cual mira el jugador
@@ -97,6 +112,8 @@ public class Hanging implements ControllableMode {
 
     private HorizontalDirection direction;
     private Platform platform;
+    private Boolean valid = true;
+
     /**
      * Indica la rutina a ejecutar dado un cambio de orientación del jugador producto de una entrada de usuario
      * @param player entidad que identifica al avatar del jugador
@@ -105,7 +122,7 @@ public class Hanging implements ControllableMode {
     private void onFaceDirection(PlayerAvatar player, HorizontalDirection newDirection) {
         this.direction = this.direction.invert();
         if (this.direction == newDirection) {
-            player.switchTo(new Falling(new Running(this.direction), player.getPosition(), this.platform));
+            player.switchTo(new Falling(new Running(this.direction), player.getPosition()));
         } else {
             player.switchTo(new Hanging(this.direction, this.platform, player));
         }
