@@ -30,11 +30,15 @@ public abstract class GameObject {
         this.position = position;
         this.mode = mode;
     }
+
     /**
-     * Obtiene el tipo de colisiones que se pueden tener con el objeto
-     * @return typo de colision con el objeto
+     * COnstruye un string para describir de una manera simple una entidad de juego
      */
-    public abstract Dynamics getDynamics();
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + " #" + this.id
+             + " at (" + this.position.getX() + ", " + this.position.getY() + ")";
+    }
 
     /**
      * Obtiene el id de la entidad representada(mismo para cliente y servidor)
@@ -97,8 +101,8 @@ public abstract class GameObject {
     public void addObserver(GameObjectObserver observer) {
         assert this.observer == null;
         this.observer = observer;
-        this.observer.log("New object " + this.id);
     }
+
     /**
      * Indica si la entidad forma parte de algun juego activo
      * @return true si la entidad esta registrada en un juego, falso de lo contrario
@@ -120,7 +124,7 @@ public abstract class GameObject {
                 String previousName = previous.getClass().getSimpleName();
                 String newName = newMode.getClass().getSimpleName();
 
-                this.observer.log("Object " + this.id + " switched from " + previousName + " to " + newName);
+                this.observer.log("Object " + this + " switched from " + previousName + " to " + newName);
             }
         }
     }
@@ -152,6 +156,12 @@ public abstract class GameObject {
             this.switchTo(new Static(this.mode.getSequence().freeze()));
         }
     }
+
+    /**
+     * Obtiene el tipo de colisiones que se pueden tener con el objeto
+     * @return typo de colision con el objeto
+     */
+    public abstract Dynamics getDynamics();
 
     /**
      * Indica la rutina a ejecutar cuando el objeto interactua con alguna otra entidad

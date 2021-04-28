@@ -35,6 +35,19 @@ public class ClientAdmin implements AutoCloseable {
         this.runnerThread.start();
     }
 
+    /**
+     * Provee una representación textual de este cliente.
+     */
+    @Override
+    public String toString() {
+        String string = "#" + this.id;
+        if (this.socket != null) {
+            string += " (" + this.socket.getRemoteSocketAddress() + ")";
+        }
+
+        return string;
+    }
+
     @Override
     public void close() throws IOException {
         if (this.socket != null) {

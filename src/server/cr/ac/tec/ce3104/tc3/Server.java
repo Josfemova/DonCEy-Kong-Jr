@@ -55,6 +55,7 @@ public class Server {
     public void removeGame(Integer gameId) {
         this.games.remove(gameId);
     }
+
     /**
      * Obtiene la lista de los id's que identifican las partidas activas
      * @return lista de ids de partidas activas
@@ -69,19 +70,13 @@ public class Server {
     public void startUp() {
         try {
             this.adminWindow = new Admin(System.out);
-
-            PrintStream fakeStdout = new PrintStream(adminWindow.getOutputStream());
-            System.setOut(fakeStdout);
-            System.setErr(fakeStdout);
-
             System.out.println("[SERVR] Listening on 127.0.0.1:" + PORT + "...");
 
             // listen for clients
             while (true) {
                 // empieza una nueva conexión con cliente
-                Socket socket = serverSocket.accept();
-                System.out.println("[SERVR] Accepted connection from " + socket.getRemoteSocketAddress());
-                new ClientAdmin(socket);
+                ClientAdmin client = new ClientAdmin(this.serverSocket.accept());
+                System.out.println("[SERVR] Accepted connection from client " + client);
             }
         } catch (IOException exception) {
             exception.printStackTrace();

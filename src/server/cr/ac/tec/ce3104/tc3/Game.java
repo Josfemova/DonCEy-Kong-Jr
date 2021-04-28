@@ -96,6 +96,7 @@ public class Game implements GameObjectObserver {
             this.commit();
         }
     }
+
     /**
      * Indica la rutina a llevar a cabo una vez que el jugador ha ganado
      */
@@ -109,31 +110,31 @@ public class Game implements GameObjectObserver {
     /**
      * Agrega una entidad al escenario de juego de la partida
      */
-    public <T extends GameObject> T spawn(T object) {
-        synchronized (this) {
-            this.gameObjects.put(object.getId(), object);
-            this.onObjectModeChanged(object);
-        }
+    public synchronized <T extends GameObject> T spawn(T object) {
+        this.gameObjects.put(object.getId(), object);
+        this.onObjectModeChanged(object);
 
         object.addObserver(this);
+
+        // Evita spam durante reset()
+        if (this.player != null) {
+            this.log("New object " + object);
+        }
+
         return object;
     }
+
     /**
      * Agrega una lista de entidades al escenario de la partida 
      * @param objects array de entidades a agregar
      */
-    public void spawn(GameObject[] objects) {
-        synchronized (this) {
-            for (GameObject object : objects) {
-                this.gameObjects.put(object.getId(), object);
-                this.onObjectModeChanged(object);
-            }
-        }
-
+    public synchronized void spawn(GameObject[] objects) {
+        // No es lo mismo que hacerlo desde afuera, nótese que se preserva synchronized
         for (GameObject object : objects) {
-            object.addObserver(this);
+            this.spawn(object);
         }
     }
+
     /**
      * Indica si un objeto colisionaria si se enontrase en una posicion dada
      * @param object objeto cuyo status de colision quiere chequearse
@@ -202,7 +203,7 @@ public class Game implements GameObjectObserver {
         client.sendBatch(catchUp);
         this.clients.put(client.getClientId(), client);
 
-        this.log("Client " + client.getClientId() + " has joined");
+        this.log("Client " + client + " has joined");
     }
     /**
      * elimina a un cliente de la lista de espectadores y lo desconecta del juego
@@ -210,7 +211,7 @@ public class Game implements GameObjectObserver {
      */
     public synchronized void detachClient(ClientAdmin client) {
         this.clients.remove(client.getClientId());
-        this.log("Client " + client.getClientId() + " has left");
+        this.log("Client " + client + " has left");
 
         if (this.clients.isEmpty()) {
             this.log("No clients left; game finalized");
@@ -312,6 +313,7 @@ public class Game implements GameObjectObserver {
      */
     private synchronized void reset() {
         this.log("Begin level reset");
+        this.player = null;
 
         for (GameObject object : this.gameObjects.values()) {
             this.outputQueue.add(object.makeDeleteCommand());

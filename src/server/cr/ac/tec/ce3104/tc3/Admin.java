@@ -43,23 +43,18 @@ class Admin {
      * @throws IOException Excepciones asociadas a operaciones de IO en streams
      */
     public Admin(PrintStream realStdout) throws IOException {
+        PipedOutputStream stdoutPipe = new PipedOutputStream();
+        this.stdoutSink = new BufferedReader(new InputStreamReader(new PipedInputStream(stdoutPipe)));
         this.realStdout = realStdout;
-        this.fakeStdout = new PipedOutputStream();
-        this.stdoutSink = new BufferedReader(new InputStreamReader(new PipedInputStream(this.fakeStdout)));
+
+        PrintStream fakeStdout = new PrintStream(stdoutPipe, true);
+        System.setOut(fakeStdout);
+        System.setErr(fakeStdout);
 
         SwingUtilities.invokeLater(() -> this.start());
     }
 
-    /**
-     * Obtiene el stream de salida de los logs de la consola de administracion
-     * @return stream de salida de los logs de la consola de administracion
-     */
-    public OutputStream getOutputStream() {
-        return this.fakeStdout;
-    }
-
     private final PrintStream realStdout;
-    private final PipedOutputStream fakeStdout;
     private final BufferedReader stdoutSink;
 
     private JFrame frame;
@@ -104,17 +99,23 @@ class Admin {
      */
     private void readSink() {
         try {
-            while (true) {
-                String line = this.stdoutSink.readLine();
-                if (line == null) {
-                    continue;
-                }
+            try {
+                while (true) {
+                    String line = this.stdoutSink.readLine();
+                    if (line == null) {
+                        this.realStdout.println("EOF!");
+                        break;
+                    }
 
-                this.realStdout.println(line);
-                SwingUtilities.invokeLater(() -> this.consoleOutput.append(line + "\n"));
+                       this.realStdout.println(line);
+                    SwingUtilities.invokeLater(() -> this.consoleOutput.append(line + "\n"));
+                }
+            } finally {
+                System.setOut(this.realStdout);
+                System.setErr(this.realStdout);
             }
         } catch (Exception exception) {
-            // Ignorado
+            exception.printStackTrace();
         }
     }
 
@@ -173,7 +174,7 @@ class Admin {
                 {
                     Game game = expectGame(command, 1);
                     for (GameObject object : game.getGameObjects().values()) {
-                        System.out.println(objectDescription(object));
+                        System.out.println(object);
                     }
 
                     System.out.println("Total: " + game.getGameObjects().size());
@@ -186,7 +187,7 @@ class Admin {
                     GameObject object = expectGameObject(game, command, 2);
 
                     object.delete();
-                    System.out.println("Deleted " + objectDescription(object));
+                    System.out.println("Deleted " + object);
 
                     break;
                 }
@@ -196,11 +197,10 @@ class Admin {
                     Game game = expectGame(command, 1);
                     Platform platform = expectPlatform(game, command, 2);
 
-                    String description = objectDescription(platform);
                     if (platform.detach()) {
-                        System.out.println("Vines removed from " + description);
+                        System.out.println("Vines removed from " + platform);
                     } else {
-                        System.out.println("No vines are attached to " + description);
+                        System.out.println("No vines are attached to " + platform);
                     }
 
                     break;
@@ -218,13 +218,13 @@ class Admin {
                         System.err.println("Error: too long! Refusing to create");
                         throw new BadCommand();
                     } else if (platform.getAttached() != null) {
-                        System.out.println("There are already vines attached to " + objectDescription(platform));
+                        System.out.println("There are already vines attached to " + platform);
                     } else {
                         Vines[] chain = Vines.makeChain(platform, length);
                         game.spawn(chain);
 
                         for (Vines vines : chain) {
-                            System.out.println("Created " + objectDescription(vines));
+                            System.out.println("Created " + vines);
                         }
                     }
 
@@ -259,7 +259,7 @@ class Admin {
                     Integer score = expectInteger(command, 5);
 
                     Fruit fruit = game.spawn(new FruitFactory().createFruit(type, position, score));
-                    System.out.println("Created fruit " + objectDescription(fruit));
+                    System.out.println("Created fruit " + fruit);
                     break;
                 }
 
@@ -291,7 +291,7 @@ class Admin {
                     System.out.println("Current difficulty: " + difficulty);
 
                     Crocodile crocodile = game.spawn(new CrocodileFactory().createCrocodile(type, game, platform, difficulty));
-                    System.out.println("Created crocodile " + objectDescription(crocodile));
+                    System.out.println("Created crocodile " + crocodile);
                     break;
                 }
 
@@ -315,7 +315,7 @@ class Admin {
                     }
 
                     game.setHighlight(object.getId(), highlight);
-                    System.out.println("Updated highlight state of " + objectDescription(object));
+                    System.out.println("Updated highlight state of " + object);
 
                     break;
                 }
@@ -340,7 +340,7 @@ class Admin {
     private static Platform expectPlatform(Game game, String[] command, Integer index) throws BadCommand {
         GameObject object = expectGameObject(game, command, index);
         if (!(object instanceof Platform)) {
-            System.err.println("Error: not a platform: " + objectDescription(object));
+            System.err.println("Error: not a platform: " + object);
             throw new BadCommand();
         }
 
@@ -413,16 +413,5 @@ class Admin {
         }
 
         return command[index];
-    }
-
-    /**
-     * COnstruye un string para describir de una manera simple una entidad de juego
-     * @param object entidad de juego a describir
-     * @return string que describe a la entidad dada
-     */
-    private static String objectDescription(GameObject object) {
-        Position position = object.getPosition();
-        return object.getClass().getSimpleName() + " #" + object.getId()
-             + " at (" + position.getX() + ", " + position.getY() + ")";
     }
 }
