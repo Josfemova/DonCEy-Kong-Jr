@@ -6,6 +6,7 @@
 #include <json-c/json_tokener.h>
 
 #include "util.h"
+#include "constants.h"
 #include "donceykongjr.h"
 
 /**
@@ -16,15 +17,18 @@
  */
 void transmit(const struct key_value *items)
 {
+	// Se traduce las estructuras key-value a un objeto JSON
 	struct json_object *root = json_object_new_object();
 	for(; items->key; ++items)
 	{
 		json_object_object_add(root, items->key, items->value);
 	}
 
+	// Se envía este objeto JSON (recordar que net_file surgió de un fdopen())
 	fprintf(game.net_file, "%s\n", json_object_to_json_string(root));
 	fflush(game.net_file);
 
+	// Se libera memoria
 	json_object_put(root);
 }
 
@@ -49,12 +53,12 @@ struct json_object *expect_key
 		if(json_object_get_type(value) != type)
 		{
 			fprintf(stderr, "Error: mismatched JSON value type for key '%s'\n", key);
-			quit(1);
+			quit(EXIT_FAILURE);
 		}
 	} else if(required)
 	{
 		fprintf(stderr, "Error: expected JSON key '%s'\n", key);
-		quit(1);
+		quit(EXIT_FAILURE);
 	}
 
 	return value;
@@ -70,7 +74,7 @@ struct json_object *expect_key
  */
 static int expect_id(struct json_object *message)
 {
-	return json_object_get_int(expect_key(message, "id", json_type_int, true));
+	return json_object_get_int(expect_key(message, CMD_ID, json_type_int, true));
 }
 
 /**
@@ -89,7 +93,7 @@ static struct entity *expect_entity(struct json_object *message)
 	if(!entity)
 	{
 		fprintf(stderr, "Error: no entity has ID %d\n", id);
-		quit(1);
+		quit(EXIT_FAILURE);
 	}
 
 	return entity;
@@ -111,10 +115,11 @@ static struct ratio expect_ratio(struct json_object *message, const char *num_ke
 	int num = json_object_get_int(expect_key(message, num_key, json_type_int, true));
 	int denom = json_object_get_int(expect_key(message, denom_key, json_type_int, true));
 
+	// Se acepta 0/0 para el caso de una entidad estática
 	if(denom < 0 || (num != 0 && denom == 0))
 	{
 		fprintf(stderr, "Error: bad speed ratio: %d:%d\n", num, denom);
-		quit(1);
+		quit(EXIT_FAILURE);
 	}
 
 	struct ratio ratio =
@@ -138,11 +143,12 @@ static struct ratio expect_ratio(struct json_object *message, const char *num_ke
  */
 static void expect_sequence(struct json_object *message, struct vec *sequence)
 {
-	struct json_object *sequence_ids = expect_key(message, "seq", json_type_array, true);
+	struct json_object *sequence_ids = expect_key(message, CMD_SEQUENCE, json_type_array, true);
 	if(json_object_array_length(sequence_ids) == 0)
 	{
 		fputs("Error: empty sequence array\n", stderr);
 	}
+
 	//Recorre el array json
 	for(size_t i = 0; i < json_object_array_length(sequence_ids); ++i)
 	{
@@ -150,14 +156,14 @@ static void expect_sequence(struct json_object *message, struct vec *sequence)
 		if(json_object_get_type(id_object) != json_type_int) 
 		{
 			fputs("Error: expected int in sequence array\n", stderr);
-			quit(1);//fallar si no se obtiene un valor de tipo entero
+			quit(EXIT_FAILURE);//fallar si no se obtiene un valor de tipo entero
 		}
 
 		int id = json_object_get_int(id_object);
 		if(!hash_map_get(&game.sprites, id))
 		{
 			fprintf(stderr, "Error: no sprite has ID %d\n", id);
-			quit(1);
+			quit(EXIT_FAILURE);
 		}
 		//agrega elemento al vector de retorno
 		*(int*)vec_emplace(sequence) = id;
@@ -175,8 +181,8 @@ static void expect_sequence(struct json_object *message, struct vec *sequence)
  */
 static void expect_position(struct json_object *message, int *x, int *y)
 {
-	*x = json_object_get_int(expect_key(message, "x", json_type_int, true));
-	*y = json_object_get_int(expect_key(message, "y", json_type_int, true));
+	*x = json_object_get_int(expect_key(message, CMD_X, json_type_int, true));
+	*y = json_object_get_int(expect_key(message, CMD_Y, json_type_int, true));
 }
 
 /**
@@ -191,15 +197,18 @@ static void expect_position(struct json_object *message, int *x, int *y)
  */
 static void handle_command(struct json_object *message)
 {
-	const char *operation = json_object_get_string(expect_key(message, "op", json_type_string, true));
-	if(strcmp(operation, "put") == 0)//comando de crear entidades
+	// Dispatch principal de comandos provenientes del servidor
+	const char *operation = json_object_get_string(expect_key(message, CMD_OP, json_type_string, true));
+	if(strcmp(operation, CMD_PUT) == 0)//comando de crear entidades
 	{
 		int id = expect_id(message);
 
+		// Se crea una nueva entidad (asumiendo que no existe)
 		struct entity new = { 0 };
 		struct entity *existing = hash_map_get(&game.entities, id);
 		struct entity *entity = existing ? existing : &new;
 
+		// En caso de que sí existiera, simplemente se sobreescribe
 		if(existing)
 		{
 			vec_resize(&existing->sequence, 0);
@@ -209,11 +218,13 @@ static void handle_command(struct json_object *message)
 			entity = hash_map_put(&game.entities, id, &new);
 		}
 
+		// Se insertan otros valores que incluye el mensaje
 		entity->next_sprite = 0;
 		expect_position(message, &entity->x, &entity->y);
 		expect_sequence(message, &entity->sequence);
 
-		entity->z = json_object_get_int(expect_key(message, "z", json_type_int, true));
+		// Profundidad
+		entity->z = json_object_get_int(expect_key(message, CMD_Z, json_type_int, true));
 		if(entity->z > game.max_depth)
 		{
 			game.max_depth = entity->z;
@@ -221,11 +232,11 @@ static void handle_command(struct json_object *message)
 
 		entity->speed_x = expect_ratio(message, "num_x", "denom_x");
 		entity->speed_y = expect_ratio(message, "num_y", "denom_y");
-	} else if(strcmp(operation, "move") == 0)//comando de mover un entidad
+	} else if(strcmp(operation, CMD_MOVE) == 0)//comando de mover un entidad
 	{
 		struct entity *entity = expect_entity(message);
 		expect_position(message, &entity->x, &entity->y);
-	} else if(strcmp(operation, "delete") == 0)//comando para eliminar una entidad
+	} else if(strcmp(operation, CMD_DELETE) == 0)//comando para eliminar una entidad
 	{
 		int id = expect_id(message);
 
@@ -235,26 +246,26 @@ static void handle_command(struct json_object *message)
 			vec_clear(&entity->sequence);
 			hash_map_delete(&game.entities, id);
 		}
-	} else if(strcmp(operation, "stats") == 0) // Actualización de estadísticas
+	} else if(strcmp(operation, CMD_STATS) == 0) // Actualización de estadísticas
 	{
-		int lives = json_object_get_int(expect_key(message, "lives", json_type_int, true));
-		int score = json_object_get_int(expect_key(message, "score", json_type_int, true));
+		int lives = json_object_get_int(expect_key(message, CMD_LIVES, json_type_int, true));
+		int score = json_object_get_int(expect_key(message, CMD_SCORE, json_type_int, true));
 
 		update_stats(lives, score);
-	} else if(strcmp(operation, "highlight") == 0) // Resaltado de guía
+	} else if(strcmp(operation, CMD_HIGHLIGHT) == 0) // Resaltado de guía
 	{
 		expect_entity(message)->highlight = true;
-	} else if(strcmp(operation, "unhighlight") == 0) // Quitar resaltado
+	} else if(strcmp(operation, CMD_UNHIGHLIGHT) == 0) // Quitar resaltado
 	{
 		expect_entity(message)->highlight = false;
-	} else if(strcmp(operation, "bye") == 0)//Servidor se despide del cliente
+	} else if(strcmp(operation, CMD_BYE) == 0)//Servidor se despide del cliente
 	{
 		puts("Connection terminated by server");
-		quit(0);
+		quit(EXIT_SUCCESS);
 	} else
 	{
 		fprintf(stderr, "Error: unknown command '%s'\n", operation);
-		quit(1);
+		quit(EXIT_FAILURE);
 	}
 }
 
@@ -272,17 +283,20 @@ void receive(const char *line)
 	struct json_object *root = json_tokener_parse(line);
 	if(!root || json_object_get_type(root) != json_type_object)
 	{
+		// El servidor envió un mensaje con formato incorrecto
 		fprintf(stderr, "Error: bad JSON: %s\n", line);
-		quit(1);
+		quit(EXIT_FAILURE);
 	}
 
-	struct json_object *error = expect_key(root, "error", json_type_string, false);
+	// Siempre se considera primero la posibilidad de un mensaje de error
+	struct json_object *error = expect_key(root, CMD_ERROR, json_type_string, false);
 	if(error)
 	{
 		fprintf(stderr, "Error: server failure: %s\n", json_object_get_string(error));
-		quit(1);
+		quit(EXIT_FAILURE);
 	}
 
+	// Se esperan distintos comandos según el estado de inicialización y handshake
 	switch(game.state)
 	{
 		case GAME_STATE_HANDSHAKE_WHOAMI:

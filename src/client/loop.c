@@ -24,6 +24,7 @@
  */
 static void render(const struct sprite *sprite, int x, int y)
 {
+	// Las bounds se derivan de posiciones y tamaños
 	struct SDL_Rect destination =
 	{
 		.x = x,
@@ -58,9 +59,9 @@ static void render_entity(const struct entity *entity, const struct sprite *spri
 			.h = sprite->surface->h
 		};
 
-		if(SDL_SetRenderDrawColor(game.renderer, 255, 255, 255, 96) < 0
+		if(SDL_SetRenderDrawColor(game.renderer, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, ALPHA_HIGHLIGHT) < 0
 		|| SDL_RenderFillRect(game.renderer, &area) < 0
-		|| SDL_SetRenderDrawColor(game.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE) < 0)
+		|| SDL_SetRenderDrawColor(game.renderer, COLOR_BLACK, COLOR_BLACK, COLOR_BLACK, SDL_ALPHA_OPAQUE) < 0)
 		{
 			sdl_fatal();
 		}
@@ -74,11 +75,13 @@ static void render_entity(const struct entity *entity, const struct sprite *spri
  */
 void redraw(void)
 {
+	// Se limpia la pantalla antes de cada frame
 	if(SDL_RenderClear(game.renderer) < 0)
 	{
 		sdl_fatal();
 	}
 
+	// Se cubre cada una de las 'capas', pasando por todas las entidades en cada iteración
 	for(int depth = 0; depth <= game.max_depth; ++depth)
 	{
 		for(struct hash_map_iter iter = hash_map_iter(&game.entities); iter.cell; hash_map_iter_next(&iter))
@@ -99,6 +102,7 @@ void redraw(void)
 			struct sprite *sprite = hash_map_get(&game.sprites, sprite_id);
 			assert(sprite);
 
+			// Ciclo de animación
 			if(moved && ++entity->next_sprite == entity->sequence.length)
 			{
 				entity->next_sprite = 0;
@@ -111,11 +115,11 @@ void redraw(void)
 			{
 				struct key_value items[] =
 				{
-					{"op", json_object_new_string("move")},
-					{"id", json_object_new_int(id)},
-					{"x",  json_object_new_int(entity->x)},
-					{"y",  json_object_new_int(entity->y)},
-					{NULL, NULL}
+					{CMD_OP, json_object_new_string(CMD_MOVE)},
+					{CMD_ID, json_object_new_int(id)},
+					{CMD_X,  json_object_new_int(entity->x)},
+					{CMD_Y,  json_object_new_int(entity->y)},
+					{NULL,   NULL}
 				};
 
 				transmit(items);
@@ -123,6 +127,7 @@ void redraw(void)
 		}
 	}
 
+	// Label de estadísticas
 	if(game.stats_label.texture)
 	{
 		render(&game.stats_label, STATS_LABEL_X, STATS_LABEL_Y);
@@ -151,6 +156,7 @@ static void push_sdl_event(int type)
  */
 void event_loop(void)
 {
+	// File descriptors a los que se les hará polling
 	struct pollfd pollfds[] =
 	{
 		{
@@ -158,11 +164,11 @@ void event_loop(void)
 			.events = POLLIN
 		},
 		{
-			.fd = -1,
+			.fd = FD_INVALID,
 			.events = POLLIN
 		},
 		{
-			.fd = -1,
+			.fd = FD_INVALID,
 			.events = POLLIN
 		}
 	};
@@ -174,6 +180,7 @@ void event_loop(void)
 	char input_line[MAX_INPUT_LINE_SIZE];
 	size_t input_offset = 0;
 
+	// Bucle principal de eventos
 	while(true)
 	{
 		SDL_Event event;
@@ -198,15 +205,17 @@ void event_loop(void)
 					errno = 0;
 					while(fgets(input_line + input_offset, sizeof input_line - input_offset, game.net_file))
 					{
-						if(!strchr(input_line + input_offset, '\n'))
+						// Esto ocurre si hay una condición de short read
+						if(!strchr(input_line + input_offset, NEWLINE))
 						{
 							input_offset += strlen(input_line + input_offset);
 							if(input_offset == sizeof input_line - 1)
 							{
 								fprintf(stderr, "Error: buffer overflow detected: %s\n", input_line);
-								quit(1);
+								quit(EXIT_FAILURE);
 							}
 
+							// Y este caso es equivalente a un EAGAIN por non-blocking I/O
 							errno = EAGAIN;
 							break;
 						}
@@ -215,6 +224,7 @@ void event_loop(void)
 						input_offset = 0;
 					}
 
+					// EAGAIN indica que faltan datos, se espera en el bucle nuevamente
 					if(errno == EAGAIN)
 					{
 						clearerr(game.net_file);
@@ -232,9 +242,11 @@ void event_loop(void)
 
 				case TIMER_EVENT:
 				{
+					// Véase la man page de timerfd
 					uint64_t expirations = 0;
 					read(game.timer_fd, &expirations, sizeof expirations);
 
+					// Lapso de tiempo inesperado
 					if(expirations > 1)
 					{
 						fprintf(stderr, "Warning: %lu clock tick(s) missed\n", expirations - 1);
@@ -248,19 +260,23 @@ void event_loop(void)
 			}
 		}
 
+		// Estos dos pueden cambiar durante la ejecución
 		x11_pollfd->fd = game.x11_fd;
 		timer_pollfd->fd = game.timer_fd;
 
+		// Aquí es donde propiamente espera a un evento
 		if(poll(pollfds, sizeof pollfds / sizeof(struct pollfd), -1) < 0 && errno != EINTR)
 		{
 			sys_fatal();
 		}
 
+		// Si hay eventos de salida, se agrega a la queue
 		if(net_pollfd->revents)
 		{
 			push_sdl_event(X11_EVENT);
 		}
 
+		// Igual pero para el timer
 		if(timer_pollfd->revents)
 		{
 			push_sdl_event(TIMER_EVENT);

@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include "util.h"
+#include "constants.h"
 
 /**
  * @brief Crea e inicializa un nuevo vector
@@ -61,7 +62,8 @@ static void vec_require_capacity(struct vec *vec, size_t required)
 	{
 		do
 		{
-			vec->capacity = vec->capacity > 0 ? 2 * vec->capacity : 4; //duplica la capacidad
+			// Duplica la capacidad
+			vec->capacity = vec->capacity > 0 ? VEC_CAPACITY_FACTOR * vec->capacity : DEFAULT_VEC_CAPACITY;
 		} while(required > vec->capacity);
 
 		vec->data = realloc(vec->data, vec->element_size * vec->capacity);
@@ -81,6 +83,7 @@ static void vec_require_capacity(struct vec *vec, size_t required)
  */
 void *vec_emplace(struct vec *vec)
 {
+	// Se extiende y luego se obtiene un puntero al último
 	vec_require_capacity(vec, vec->length + 1);
 	return (char*)vec->data + vec->length++ * vec->element_size;
 }
@@ -98,6 +101,7 @@ void vec_delete(struct vec *vec, size_t index)
 	void *target = (char*)vec->data + vec->element_size * index;
 	void *source = (char*)target + vec->element_size;
 
+	// Se corren los elementos que quedaron por encima del eliminado
 	memmove(target, source, (vec->length-- - index - 1) * vec->element_size);
 }
 

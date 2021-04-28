@@ -3,6 +3,7 @@
 
 #include <getopt.h>
 
+#include "constants.h"
 #include "donceykongjr.h"
 
 /**
@@ -27,24 +28,25 @@ static void usage(const char *argv0)
  */
 int main(int argc, char *argv[])
 {
+	// Primero se parsea la línea de comandos
 	const struct option CMDLINE_OPTIONS[] =
 	{
-		{"help",            no_argument, NULL, 'h'},
-		{"version",         no_argument, NULL, 'v'},
-		{"fullscreen",      no_argument, NULL, 'f'},
-		{"fullscreen-fake", no_argument, NULL, 'F'},
-		{NULL,              0,           NULL, 0}
+		{CMDLINE_HELP,            no_argument, NULL, CMDLINE_OPT_HELP},
+		{CMDLINE_VERSION,         no_argument, NULL, CMDLINE_OPT_VERSION},
+		{CMDLINE_FULLSCREEN,      no_argument, NULL, CMDLINE_OPT_FULLSCREEN},
+		{CMDLINE_FULLSCREEN_FAKE, no_argument, NULL, CMDLINE_OPT_FULLSCREEN_FAKE},
+		{NULL,                    0,           NULL, 0}
 	};
 
-	game.sprites = hash_map_new(8, sizeof(struct sprite));
-	game.entities = hash_map_new(8, sizeof(struct entity));
+	game.sprites = hash_map_new(DEFAULT_MAP_ORDER, sizeof(struct sprite));
+	game.entities = hash_map_new(DEFAULT_MAP_ORDER, sizeof(struct entity));
 
 	int option;
-	while((option = getopt_long(argc, argv, "hvfF", CMDLINE_OPTIONS, NULL)) != -1)
+	while((option = getopt_long(argc, argv, CMDLINE_ALL_SHORTS, CMDLINE_OPTIONS, NULL)) != -1)
 	{
 		switch(option)
 		{
-			case 'h':
+			case CMDLINE_OPT_HELP:
 				fprintf
 				(
 					stderr,
@@ -57,21 +59,21 @@ int main(int argc, char *argv[])
 
 				return 0;
 
-			case 'v':
+			case CMDLINE_OPT_VERSION:
 				puts("DonCEy Kong Jr. v1.0.0");
 				return 0;
 
-			case 'f':
+			case CMDLINE_OPT_FULLSCREEN:
 				game.flags |= GAME_FLAG_FULLSCREEN_MODESET;
 				break;
 
-			case 'F':
+			case CMDLINE_OPT_FULLSCREEN_FAKE:
 				game.flags |= GAME_FLAG_FULLSCREEN_FAKE;
 				break;
 
 			case '?':
 				usage(argv[0]);
-				return 1;
+				return EXIT_FAILURE;
 		}
 	}
 
@@ -80,12 +82,13 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "%s: missing host or port\n", argv[0]);
 		usage(argv[0]);
 
-		return 1;
+		return EXIT_FAILURE;
 	}
 
+	// Inicio del juego
 	init_sdl();
 	init_net(argv[optind], argv[optind + 1]);
 
 	event_loop();
-	quit(0);
+	quit(EXIT_SUCCESS);
 }

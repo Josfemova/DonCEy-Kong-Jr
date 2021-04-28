@@ -10,6 +10,7 @@
 #include <json-c/json_object.h>
 
 #include "util.h"
+#include "constants.h"
 #include "donceykongjr.h"
 
 /**
@@ -19,18 +20,24 @@
  */
 void quit(int exit_code)
 {
+	// Esta función destruye/libera todos los recursos en struct game
+
+	// Reloj
 	close(game.timer_fd);
 
+	// Socket
 	if(game.net_file)
 	{
 		fclose(game.net_file);
 	}
 
+	// Ventana
 	if(game.window)
 	{
 		SDL_DestroyWindow(game.window);
 	}
 
+	// Secuencias de entidades
 	for(struct hash_map_iter iter = hash_map_iter(&game.entities); iter.cell; hash_map_iter_next(&iter))
 	{
 		struct entity *entity = hash_map_iter_value(&iter);
@@ -38,6 +45,7 @@ void quit(int exit_code)
 		vec_clear(&entity->sequence);
 	}
 
+	// Texturas de sprites
 	for(struct hash_map_iter iter = hash_map_iter(&game.sprites); iter.cell; hash_map_iter_next(&iter))
 	{
 		struct sprite *sprite = hash_map_iter_value(&iter);
@@ -46,20 +54,24 @@ void quit(int exit_code)
 		SDL_FreeSurface(sprite->surface);
 	}
 
+	// Mapas
 	hash_map_clear(&game.sprites);
 	hash_map_clear(&game.entities);
 
+	// Texto del label
 	if(game.stats_label.texture)
 	{
 		SDL_DestroyTexture(game.stats_label.texture);
 		SDL_FreeSurface(game.stats_label.surface);
 	}
 
+	// Fuente
 	if(game.font)
 	{
 		TTF_CloseFont(game.font);
 	}
 
+	// Se desinicializan todas las bibliotecas
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
@@ -74,7 +86,7 @@ void quit(int exit_code)
 void sdl_fatal(void)
 {
 	fprintf(stderr, "Fatal SDL error: %s\n", SDL_GetError());
-	quit(1);
+	quit(EXIT_FAILURE);
 }
 
 /**
@@ -84,7 +96,7 @@ void sdl_fatal(void)
 void sdl_image_fatal(void)
 {
 	fprintf(stderr, "Fatal SDL_image error: %s\n", IMG_GetError());
-	quit(1);
+	quit(EXIT_FAILURE);
 }
 
 /**
@@ -94,7 +106,7 @@ void sdl_image_fatal(void)
 void sdl_ttf_fatal(void)
 {
 	fprintf(stderr, "Fatal SDL_ttf error: %s\n", TTF_GetError());
-	quit(1);
+	quit(EXIT_FAILURE);
 }
 
 /**
@@ -104,7 +116,7 @@ void sdl_ttf_fatal(void)
 void sys_fatal(void)
 {
 	perror("Fatal error");
-	quit(1);
+	quit(EXIT_FAILURE);
 }
 
 /**
@@ -117,8 +129,8 @@ void bye(void)
 {
 	struct key_value items[] =
 	{
-		{"op", json_object_new_string("bye")},
-		{NULL, NULL}
+		{CMD_OP, json_object_new_string(CMD_BYE)},
+		{NULL,   NULL}
 	};
 
 	transmit(items);

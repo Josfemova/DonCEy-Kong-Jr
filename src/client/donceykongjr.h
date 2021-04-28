@@ -83,6 +83,7 @@ extern struct game
 	 */
 	enum
 	{
+		GAME_FLAG_ZERO               = 0x00,
 		GAME_FLAG_FULLSCREEN_MODESET = 0x01,
 		GAME_FLAG_FULLSCREEN_FAKE    = 0x02,
 		GAME_FLAG_SPECTATOR          = 0x04

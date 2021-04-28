@@ -31,16 +31,16 @@
 #include "donceykongjr.h"
 
 /**
- * @brief Describe el estado del cliente
- *
+ * @brief Describe el estado del cliente. Los valores
+ * puestos saquí son los iniciales.
  */
 struct game game =
 {
 	.state       = GAME_STATE_HANDSHAKE_WHOAMI,
-	.flags       = 0,
-	.net_fd      = -1,
-	.x11_fd      = -1,
-	.timer_fd    = -1,
+	.flags       = GAME_FLAG_ZERO,
+	.net_fd      = FD_INVALID,
+	.x11_fd      = FD_INVALID,
+	.timer_fd    = FD_INVALID,
 	.net_file    = NULL,
 	.window      = NULL,
 	.renderer    = NULL,
@@ -67,10 +67,12 @@ struct game game =
  */
 bool move_on_tick(int *coordinate, const struct ratio *speed)
 {
+	// El numerador es una distancia y el denominador un tiempo en ticks
 	if(speed->denominator > 0 && game.ticks % speed->denominator == 0)
 	{
+		// Cada speed->denominator ticks se agrega el numerador
 		int jump = abs(speed->numerator);
-		jump = jump > 0 ? jump : 1;
+		jump = jump > 0 ? jump : JUMP_DEFAULT; // Caso 0/n
 		jump = speed->numerator > 0 ? jump : -jump;
 
 		*coordinate += jump;
@@ -88,17 +90,19 @@ bool move_on_tick(int *coordinate, const struct ratio *speed)
  */
 void update_stats(int lives, int score)
 {
+	// Se libera el label viejo
 	if(game.stats_label.texture)
 	{
 		SDL_DestroyTexture(game.stats_label.texture);
 		SDL_FreeSurface(game.stats_label.surface);
 	}
 
+	// Se genera el texto del label y se renderiza
 	char text[STATS_LABEL_MAX_CHARS];
 	snprintf(text, sizeof text, STATS_LABEL_FORMAT, lives, score);
 
 	SDL_Color fg = STATS_LABEL_COLOR;
-	SDL_Color bg = { .r = 0, .g = 0, .b = 0, .a = 0 };
+	SDL_Color bg = { .r = COLOR_BLACK, .g = COLOR_BLACK, .b = COLOR_BLACK, .a = COLOR_BLACK };
 	if(!(game.stats_label.surface = TTF_RenderUTF8_Shaded(game.font, text, fg, bg)))
 	{
 		sdl_ttf_fatal();
@@ -118,38 +122,39 @@ void update_stats(int lives, int score)
  */
 void handle_key(const SDL_KeyboardEvent *event)
 {
+	// Solo se maneja el momento de la presión, no repeticiones
 	if(event->repeat > 0)
 	{
 		return;
 	}
 
-	const char *operation = event->state == SDL_PRESSED ? "press" : "release";
-	const char *key = "unknown";
+	const char *operation = event->state == SDL_PRESSED ? CMD_PRESS : CMD_RELEASE;
+	const char *key = CMD_UNKNOWN;
 
 	switch(event->keysym.sym)
 	{
 		case SDLK_LEFT:
 		case SDLK_a:
-			key = "left";
+			key = KEY_LEFT;
 			break;
 
 		case SDLK_RIGHT:
 		case SDLK_d:
-			key = "right";
+			key = KEY_RIGHT;
 			break;
 
 		case SDLK_UP:
 		case SDLK_w:
-			key = "up";
+			key = KEY_UP;
 			break;
 
 		case SDLK_DOWN:
 		case SDLK_s:
-			key = "down";
+			key = KEY_DOWN;
 			break;
 
 		case SDLK_SPACE:
-			key = "jump";
+			key = KEY_JUMP;
 			break;
 
 		default:
@@ -158,9 +163,9 @@ void handle_key(const SDL_KeyboardEvent *event)
 
 	struct key_value items[] =
 	{
-		{"op",  json_object_new_string(operation)},
-		{"key", json_object_new_string(key)},
-		{NULL,  NULL}
+		{CMD_OP,  json_object_new_string(operation)},
+		{CMD_KEY, json_object_new_string(key)},
+		{NULL,    NULL}
 	};
 
 	transmit(items);
@@ -179,10 +184,12 @@ void handle_click(const SDL_MouseButtonEvent *event)
 		return;
 	}
 
+	// En fullscreen cambia la escala
 	float scale_x;
 	float scale_y;
 	SDL_RenderGetScale(game.renderer, &scale_x, &scale_y);
 
+	// Se ajusta según escala
 	int click_x = event->x / scale_x;
 	int click_y = event->y / scale_y;
 
@@ -210,7 +217,7 @@ void handle_click(const SDL_MouseButtonEvent *event)
 		}
 	}
 
-	found ? putchar('\n') : printf("No IDs match click at (%d, %d)\n", click_x, click_y);
+	found ? putchar(NEWLINE) : printf("No IDs match click at (%d, %d)\n", click_x, click_y);
 }
 
 /**
@@ -233,27 +240,29 @@ static int32_t select_game(int32_t client_id, struct json_object *games)
 		if(json_object_get_type(game) != json_type_int)
 		{
 			fprintf(stderr, "Error: 'games[%zu]' is not an integer\n", i);
-			quit(1);
+			quit(EXIT_FAILURE);
 		}
 
 		printf("- Game %d is running\n", json_object_get_int(game));
 	}
 
-	puts("");
+	putchar(NEWLINE);
 
 	int32_t game_id;
 	while(true)
 	{
 		printf("Enter a game ID to watch, or %d to start a new game\n> ", client_id);
 
+		// SCNd32 se requiere por ser int32_t
 		int scanned = scanf(" %" SCNd32, &game_id);
 		if(scanned == EOF)
 		{
 			bye(); //no se quiere empezar un juego, se cierra sin error
-			quit(0);
+			quit(EXIT_SUCCESS);
 		}
 
-		while(getchar() != '\n')
+		// Se lee y descarta el resto de la línea de entrada
+		while(getchar() != NEWLINE)
 		{
 			continue;
 		}
@@ -295,9 +304,10 @@ static int32_t select_game(int32_t client_id, struct json_object *games)
  */
 void start_or_watch_game(struct json_object *message)
 {
-	int32_t client_id = json_object_get_int(expect_key(message, "whoami", json_type_int, true));
-	struct json_object *games = expect_key(message, "games", json_type_array, true);
+	int32_t client_id = json_object_get_int(expect_key(message, CMD_WHOAMI, json_type_int, true));
+	struct json_object *games = expect_key(message, CMD_GAMES, json_type_array, true);
 
+	// PRId32 se ocupa por ser int32_t
 	printf("This is client %" PRId32 "\n", client_id);
 
 	int32_t game_id;
@@ -312,8 +322,8 @@ void start_or_watch_game(struct json_object *message)
 
 	struct key_value items[] =
 	{
-		{"init", json_object_new_int(game_id)},
-		{NULL,   NULL}
+		{CMD_INIT, json_object_new_int(game_id)},
+		{NULL,     NULL}
 	};
 
 	transmit(items);

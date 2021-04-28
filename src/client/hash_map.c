@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "util.h"
+#include "constants.h"
 
 /**
  * @brief Busca por un par llave-valor en un bucket dado
@@ -15,6 +16,7 @@ static void *bucket_get_pair(struct vec *bucket, int lookup)
 {
 	if(bucket)
 	{
+		// Se busca linealmente
 		for(size_t i = 0; i < bucket->length; ++i)
 		{
 			char *pair = vec_get(bucket, i); //Obtiene elemento en índice i del vector bucket
@@ -73,6 +75,7 @@ void hash_map_clear(struct hash_map *map)
  */
 static size_t hash_map_cell_size(struct hash_map *map)
 {
+	// Máximo entre tamaño de llave (sizeof(int)) y tamaño de valor, para garantizar alineamiento
 	return map->value_size > sizeof(int) ? map->value_size : sizeof(int);
 }
 
@@ -85,11 +88,15 @@ static size_t hash_map_cell_size(struct hash_map *map)
  */
 static struct vec *hash_map_bucket_for(struct hash_map *map, int key)
 {
+	// No hay memoria reservada
 	if(!map->buckets.data)
 	{
 		return NULL;
 	}
 
+	/* `((1 << order) - 1)` es una potencia de dos menos uso: `2 ** order - 1`
+	 * Entonces, esto toma los bits indicados por el orden.
+	 */
 	return vec_get(&map->buckets, (unsigned)key & ((1u << map->order) - 1));
 }
 
@@ -118,11 +125,12 @@ void *hash_map_get(struct hash_map *map, int lookup)
  */
 void *hash_map_put(struct hash_map *map, int key, const void *value)
 {
+	// Se inicializan los buckets de no haber sido ya
 	if(!map->buckets.data)
 	{
 		vec_resize(&map->buckets, 1lu << map->order);
 
-		struct vec empty_bucket = vec_new(2 * hash_map_cell_size(map));
+		struct vec empty_bucket = vec_new(HASH_MAP_CELLS_PER_ITEM * hash_map_cell_size(map));
 		for(size_t i = 0; i < 1lu << map->order; ++i)
 		{
 			*((struct vec*)vec_get(&map->buckets, i)) = empty_bucket;
@@ -132,6 +140,7 @@ void *hash_map_put(struct hash_map *map, int key, const void *value)
 	struct vec *bucket = hash_map_bucket_for(map, key);
 	char *pair = bucket_get_pair(bucket, key);
 
+	// Si el elemento no estaba ya, se inserta
 	if(!pair)
 	{
 		pair = vec_emplace(bucket);
@@ -140,6 +149,7 @@ void *hash_map_put(struct hash_map *map, int key, const void *value)
 	int *stored_key = (int*)pair;
 	void *stored_value = pair + hash_map_cell_size(map);
 
+	// Se sobreescribe, haya estado antes o no
 	*stored_key = key;
 	return memcpy(stored_value, value, map->value_size);
 }
@@ -157,6 +167,7 @@ void hash_map_delete(struct hash_map *map, int key)
 
 	if(pair)
 	{
+		// El segundo argumento es un índice
 		vec_delete(bucket, (pair - (char*)bucket->data) / bucket->element_size);
 	}
 }
@@ -194,10 +205,12 @@ void hash_map_iter_next(struct hash_map_iter *iter)
 		struct vec *bucket = vec_get(&iter->map->buckets, iter->current_bucket);
 		if(iter->next_index < bucket->length)
 		{
+			// Se encontró una siguiente celda en la iteración
 			iter->cell = vec_get(bucket, iter->next_index++);
 			return;
 		}
 
+		// El bucket actual ya no tiene más elementos para iterar
 		iter->next_index = 0;
 	}
 
