@@ -50,6 +50,10 @@ public class ClientAdmin implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
+        if (this.game == null) {
+            System.out.println("[SERVR] Connection finalized with detached client " + this);
+        }
+
         if (this.socket != null) {
             this.socket.close();
             this.socket = null;

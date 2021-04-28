@@ -247,13 +247,10 @@ static int32_t select_game(int32_t client_id, struct json_object *games)
 		printf("Enter a game ID to watch, or %d to start a new game\n> ", client_id);
 
 		int scanned = scanf(" %" SCNd32, &game_id);
-		if(scanned == EOF && feof(stdin))
+		if(scanned == EOF)
 		{
 			bye(); //no se quiere empezar un juego, se cierra sin error
 			quit(0);
-		} else if(scanned == EOF)
-		{
-			sys_fatal();
 		}
 
 		while(getchar() != '\n')
