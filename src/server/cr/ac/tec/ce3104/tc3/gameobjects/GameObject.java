@@ -120,7 +120,7 @@ public abstract class GameObject {
 
         if (this.observer != null) {
             this.observer.onObjectModeChanged(this);
-            if (previous != newMode) {
+            if (previous.getClass() != newMode.getClass()) {
                 String previousName = previous.getClass().getSimpleName();
                 String newName = newMode.getClass().getSimpleName();
 
