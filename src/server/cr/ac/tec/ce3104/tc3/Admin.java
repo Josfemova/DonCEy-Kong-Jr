@@ -101,13 +101,18 @@ class Admin {
         try {
             try {
                 while (true) {
-                    String line = this.stdoutSink.readLine();
+                    String line;
+                    try {
+                        line = this.stdoutSink.readLine();
+                    } catch (IOException exception) {
+                        continue;
+                    }
+
                     if (line == null) {
-                        this.realStdout.println("EOF!");
                         break;
                     }
 
-                       this.realStdout.println(line);
+                    this.realStdout.println(line);
                     SwingUtilities.invokeLater(() -> this.consoleOutput.append(line + "\n"));
                 }
             } finally {
